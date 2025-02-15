@@ -1,0 +1,79 @@
+link: https://dbdiagram.io/d/67af289b263d6cf9a02c84d1
+
+INSERT INTO All_code (code, kieu, mo_ta) VALUES
+-- User Type
+('AD', 'user type', 'Admin'),
+('HS', 'user type', 'Học sinh'),
+('T', 'user type', 'Thầy'),
+('TG', 'user type', 'Trợ giảng'),
+
+-- Class Status
+('LHD', 'class status', 'Hoạt động'),
+('LKT', 'class status', 'Kết thúc'),
+
+-- Student Status
+('HSDH', 'student status', 'Học sinh đang học'),
+('HSNH', 'student status', 'Học sinh nghỉ học'),
+('HSTN', 'student status', 'Học sinh tốt nghiệp'),
+
+-- Days of Week (Thứ trong tuần)
+('T2', 'dow', 'Thứ 2'),
+('T3', 'dow', 'Thứ 3'),
+('T4', 'dow', 'Thứ 4'),
+('T5', 'dow', 'Thứ 5'),
+('T6', 'dow', 'Thứ 6'),
+('T7', 'dow', 'Thứ 7'),
+('CN', 'dow', 'Chủ nhật'),
+
+-- Duration (Khoảng thời gian)
+('7:00 - 9:00', 'duration', 'từ 7h sáng đến 9h sáng'),
+('8:00 - 10:00', 'duration', 'từ 8h sáng đến 10h sáng'),
+('9:00 - 11:00', 'duration', 'từ 9h sáng đến 11h sáng'),
+
+-- Study Item Type (Loại mục học tập)
+('BTVN', 'study item type', 'Bài tập về nhà'),
+('DOC', 'study item type', 'Tài liệu'),
+('VID', 'study item type', 'Video'),
+
+-- Exam Type (Loại kỳ thi)
+('GK1', 'exam type', 'Giữa kì 1'),
+('CK1', 'exam type', 'Cuối kì 1'),
+('GK2', 'exam type', 'Giữa kì 2'),
+('CK2', 'exam type', 'Cuối kì 2'),
+('OT', 'exam type', 'Ôn tập'),
+('THPT', 'exam type', 'Thi THPT'),
+('OTTHPT', 'exam type', 'Ôn thi THPT'),
+('HSA', 'exam type', 'Đánh giá năng lực'),
+('TSA', 'exam type', 'Đánh giá tư duy'),
+
+-- Chapter (Chương học)
+('10C1', 'chuong', 'Lớp 10 chương 1'),
+('10C2', 'chuong', 'Lớp 10 chương 2'),
+('10C3', 'chuong', 'Lớp 10 chương 3'),
+('11C1', 'chuong', 'Lớp 11 chương 1'),
+('11C2', 'chuong', 'Lớp 11 chương 2'),
+('11C3', 'chuong', 'Lớp 11 chương 3'),
+('12C1', 'chuong', 'Lớp 12 chương 1'),
+('12C2', 'chuong', 'Lớp 12 chương 2'),
+('12C3', 'chuong', 'Lớp 12 chương 3'),
+
+-- Question Type (Loại câu hỏi)
+('TN', 'question type', 'Trắc nghiệm'),
+('TLN', 'question type', 'Trả lời ngắn'),
+('DS', 'question type', 'Đúng sai'),
+
+-- Difficulty (Mức độ khó)
+('NB', 'difficult', 'Nhận biết'),
+('TH', 'difficult', 'Thông hiểu'),
+('VD', 'difficult', 'Vận dụng'),
+('VDC', 'difficult', 'Vận dụng cao'),
+
+-- Cheat Type (Loại gian lận)
+('CCE', 'cheat type', 'Ctrl C'),
+('OFSE', 'cheat type', 'Thoát chế độ toàn màn hình'),
+('OTE', 'cheat type', 'Out tab khác'),
+
+-- Wait Status (Trạng thái chờ)
+('WS', 'wait status', 'Đang chờ phê duyệt'),
+('BS', 'wait status', 'Bị chặn vào lớp'),
+('JS', 'wait status', 'Đã vào lớp');

@@ -1,0 +1,38 @@
+Tạo người dùng
+npx sequelize-cli model:generate --name Nguoi_dung --attributes ho_ten_dem:string,ten:string,tai_khoan:string,mat_khau:string,kieu_nguoi_dung:string,gioi_tinh:boolean,ngay_sinh:date,sdt:string,truong_c3:string,lop:string,email:string,trang_thai:string,nam_tot_nghiep:integer,diem_thi_thpt:float,dai_hoc:string,link_avartar:text
+
+Thêm unique cho email và sdt
+npx sequelize-cli migration:generate --name add-unique-constraints-to-nguoi_dung
+
+Tạo lớp
+npx sequelize-cli model:generate --name Lop --attributes ten:string,mo_ta:text,nam_hoc:string,trang_thai:string,link_image:text,so_buoi_hoc:integer
+
+Tạo Buổi học
+npx sequelize-cli model:generate --name Buoi_hoc --attributes ten:string,mo_ta:text,so_muc_hoc_tap:integer
+
+Tạo Mục học tập
+npx sequelize-cli model:generate --name Muc_hoc_tap --attributes ten:string,kieu_muc:string,link:text,han_thoi_gian:date
+
+Tạo Đề
+npx sequelize-cli model:generate --name De --attributes ten:string,lop:string,kieu_de:string,chuong:string,thoi_gian_lam_bai:integer,mo_ta:text,ty_le_dat:integer,link_chua:text,link_anh:text
+
+Tạo câu hỏi
+npx sequelize-cli model:generate --name Cau_hoi --attributes lop:string,noi_dung:text,kieu_cau_hoi:string,menh_de:text,dap_an_dung:string,do_kho:string,chuong:string,mo_ta:text,link_chua:text,link_anhMH:text
+
+Tạo Allcode
+npx sequelize-cli model:generate --name All_code --attributes code:string,kieu:string,mo_ta:text
+
+
+chạy Migrations:
+npx sequelize-cli db:migrate
+npx sequelize-cli db:migrate:undo:all
+
+
+xem database
+docker exec -it mysql_container bash
+mysql -u root -p
+show databases;
+use toan_thay_bee;
+
+yarn add express
+yarn add dotenv notdemon

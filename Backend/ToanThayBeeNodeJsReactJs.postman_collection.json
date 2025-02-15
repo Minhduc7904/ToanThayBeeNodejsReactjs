@@ -1,0 +1,1048 @@
+{
+	"info": {
+		"_postman_id": "e0ef45d0-1e9a-4dd5-a456-770c706bd136",
+		"name": "ToanThayBeeNodeJsReactJs",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "41852384"
+	},
+	"item": [
+		{
+			"name": "De",
+			"item": [
+				{
+					"name": "/api/v1/de",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/de",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"de"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/de/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/de/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"de",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/de",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/de",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"de"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/de/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/de/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"de",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/de/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/de/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"de",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CauHoi",
+			"item": [
+				{
+					"name": "/api/v1/cauhoi",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cauhoi",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cauhoi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cauhoi/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cauhoi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cauhoi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cauhoi/de/:ma_de",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cauhoi/de/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cauhoi",
+								"de",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cauhoi",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cauhoi",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cauhoi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cauhoi/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cauhoi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cauhoi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cauhoi/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cauhoi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cauhoi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Lop",
+			"item": [
+				{
+					"name": "/api/v1/lop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/lop",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"lop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/lop/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/lop/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"lop",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/lop",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/lop",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"lop"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/lop/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/lop/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"lop",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/lop/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/lop/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"lop",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BaoCaoND",
+			"item": [
+				{
+					"name": "/api/v1/baocaond",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaond",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaond"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/baocaond/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaond/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaond",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/baocaond",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaond",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaond"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/baocaond/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaond/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaond",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BaoCaoCH",
+			"item": [
+				{
+					"name": "/api/v1/baocaoch",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaoch",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaoch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/baocaoch/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaoch/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaoch",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/baocaoch",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaoch",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaoch"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/baocaoch/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/baocaoch/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"baocaoch",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "BuoiHoc",
+			"item": [
+				{
+					"name": "/api/v1/buoi-hoc",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/buoi-hoc",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"buoi-hoc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/buoi-hoc/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/buoi-hoc/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"buoi-hoc",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/buoi-hoc/lop/:ma_lop",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/buoi-hoc/lop/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"buoi-hoc",
+								"lop",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/buoi-hoc",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/buoi-hoc",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"buoi-hoc"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/buoi-hoc/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/buoi-hoc/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"buoi-hoc",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/buoi-hoc/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/buoi-hoc/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"buoi-hoc",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "LuotLamBai",
+			"item": [
+				{
+					"name": "/api/v1/luot-lam-bai",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/luot-lam-bai",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"luot-lam-bai"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/luot-lam-bai/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/luot-lam-bai/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"luot-lam-bai",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/luot-lam-bai/de/:ma_de",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/luot-lam-bai/de/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"luot-lam-bai",
+								"de",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/luot-lam-bai",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/luot-lam-bai",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"luot-lam-bai"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/luot-lam-bai/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/luot-lam-bai/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"luot-lam-bai",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/luot-lam-bai/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/luot-lam-bai/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"luot-lam-bai",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "CauTraLoi",
+			"item": [
+				{
+					"name": "/api/v1/cau-tra-loi/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cau-tra-loi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cau-tra-loi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cau-tra-loi/luot-lam-bai/:ma_lam_bai",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cau-tra-loi/luot-lam-bai/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cau-tra-loi",
+								"luot-lam-bai",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cau-tra-loi",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cau-tra-loi",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cau-tra-loi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cau-tra-loi/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cau-tra-loi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cau-tra-loi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/cau-tra-loi/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/cau-tra-loi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"cau-tra-loi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Loi",
+			"item": [
+				{
+					"name": "/api/v1/loi",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/loi",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"loi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/loi/luot-lam-bai/:ma_lam_bai",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/loi/luot-lam-bai/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"loi",
+								"luot-lam-bai",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/loi",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/loi",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"loi"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/loi/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/loi/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"loi",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "MucHocTap",
+			"item": [
+				{
+					"name": "/api/v1/muc-hoc-tap",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/muc-hoc-tap",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/muc-hoc-tap/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/muc-hoc-tap/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/muc-hoc-tap/buoi-hoc/:ma_buoi_hoc",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/muc-hoc-tap/buoi-hoc/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap",
+								"buoi-hoc",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/muc-hoc-tap",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/muc-hoc-tap",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/muc-hoc-tap/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/muc-hoc-tap/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/muc-hoc-tap/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/muc-hoc-tap/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Code",
+			"item": [
+				{
+					"name": "/api/v1/code",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/code",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/code/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/code/123",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"code",
+								"123"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/code",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"AD\",\n    \"kieu\": \"user type\",\n    \"mo_ta\": \"Admin\"\n  }"
+						},
+						"url": {
+							"raw": "{{api_prefix}}/code",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"code"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/code/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"code\": \"123\",\n    \"kieu\": \"updated\",\n    \"mo_ta\": \"Updated code description\"\n}"
+						},
+						"url": {
+							"raw": "{{api_prefix}}/code/123",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"code",
+								"123"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	]
+}

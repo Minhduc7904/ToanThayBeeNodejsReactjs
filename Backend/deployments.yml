@@ -1,0 +1,10 @@
+services:
+  mysql:
+    image: mysql:latest
+    container_name: mysql_container
+    restart: always
+    ports:
+      - "3309:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: "070904"
+      MYSQL_DATABASE: "toan_thay_bee"
