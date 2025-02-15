@@ -50,6 +50,9 @@ module.exports = {
       link_anh: {
         type: Sequelize.TEXT
       },
+      public: {
+        type: Sequelize.BOOLEAN
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

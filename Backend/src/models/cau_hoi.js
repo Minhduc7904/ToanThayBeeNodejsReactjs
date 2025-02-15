@@ -1,7 +1,5 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
 module.exports = (sequelize, DataTypes) => {
   class Cau_hoi extends Model {
     /**
@@ -10,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      // Định nghĩa quan hệ: Một câu hỏi có thể có nhiều mệnh đề
+      Cau_hoi.hasMany(models.Menh_De, { foreignKey: 'ma_cau_hoi', as: 'menhDe' });
     }
   }
   Cau_hoi.init({

@@ -23,6 +23,7 @@ module.exports = (sequelize, DataTypes) => {
     ty_le_dat: DataTypes.INTEGER,
     link_chua: DataTypes.TEXT,
     link_anh: DataTypes.TEXT,
+    public: DataTypes.BOOLEAN,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

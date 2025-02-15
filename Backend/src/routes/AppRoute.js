@@ -11,6 +11,7 @@ import * as CauTraLoiController from '../controllers/CauTraLoiController.js';
 import * as LoiController from '../controllers/LoiController.js';
 import * as MucHocTapController from '../controllers/MucHocTapController.js';
 import * as CodeController from '../controllers/CodeController.js';
+import * as MenhDeController from '../controllers/MenhDeController.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import validate from '../middlewares/validate.js';
 import PostCodeRequest from "../dtos/requests/PostCodeRequest";
@@ -98,6 +99,12 @@ export const AppRoute = (app) => {
         asyncHandler(CodeController.postCode));
     router.put('/v1/code/:code', asyncHandler(CodeController.putCode));
 
+    // MenhDe routes
+    router.get('/v1/menh-de/cau-hoi/:id', asyncHandler(MenhDeController.getMenhDeByCauHoiId));
+    router.get('/v1/menh-de/:id', asyncHandler(MenhDeController.getMenhDeById));
+    router.post('/v1/menh-de', asyncHandler(MenhDeController.postMenhDe));
+    router.put('/v1/menh-de/:id', asyncHandler(MenhDeController.putMenhDe));
+    router.delete('/v1/menh-de/:id', asyncHandler(MenhDeController.deleteMenhDe));
 
     app.use('/api/', router);
 };

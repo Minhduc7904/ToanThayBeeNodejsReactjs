@@ -2,10 +2,11 @@ import Joi from "joi";
 
 class PostCodeRequest {
     constructor(data) {
-        this.code = code;
-        this.kieu = kieu;
-        this.mo_ta = mo_ta;
+        this.code = data.code;
+        this.kieu = data.kieu;
+        this.mo_ta = data.mo_ta;
     }
+    
     static validate(data) {
         const schema = Joi.object({
             code: Joi.string().required(),

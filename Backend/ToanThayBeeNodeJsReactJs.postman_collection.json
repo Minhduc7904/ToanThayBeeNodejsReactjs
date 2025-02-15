@@ -1043,6 +1043,101 @@
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "MenhDe",
+			"item": [
+				{
+					"name": "/api/v1/menh-de/cau-hoi/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/menh-de/cau-hoi/1",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"menh-de",
+								"cau-hoi",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/menh-de/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/menh-de/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"menh-de",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/menh-de",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/menh-de",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"menh-de"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/menh-de/:id",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/menh-de/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"menh-de",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/menh-de/:id",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/menh-de/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"muc-hoc-tap",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }

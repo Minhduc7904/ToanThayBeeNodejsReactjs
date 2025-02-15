@@ -1,0 +1,109 @@
+link: https://dbdiagram.io/d/67af289b263d6cf9a02c84d1
+
+{
+  "All_code": [
+    {
+      "code": "GK1",
+      "kieu": "exam type",
+      "mo_ta": "Giữa kì 1"
+    },
+    {
+      "code": "LHD",
+      "kieu": "class status",
+      "mo_ta": "Hoạt động"
+    },
+    {
+      "code": "NB",
+      "kieu": "difficult",
+      "mo_ta": "nhận biết"
+    },
+    {
+      "code": "TN",
+      "kieu": "question type",
+      "mo_ta": "trắc nghiệm"
+    },
+    {
+      "code": "10C1",
+      "kieu": "chuong",
+      "mo_ta": "lớp 10 chương 1"
+    },
+    {
+      "code": "11C1",
+      "kieu": "chuong",
+      "mo_ta": "lớp 11 chương 1"
+    }
+  ],
+  "De": [
+    {
+      "id": 1,
+      "ten": "Đề số 1",
+      "lop": "10",
+      "kieu_de": "GK1",
+      "chuong": "10C1",
+      "thoi_gian_lam_bai": 90,
+      "mo_ta": "Đề kiểm tra giữa học kỳ",
+      "ty_le_dat": 75,
+      "link_chua": "http://example.com/de1",
+      "link_anh": "http://example.com/de1.png",
+      "pucblic": true
+    },
+    {
+      "id": 2,
+      "ten": "Đề số 2",
+      "lop": "11",
+      "kieu_de": "GK1",
+      "chuong": "11C1",
+      "thoi_gian_lam_bai": 120,
+      "mo_ta": "Đề kiểm tra cuối kỳ",
+      "ty_le_dat": 80,
+      "link_chua": "http://example.com/de2",
+      "link_anh": "http://example.com/de2.png",
+      "pucblic": false
+    }
+  ],
+  "Cau_hoi": [
+    {
+      "id": 1,
+      "lop": "10",
+      "noi_dung": "Câu hỏi 1",
+      "kieu_cau_hoi": "TN",
+      "dap_an_dung": "A",
+      "do_kho": "NB",
+      "chuong": "10C1",
+      "mo_ta": "Mô tả câu hỏi 1",
+      "link_chua": "http://example.com/cauhoi1",
+      "link_anhMH": "http://example.com/cauhoi1.png"
+    },
+    {
+      "id": 2,
+      "lop": "11",
+      "noi_dung": "Câu hỏi 2",
+      "kieu_cau_hoi": "TN",
+      "dap_an_dung": "B",
+      "do_kho": "NB",
+      "chuong": "11C1",
+      "mo_ta": "Mô tả câu hỏi 2",
+      "link_chua": "http://example.com/cauhoi2",
+      "link_anhMH": "http://example.com/cauhoi2.png"
+    }
+  ],
+  "Menh_De": [
+    {
+      "id": 1,
+      "ma_cau_hoi": 1,
+      "noi_dung": "Mệnh đề cho câu hỏi 1",
+      "link_anhMH": "http://example.com/menhde1.png",
+      "do_kho": "NB",
+      "is_correct": true
+    },
+    {
+      "id": 2,
+      "ma_cau_hoi": 2,
+      "noi_dung": "Mệnh đề cho câu hỏi 2",
+      "link_anhMH": "http://example.com/menhde2.png",
+      "do_kho": "NB",
+      "is_correct": false
+    }
+  ]
+}
+

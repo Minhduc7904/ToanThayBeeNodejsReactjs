@@ -53,20 +53,25 @@ export const getCauHoi = async (req, res, next) => {
 // Lấy chi tiết một câu hỏi theo id
 // GET http://localhost:3000/api/cauhoi/:id
 export const getCauHoiById = async (req, res) => {
-    res.status(200).json({ message: 'Hello from getCauHoiById' });
+    const { id } = req.params;
+    const cauhoiDetail = await db.Cau_hoi.findByPk(id);
+    if (!cauhoiDetail) {
+        return res.status(404).json({ message: 'Câu hỏi không tồn tại' });
+    }
+    return res.status(200).json({ message: 'Chi tiết câu hỏi', data: cauhoiDetail });
 };
 
 // Lấy danh sách câu hỏi theo id của đề
 // GET http://localhost:3000/api/cauhoi/de/:ma_de
 export const getCauHoiByDeId = async (req, res) => {
-    res.status(200).json({ message: `Hello from getCauHoiByDeId, ma_de: ${req.params.ma_de}` });
+    
 };
 
 // Thêm một câu hỏi mới
 // POST http://localhost:3000/api/cauhoi
 export const postCauHoi = async (req, res) => {
-
-    res.status(201).json({ message: 'Hello from postCauHoi' });
+    const cauhoi = await db.Cau_hoi.create(req.body);
+    return res.status(201).json({ message: 'Thêm câu hỏi thành công', data: cauhoi });
 };
 
 // Cập nhật thông tin một câu hỏi
