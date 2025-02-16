@@ -7,37 +7,37 @@
 	},
 	"item": [
 		{
-			"name": "De",
+			"name": "Exam",
 			"item": [
 				{
-					"name": "/api/v1/de",
+					"name": "/api/v1/exam",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/de",
+							"raw": "{{api_prefix}}/exam",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"de"
+								"exam"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/de/:id",
+					"name": "/api/v1/exam/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/de/3",
+							"raw": "{{api_prefix}}/exam/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"de",
+								"exam",
 								"3"
 							]
 						}
@@ -45,34 +45,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/de",
+					"name": "/api/v1/exam",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/de",
+							"raw": "{{api_prefix}}/exam",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"de"
+								"exam"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/de/:id",
+					"name": "/api/v1/exam/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/de/3",
+							"raw": "{{api_prefix}}/exam/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"de",
+								"exam",
 								"3"
 							]
 						}
@@ -80,17 +80,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/de/:id",
+					"name": "/api/v1/exam/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/de/3",
+							"raw": "{{api_prefix}}/exam/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"de",
+								"exam",
 								"3"
 							]
 						}
@@ -100,37 +100,37 @@
 			]
 		},
 		{
-			"name": "CauHoi",
+			"name": "Question",
 			"item": [
 				{
-					"name": "/api/v1/cauhoi",
+					"name": "/api/v1/question",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cauhoi",
+							"raw": "{{api_prefix}}/question",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cauhoi"
+								"question"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/cauhoi/:id",
+					"name": "/api/v1/question/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cauhoi/3",
+							"raw": "{{api_prefix}}/question/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cauhoi",
+								"question",
 								"3"
 							]
 						}
@@ -138,18 +138,18 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/cauhoi/de/:ma_de",
+					"name": "/api/v1/question/exam/:ma_de",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cauhoi/de/2",
+							"raw": "{{api_prefix}}/question/exam/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cauhoi",
-								"de",
+								"question",
+								"exam",
 								"2"
 							]
 						}
@@ -157,34 +157,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/cauhoi",
+					"name": "/api/v1/question",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cauhoi",
+							"raw": "{{api_prefix}}/question",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cauhoi"
+								"question"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/cauhoi/:id",
+					"name": "/api/v1/question/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cauhoi/3",
+							"raw": "{{api_prefix}}/question/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cauhoi",
+								"question",
 								"3"
 							]
 						}
@@ -192,17 +192,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/cauhoi/:id",
+					"name": "/api/v1/question/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cauhoi/3",
+							"raw": "{{api_prefix}}/question/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cauhoi",
+								"question",
 								"3"
 							]
 						}
@@ -212,37 +212,37 @@
 			]
 		},
 		{
-			"name": "Lop",
+			"name": "Class",
 			"item": [
 				{
-					"name": "/api/v1/lop",
+					"name": "/api/v1/class",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/lop",
+							"raw": "{{api_prefix}}/class",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"lop"
+								"class"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/lop/:id",
+					"name": "/api/v1/class/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/lop/3",
+							"raw": "{{api_prefix}}/class/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"lop",
+								"class",
 								"3"
 							]
 						}
@@ -250,34 +250,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/lop",
+					"name": "/api/v1/class",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/lop",
+							"raw": "{{api_prefix}}/class",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"lop"
+								"class"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/lop/:id",
+					"name": "/api/v1/class/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/lop/3",
+							"raw": "{{api_prefix}}/class/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"lop",
+								"class",
 								"3"
 							]
 						}
@@ -285,17 +285,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/lop/:id",
+					"name": "/api/v1/class/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/lop/3",
+							"raw": "{{api_prefix}}/class/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"lop",
+								"class",
 								"3"
 							]
 						}
@@ -305,37 +305,37 @@
 			]
 		},
 		{
-			"name": "BaoCaoND",
+			"name": "AssistantReport",
 			"item": [
 				{
-					"name": "/api/v1/baocaond",
+					"name": "/api/v1/assistant-report",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaond",
+							"raw": "{{api_prefix}}/assistant-report",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaond"
+								"assistant-report"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/baocaond/:id",
+					"name": "/api/v1/assistant-report/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaond/3",
+							"raw": "{{api_prefix}}/assistant-report/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaond",
+								"assistant-report",
 								"3"
 							]
 						}
@@ -343,34 +343,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/baocaond",
+					"name": "/api/v1/assistant-report",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaond",
+							"raw": "{{api_prefix}}/assistant-report",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaond"
+								"assistant-report"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/baocaond/:id",
+					"name": "/api/v1/assistant-report/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaond/3",
+							"raw": "{{api_prefix}}/assistant-report/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaond",
+								"assistant-report",
 								"3"
 							]
 						}
@@ -380,37 +380,37 @@
 			]
 		},
 		{
-			"name": "BaoCaoCH",
+			"name": "QuestionReport",
 			"item": [
 				{
-					"name": "/api/v1/baocaoch",
+					"name": "/api/v1/question-report",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaoch",
+							"raw": "{{api_prefix}}/question-report",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaoch"
+								"question-report"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/baocaoch/:id",
+					"name": "/api/v1/question-report/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaoch/3",
+							"raw": "{{api_prefix}}/question-report/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaoch",
+								"question-report",
 								"3"
 							]
 						}
@@ -418,34 +418,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/baocaoch",
+					"name": "/api/v1/question-report",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaoch",
+							"raw": "{{api_prefix}}/question-report",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaoch"
+								"question-report"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/baocaoch/:id",
+					"name": "/api/v1/question-report/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/baocaoch/3",
+							"raw": "{{api_prefix}}/question-report/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"baocaoch",
+								"question-report",
 								"3"
 							]
 						}
@@ -455,37 +455,37 @@
 			]
 		},
 		{
-			"name": "BuoiHoc",
+			"name": "Lesson",
 			"item": [
 				{
-					"name": "/api/v1/buoi-hoc",
+					"name": "/api/v1/lesson",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/buoi-hoc",
+							"raw": "{{api_prefix}}/lesson",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"buoi-hoc"
+								"lesson"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/buoi-hoc/:id",
+					"name": "/api/v1/lesson/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/buoi-hoc/3",
+							"raw": "{{api_prefix}}/lesson/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"buoi-hoc",
+								"lesson",
 								"3"
 							]
 						}
@@ -493,18 +493,18 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/buoi-hoc/lop/:ma_lop",
+					"name": "/api/v1/lesson/class/:classId",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/buoi-hoc/lop/2",
+							"raw": "{{api_prefix}}/lesson/class/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"buoi-hoc",
-								"lop",
+								"lesson",
+								"class",
 								"2"
 							]
 						}
@@ -512,34 +512,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/buoi-hoc",
+					"name": "/api/v1/lesson",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/buoi-hoc",
+							"raw": "{{api_prefix}}/lesson",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"buoi-hoc"
+								"lesson"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/buoi-hoc/:id",
+					"name": "/api/v1/lesson/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/buoi-hoc/3",
+							"raw": "{{api_prefix}}/lesson/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"buoi-hoc",
+								"lesson",
 								"3"
 							]
 						}
@@ -547,17 +547,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/buoi-hoc/:id",
+					"name": "/api/v1/lesson/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/buoi-hoc/3",
+							"raw": "{{api_prefix}}/lesson/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"buoi-hoc",
+								"lesson",
 								"3"
 							]
 						}
@@ -567,37 +567,37 @@
 			]
 		},
 		{
-			"name": "LuotLamBai",
+			"name": "Attempt",
 			"item": [
 				{
-					"name": "/api/v1/luot-lam-bai",
+					"name": "/api/v1/attempt",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/luot-lam-bai",
+							"raw": "{{api_prefix}}/attempt",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"luot-lam-bai"
+								"attempt"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/luot-lam-bai/:id",
+					"name": "/api/v1/attempt/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/luot-lam-bai/3",
+							"raw": "{{api_prefix}}/attempt/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"luot-lam-bai",
+								"attempt",
 								"3"
 							]
 						}
@@ -605,18 +605,18 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/luot-lam-bai/de/:ma_de",
+					"name": "/api/v1/attempt/exam/:ma_de",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/luot-lam-bai/de/2",
+							"raw": "{{api_prefix}}/attempt/exam/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"luot-lam-bai",
-								"de",
+								"attempt",
+								"exam",
 								"2"
 							]
 						}
@@ -624,34 +624,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/luot-lam-bai",
+					"name": "/api/v1/attempt",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/luot-lam-bai",
+							"raw": "{{api_prefix}}/attempt",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"luot-lam-bai"
+								"attempt"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/luot-lam-bai/:id",
+					"name": "/api/v1/attempt/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/luot-lam-bai/3",
+							"raw": "{{api_prefix}}/attempt/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"luot-lam-bai",
+								"attempt",
 								"3"
 							]
 						}
@@ -659,17 +659,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/luot-lam-bai/:id",
+					"name": "/api/v1/attempt/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/luot-lam-bai/3",
+							"raw": "{{api_prefix}}/attempt/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"luot-lam-bai",
+								"attempt",
 								"3"
 							]
 						}
@@ -679,20 +679,20 @@
 			]
 		},
 		{
-			"name": "CauTraLoi",
+			"name": "Answer",
 			"item": [
 				{
-					"name": "/api/v1/cau-tra-loi/:id",
+					"name": "/api/v1/answer/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cau-tra-loi/3",
+							"raw": "{{api_prefix}}/answer/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cau-tra-loi",
+								"answer",
 								"3"
 							]
 						}
@@ -700,18 +700,18 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/cau-tra-loi/luot-lam-bai/:ma_lam_bai",
+					"name": "/api/v1/answer/attempt/:ma_lam_bai",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cau-tra-loi/luot-lam-bai/2",
+							"raw": "{{api_prefix}}/answer/attempt/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cau-tra-loi",
-								"luot-lam-bai",
+								"answer",
+								"attempt",
 								"2"
 							]
 						}
@@ -719,34 +719,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/cau-tra-loi",
+					"name": "/api/v1/answer",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cau-tra-loi",
+							"raw": "{{api_prefix}}/answer",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cau-tra-loi"
+								"answer"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/cau-tra-loi/:id",
+					"name": "/api/v1/answer/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cau-tra-loi/3",
+							"raw": "{{api_prefix}}/answer/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cau-tra-loi",
+								"answer",
 								"3"
 							]
 						}
@@ -754,17 +754,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/cau-tra-loi/:id",
+					"name": "/api/v1/answer/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/cau-tra-loi/3",
+							"raw": "{{api_prefix}}/answer/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"cau-tra-loi",
+								"answer",
 								"3"
 							]
 						}
@@ -774,38 +774,38 @@
 			]
 		},
 		{
-			"name": "Loi",
+			"name": "Cheat",
 			"item": [
 				{
-					"name": "/api/v1/loi",
+					"name": "/api/v1/cheat",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/loi",
+							"raw": "{{api_prefix}}/cheat",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"loi"
+								"cheat"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/loi/luot-lam-bai/:ma_lam_bai",
+					"name": "/api/v1/cheat/attempt/:attemptId",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/loi/luot-lam-bai/2",
+							"raw": "{{api_prefix}}/cheat/attempt/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"loi",
-								"luot-lam-bai",
+								"cheat",
+								"attempt",
 								"2"
 							]
 						}
@@ -813,34 +813,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/loi",
+					"name": "/api/v1/cheat",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/loi",
+							"raw": "{{api_prefix}}/cheat",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"loi"
+								"cheat"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/loi/:id",
+					"name": "/api/v1/cheat/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/loi/3",
+							"raw": "{{api_prefix}}/cheat/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"loi",
+								"cheat",
 								"3"
 							]
 						}
@@ -850,37 +850,37 @@
 			]
 		},
 		{
-			"name": "MucHocTap",
+			"name": "LearningItem",
 			"item": [
 				{
-					"name": "/api/v1/muc-hoc-tap",
+					"name": "/api/v1/learning-item",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/muc-hoc-tap",
+							"raw": "{{api_prefix}}/learning-item",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap"
+								"learning-item"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/muc-hoc-tap/:id",
+					"name": "/api/v1/learning-item/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/muc-hoc-tap/3",
+							"raw": "{{api_prefix}}/learning-item/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap",
+								"learning-item",
 								"3"
 							]
 						}
@@ -888,18 +888,18 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/muc-hoc-tap/buoi-hoc/:ma_buoi_hoc",
+					"name": "/api/v1/learning-item/lesson/:lessonId",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/muc-hoc-tap/buoi-hoc/2",
+							"raw": "{{api_prefix}}/learning-item/lesson/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap",
-								"buoi-hoc",
+								"learning-item",
+								"lesson",
 								"2"
 							]
 						}
@@ -907,34 +907,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/muc-hoc-tap",
+					"name": "/api/v1/learning-item",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/muc-hoc-tap",
+							"raw": "{{api_prefix}}/learning-item",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap"
+								"learning-item"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/muc-hoc-tap/:id",
+					"name": "/api/v1/learning-item/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/muc-hoc-tap/3",
+							"raw": "{{api_prefix}}/learning-item/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap",
+								"learning-item",
 								"3"
 							]
 						}
@@ -942,17 +942,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/muc-hoc-tap/:id",
+					"name": "/api/v1/learning-item/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/muc-hoc-tap/3",
+							"raw": "{{api_prefix}}/learning-item/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap",
+								"learning-item",
 								"3"
 							]
 						}
@@ -1045,21 +1045,21 @@
 			]
 		},
 		{
-			"name": "MenhDe",
+			"name": "Statement",
 			"item": [
 				{
-					"name": "/api/v1/menh-de/cau-hoi/:id",
+					"name": "/api/v1/statement/question/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/menh-de/cau-hoi/1",
+							"raw": "{{api_prefix}}/statement/question/1",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"menh-de",
-								"cau-hoi",
+								"statement",
+								"question",
 								"1"
 							]
 						}
@@ -1067,17 +1067,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/menh-de/:id",
+					"name": "/api/v1/statement/:id",
 					"request": {
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/menh-de/3",
+							"raw": "{{api_prefix}}/statement/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"menh-de",
+								"statement",
 								"3"
 							]
 						}
@@ -1085,34 +1085,34 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/menh-de",
+					"name": "/api/v1/statement",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/menh-de",
+							"raw": "{{api_prefix}}/statement",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"menh-de"
+								"statement"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/menh-de/:id",
+					"name": "/api/v1/statement/:id",
 					"request": {
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/menh-de/3",
+							"raw": "{{api_prefix}}/statement/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"menh-de",
+								"statement",
 								"3"
 							]
 						}
@@ -1120,17 +1120,17 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/menh-de/:id",
+					"name": "/api/v1/statement/:id",
 					"request": {
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/menh-de/3",
+							"raw": "{{api_prefix}}/statement/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"muc-hoc-tap",
+								"learning-item",
 								"3"
 							]
 						}

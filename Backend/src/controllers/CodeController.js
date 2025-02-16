@@ -3,10 +3,10 @@ import db from "../models";
 const Op = Sequelize.Op;
 
 // Lấy danh sách tất cả mã code
-// GET http://localhost:3000/api/code
+// GET http://localhost:3000/api/v1/code
 export const getAllCode = async (req, res, next) => {
     try {
-        const { search = '', page = 1, limit = 2 } = req.query;
+        const { search = '', page = 1, limit = 10 } = req.query;
         const offset = (page - 1) * limit;
 
         let whereClause = {};
@@ -21,8 +21,8 @@ export const getAllCode = async (req, res, next) => {
         }
 
         const [allCode, total] = await Promise.all([
-            db.All_code.findAll({ where: whereClause, offset, limit }),
-            db.All_code.count({ where: whereClause })
+            db.allCode.findAll({ where: whereClause, offset, limit }),
+            db.allCode.count({ where: whereClause })
         ]);
 
         res.status(200).json({
@@ -38,10 +38,10 @@ export const getAllCode = async (req, res, next) => {
 };
 
 // Lấy chi tiết một mã code theo code
-// GET http://localhost:3000/api/code/:code
+// GET http://localhost:3000/api/v1/code/:1
 export const getCodeByCode = async (req, res) => {
     const code = req.params.code
-    const codeDetail = await db.All_code.findByPk(code);
+    const codeDetail = await db.allCode.findByPk(code);
 
     if (!codeDetail) {
         return res.status(404).json({
@@ -55,9 +55,9 @@ export const getCodeByCode = async (req, res) => {
 };
 
 // Thêm một mã code mới
-// POST http://localhost:3000/api/code
+// POST http://localhost:3000/api/v1/code
 export const postCode = async (req, res) => {
-    const newCode = await db.All_code.create(req.body);
+    const newCode = await db.allCode.create(req.body);
     return res.status(201).json({
         message: 'Mã code đã được tạo.',
         data: newCode
@@ -65,7 +65,7 @@ export const postCode = async (req, res) => {
 };
 
 // Cập nhật thông tin một mã code
-// PUT http://localhost:3000/api/code/:code
+// PUT http://localhost:3000/api/v1/code/:1
 export const putCode = async (req, res) => {
     // Ví dụ sử dụng model AllCode (nếu có)
     //   try {
