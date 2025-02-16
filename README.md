@@ -40,5 +40,5 @@ The platform is developed using modern web technologies:
 
 ### 📌 **1. Clone the Repository**  
 ```sh
-git clone https://github.com/your-repo/toan-thay-bee.git
+git clone https://github.com/Minhduc7904/toan-thay-bee.git
 cd toan-thay-bee
