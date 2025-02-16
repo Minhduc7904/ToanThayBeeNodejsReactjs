@@ -1,0 +1,13 @@
+export * as UserController from './UserController.js';
+export * as ExamController from './ExamController.js';
+export * as QuestionController from './QuestionController.js';
+export * as ClassController from './ClassController.js';
+export * as AssistantReportController from './AssistantReportController.js';
+export * as QuestionReportController from './QuestionReportController.js';
+export * as LessonController from './LessonController.js';
+export * as AttemptController from './AttemptController.js';
+export * as AnswerController from './AnswerController.js';
+export * as CheatController from './CheatController.js';
+export * as LearningItemController from './LearningItemController.js';
+export * as CodeController from './CodeController.js';
+export * as StatementController from './StatementController.js';
