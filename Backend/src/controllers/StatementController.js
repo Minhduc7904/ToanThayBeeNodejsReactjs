@@ -7,7 +7,7 @@ export const getStatementByQuestionId = async (req, res, next) => {
         const { questionId } = req.params;
         const statements = await db.Statement.findAll({
             include: {
-                model: db.question,
+                model: db.Question,
                 as: 'question',
                 where: { questionId },
                 attributes: []

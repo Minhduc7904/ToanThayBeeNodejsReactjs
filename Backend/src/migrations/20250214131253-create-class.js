@@ -29,8 +29,13 @@ module.exports = {
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
       },
-      imageUrl: { 
-        type: Sequelize.TEXT
+      slideId: { 
+        type: Sequelize.INTEGER,
+        references: {
+          model: 'slides',
+          key: 'id'
+        },
+        onDelete: 'SET NULL',
       },
       lessonCount: {
         type: Sequelize.INTEGER,

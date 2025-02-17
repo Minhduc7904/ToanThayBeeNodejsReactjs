@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.TEXT,
     typeOfQuestion: DataTypes.STRING,
     correctAnswer: DataTypes.STRING,
-    difficult: DataTypes.STRING,
+    difficulty: DataTypes.STRING,
     chapter: DataTypes.STRING,
     description: DataTypes.TEXT,
     solutionUrl: DataTypes.TEXT,

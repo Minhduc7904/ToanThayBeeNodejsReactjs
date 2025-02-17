@@ -11,3 +11,5 @@ export * as CheatController from './CheatController.js';
 export * as LearningItemController from './LearningItemController.js';
 export * as CodeController from './CodeController.js';
 export * as StatementController from './StatementController.js';
+export * as ImageController from './ImageController.js';
+export * as SildeController from './SildeController.js';

@@ -59,7 +59,7 @@ const QuestionForm = () => {
                 content: questionContent,
                 typeOfQuestion: "trắc nghiệm",
                 correctAnswer: correctAnswer || "",
-                difficult: "",
+                difficulty: "",
                 chapter: "",
                 description: "",
                 solutionUrl: "",

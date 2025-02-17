@@ -18,6 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     class: DataTypes.STRING,
     typeOfExam: DataTypes.STRING,
     chapter: DataTypes.STRING,
+    year: DataTypes.STRING,
     testDuration: DataTypes.INTEGER,
     description: DataTypes.TEXT,
     passRate: DataTypes.INTEGER,

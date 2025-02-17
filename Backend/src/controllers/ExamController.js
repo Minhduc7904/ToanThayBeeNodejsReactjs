@@ -15,25 +15,28 @@ export const getExam = async (req, res) => {
             [Op.or]: [
                 { name: { [Op.like]: `%${search}%` } },
                 { description: { [Op.like]: `%${search}%` } },
-                { chapter: { [Op.like]: `%${search}%` } }
+                { chapter: { [Op.like]: `%${search}%` } },
+                { year: { [Op.like]: `%${search}%` } },
+                { class: { [Op.like]: `%${search}%` } },
+                { typeOfExam: { [Op.like]: `%${search}%` } }
             ]
         };
     }
 
     // Truy vấn database lấy danh sách đề và tổng số đề thỏa điều kiện lọc
     const [examList, total] = await Promise.all([
-        db.exam.findAll({
+        db.Exam.findAll({
             where: whereClause,
             offset,
             limit
         }),
-        db.exam.count({
+        db.Exam.count({
             where: whereClause
         })
     ]);
 
     // Trả về kết quả JSON với phân trang
-    res.status(200).json({
+    return res.status(200).json({
         message: 'Danh sách đề',
         data: examList,
         currentPage: page,
@@ -46,7 +49,7 @@ export const getExam = async (req, res) => {
 // GET http://localhost:3000/api/exam/1
 export const getExamById = async (req, res) => {
     const { id } = req.params;
-    const examDetail = await db.exam.findByPk(id);
+    const examDetail = await db.Exam.findByPk(id);
     if (!examDetail) {
         return res.status(404).json({ message: 'Đề không tồn tại' });
     }
@@ -57,10 +60,9 @@ export const getExamById = async (req, res) => {
 
 };
 
-// Hàm tạo mới một "De"
 // POST http://localhost:3000/api/exam
 export const postExam = async (req, res) => {
-    const exam = await db.exam.create(req.body);
+    const exam = await db.Exam.create(req.body);
     if (!exam) {
         return res.status(500).json({ message: 'Tạo mới đề thất bại' });
     }
@@ -70,39 +72,31 @@ export const postExam = async (req, res) => {
     });
 };
 
-// Hàm cập nhật một "De"
 // PUT http://localhost:3000/api/exam
 export const putExam = async (req, res) => {
-    // Ví dụ với model De (nếu có)
-    //   try {
-    //     const [updated] = await De.update(req.body, {
-    //       where: { id: req.body.id }
-    //     });
-    //     if (updated) {
-    //       const updatedDe = await De.findByPk(req.body.id);
-    //       return res.status(200).json(updatedDe);
-    //     }
-    //     throw new Error('De not found');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from putDe' });
+    const { id } = req.params;
+    const [updated] = await db.Exam.update(req.body, {
+        where: { id }
+    });
+
+    if (!updated) {
+        return res.status(404).json({ message: "Đề thi không tồn tại" });
+    }
+
+    const updatedExam = await db.Exam.findByPk(id);
+    return res.status(200).json({ message: "Cập nhật đề thi thành công", data: updatedExam });
 };
 
-// Hàm xóa một "De" theo id
 // DELETE http://localhost:3000/api/exam/1
 export const deleteExam = async (req, res) => {
-    // Ví dụ với model De (nếu có)
-    //   try {
-    //     const deleted = await De.destroy({
-    //       where: { id: req.params.id }
-    //     });
-    //     if (deleted) {
-    //       return res.status(200).json({ message: 'De deleted successfully' });
-    //     }
-    //     throw new Error('De not found');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from deleteDe' });
+    const { id } = req.params;
+    const deleted = await db.Exam.destroy({
+        where: { id }
+    });
+
+    if (!deleted) {
+        return res.status(404).json({ message: "Đề thi không tồn tại" });
+    }
+
+    return res.status(200).json({ message: "Xóa đề thi thành công" });
 };

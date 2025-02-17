@@ -2,11 +2,29 @@ import express from 'express';
 import * as Controllers from '../controllers/Controller.js';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import validate from '../middlewares/validate.js';
-import PostCodeRequest from "../dtos/requests/PostCodeRequest";
+import PostCodeRequest from '../dtos/requests/code/PostCodeRequest.js';
+import PostUserRequest from '../dtos/requests/user/PostUserRequest.js';
+import upload from '../middlewares/imageUpload.js';
 
 const router = express.Router();
 
 export const AppRoute = (app) => {
+    // User routes
+    router.post('/v1/user',
+        validate(PostUserRequest),  
+        asyncHandler(Controllers.UserController.postUser));
+    router.get('/v1/user/:id', asyncHandler(Controllers.UserController.getUserById));
+
+    // Image upload route
+    router.post('/v1/images/upload', 
+        upload.array('images', 5),
+        asyncHandler(Controllers.ImageController.uploadImage)
+    );
+
+    router.get('/v1/images/:filename', 
+        asyncHandler(Controllers.ImageController.viewImage)
+    )
+
     // Exam routes
     router.get('/v1/exam', asyncHandler(Controllers.ExamController.getExam));
     router.get('/v1/exam/:id', asyncHandler(Controllers.ExamController.getExamById));
@@ -92,6 +110,13 @@ export const AppRoute = (app) => {
     router.post('/v1/statement', asyncHandler(Controllers.StatementController.postStatement));
     router.put('/v1/statement/:id', asyncHandler(Controllers.StatementController.putStatement));
     router.delete('/v1/statement/:id', asyncHandler(Controllers.StatementController.deleteStatement));
+
+    // Slide routes
+    router.get('/v1/slide', asyncHandler(Controllers.SildeController.getSlides));
+    router.get('/v1/slide/:id', asyncHandler(Controllers.SildeController.getSlideById));
+    router.post('/v1/slide', asyncHandler(Controllers.SildeController.postSlide));
+    router.put('/v1/slide/:id', asyncHandler(Controllers.SildeController.putSlide));
+    router.delete('/v1/slide/:id', asyncHandler(Controllers.SildeController.deleteSlide));
 
     app.use('/api/', router);
 };

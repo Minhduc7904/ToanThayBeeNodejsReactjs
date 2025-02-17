@@ -6,7 +6,9 @@ const Op = Sequelize.Op;
 // GET http://localhost:3000/api/v1/code
 export const getAllCode = async (req, res, next) => {
     try {
-        const { search = '', page = 1, limit = 10 } = req.query;
+        const search = req.query.search || '';
+        const page = parseInt(req.query.page, 10) || 1;
+        const limit = parseInt(req.query.limit, 10) || 10;
         const offset = (page - 1) * limit;
 
         let whereClause = {};
@@ -21,8 +23,8 @@ export const getAllCode = async (req, res, next) => {
         }
 
         const [allCode, total] = await Promise.all([
-            db.allCode.findAll({ where: whereClause, offset, limit }),
-            db.allCode.count({ where: whereClause })
+            db.AllCode.findAll({ where: whereClause, offset, limit }),
+            db.AllCode.count({ where: whereClause })
         ]);
 
         res.status(200).json({
@@ -41,7 +43,7 @@ export const getAllCode = async (req, res, next) => {
 // GET http://localhost:3000/api/v1/code/:1
 export const getCodeByCode = async (req, res) => {
     const code = req.params.code
-    const codeDetail = await db.allCode.findByPk(code);
+    const codeDetail = await db.AllCode.findByPk(code);
 
     if (!codeDetail) {
         return res.status(404).json({
@@ -57,7 +59,7 @@ export const getCodeByCode = async (req, res) => {
 // Thêm một mã code mới
 // POST http://localhost:3000/api/v1/code
 export const postCode = async (req, res) => {
-    const newCode = await db.allCode.create(req.body);
+    const newCode = await db.AllCode.create(req.body);
     return res.status(201).json({
         message: 'Mã code đã được tạo.',
         data: newCode
@@ -67,16 +69,20 @@ export const postCode = async (req, res) => {
 // Cập nhật thông tin một mã code
 // PUT http://localhost:3000/api/v1/code/:1
 export const putCode = async (req, res) => {
-    // Ví dụ sử dụng model AllCode (nếu có)
-    //   try {
-    //     const [updated] = await AllCode.update(req.body, { where: { code: req.params.code } });
-    //     if (updated) {
-    //       const updatedAllCode = await AllCode.findOne({ where: { code: req.params.code } });
-    //       return res.status(200).json(updatedAllCode);
-    //     }
-    //     throw new Error('Mã code không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from putAllCode' });
+    const code = req.params.code;
+    const [updated] = await db.AllCode.update(req.body, {
+        where: { code }
+    });
+
+    if (!updated) {
+        return res.status(404).json({
+            message: 'Mã code không tồn tại'
+        });
+    }
+
+    const updatedCode = await db.AllCode.findByPk(code);
+    return res.status(200).json({
+        message: 'Cập nhật mã code thành công',
+        data: updatedCode
+    });
 };

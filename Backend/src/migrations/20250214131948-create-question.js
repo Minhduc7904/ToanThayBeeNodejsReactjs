@@ -18,18 +18,18 @@ module.exports = {
         type: Sequelize.TEXT
       },
       typeOfQuestion: {
+        allowNull: false,
         type: Sequelize.STRING,
         references: {
           model: 'allCode', 
           key: 'code'         
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       correctAnswer: {
         type: Sequelize.STRING
       },
-      difficult: {
+      difficulty: {
         type: Sequelize.STRING,
         references: {
           model: 'allCode', 

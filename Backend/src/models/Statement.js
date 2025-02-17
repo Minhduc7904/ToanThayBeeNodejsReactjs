@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Statement.belongsTo(models.Question, { foreignKey: 'questionId', as: 'question' });
       
-      Statement.belongsTo(models.AllCode, { foreignKey: 'difficult', as: 'difficulty' });
+      Statement.belongsTo(models.AllCode, { foreignKey: 'difficulty', as: 'difficultyy' });
     }
   }
   Statement.init({
@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     questionId: DataTypes.INTEGER,
     imageUrl: DataTypes.TEXT,
     isCorrect: DataTypes.BOOLEAN,
-    difficult: DataTypes.STRING,
+    difficulty: DataTypes.STRING,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE,
   }, {

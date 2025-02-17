@@ -15,7 +15,8 @@ module.exports = {
       },
       isCorrect: {
         allowNull: false,
-        type: Sequelize.BOOLEAN
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       questionId: {
         allowNull: false,
@@ -25,7 +26,7 @@ module.exports = {
           key: 'id'
         }
       },
-      difficult: {
+      difficulty: {
         type: Sequelize.STRING,
         references: {
           model: 'allCode',

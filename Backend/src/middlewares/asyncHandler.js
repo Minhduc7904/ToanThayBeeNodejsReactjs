@@ -3,6 +3,7 @@ const asyncHandler = (fn) => {
         try {
             await fn(req, res, next);
         } catch (error) {
+            console.error(error);
             return res.status(500).json({ 
                 message: "Internal Server Error",
                 error: process.env.NODE_ENV == "development" ? error : ''});

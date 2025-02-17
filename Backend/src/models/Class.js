@@ -18,7 +18,7 @@ module.exports = (sequelize, DataTypes) => {
     description: DataTypes.TEXT,
     academicYear: DataTypes.STRING,
     status: DataTypes.STRING,
-    imageUrl: DataTypes.TEXT,
+    slideId: DataTypes.INTEGER,
     lessonCount: DataTypes.INTEGER,
     dayOfWeek: DataTypes.STRING,
     studyTime: DataTypes.STRING,

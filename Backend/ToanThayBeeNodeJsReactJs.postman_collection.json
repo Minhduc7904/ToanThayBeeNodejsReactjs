@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "e0ef45d0-1e9a-4dd5-a456-770c706bd136",
+		"_postman_id": "809687c0-634b-4fd1-8d35-ce7859826139",
 		"name": "ToanThayBeeNodeJsReactJs",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "41852384"
@@ -1006,7 +1006,12 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"AD\",\n    \"kieu\": \"user type\",\n    \"mo_ta\": \"Admin\"\n  }"
+							"raw": "{\n    \"code\": \"HSDH\",\n    \"type\": \"student status\",\n    \"description\": \"Học sinh đang học\"\n  }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
 							"raw": "{{api_prefix}}/code",
@@ -1125,12 +1130,52 @@
 						"method": "DELETE",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/statement/3",
+							"raw": "{{api_prefix}}/learning-item/3",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
 								"learning-item",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "User",
+			"item": [
+				{
+					"name": "/api/v1/user",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/exam",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"exam"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/user/:id",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/user/3",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"user",
 								"3"
 							]
 						}

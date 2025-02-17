@@ -18,13 +18,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       typeOfExam: {
+        allowNull: false,
         type: Sequelize.STRING,
         references: {
           model: 'allCode', 
           key: 'code'         
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       chapter: {
         type: Sequelize.STRING,
@@ -34,6 +34,15 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
         onDelete: 'SET NULL'
+      },
+      year: {
+        allowNull: false,
+        type: Sequelize.STRING,
+        references: {
+          model: 'allCode', 
+          key: 'code'        
+        },
+        onUpdate: 'CASCADE',
       },
       testDuration: {
         type: Sequelize.INTEGER
@@ -51,7 +60,9 @@ module.exports = {
         type: Sequelize.TEXT
       },
       public: {
-        type: Sequelize.BOOLEAN
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,
