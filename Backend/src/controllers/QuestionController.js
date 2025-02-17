@@ -61,12 +61,61 @@ export const getQuestionByExamId = async (req, res) => {
 
 // POST http://localhost:3000/api/question
 export const postQuestion = async (req, res) => {
-    const question = await db.question.create(req.body);
-    if (!question) {
-        return res.status(500).json({ message: 'Thêm câu hỏi không thành công' });
+    const transaction = await db.sequelize.transaction();
+    try {
+        const { questionData, answerOptions } = req.body;
+
+        if (!questionData || !answerOptions || !answerOptions.length) {
+            return res.status(400).json({ message: "Dữ liệu không hợp lệ!" });
+        }
+
+        // ✅ Bước 1: Lưu câu hỏi vào bảng `Cau_hoi`
+        const newQuestion = await db.question.create(
+            {
+                class: questionData.class,
+                content: questionData.content,
+                typeOfQuestion: questionData.typeOfQuestion,
+                correctAnswer: questionData.correctAnswer,
+                difficult: questionData.difficult,
+                chapter: questionData.chapter,
+                description: questionData.description,
+                solutionUrl: questionData.solutionUrl,
+                imageUrl: questionData.imageUrl
+            },
+            { transaction }
+        );
+
+        // ✅ Bước 2: Lưu danh sách mệnh đề vào bảng `Menh_De`
+        const statements = await Promise.all(
+            answerOptions.map(async (answer) => {
+                return await db.statement.create(
+                    {
+                        questionId: newQuestion.questionId,
+                        content: answer.content,
+                        imageUrl: answer.imageUrl || null,
+                        difficult: answer.difficult,
+                        isCorrect: answer.isCorrect
+                    },
+                    { transaction }
+                );
+            })
+        );
+
+        // ✅ Commit transaction nếu tất cả đều thành công
+        await transaction.commit();
+
+        return res.status(201).json({
+            message: "Thêm câu hỏi thành công!",
+            question: newQuestion,
+            statements
+        });
+    } catch (error) {
+        await transaction.rollback();
+        console.error("Lỗi khi thêm câu hỏi:", error);
+        return res.status(500).json({ message: "Lỗi server", error: error.message });
     }
-    return res.status(201).json({ message: 'Thêm câu hỏi thành công', data: question });
 };
+
 
 // PUT http://localhost:3000/api/question/:id
 export const putQuestion = async (req, res) => {

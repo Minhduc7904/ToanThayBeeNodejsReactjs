@@ -1,0 +1,10 @@
+Câu 2: Công thức tính số chỉnh hợp chập \( k \) của \( n \) phần tử là: 
+
+A. \( A_n^k = \frac{n!}{(n-k)!} \). 
+
+B. \( A_n^k = \frac{n!}{(n-k)! \cdot k!} \). 
+
+C. \( C_n^k = \frac{n!}{(n-k)! \cdot k!} \). 
+
+D. \( C_n^k = \frac{n!}{(n-k)!} \). 
+
