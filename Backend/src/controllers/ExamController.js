@@ -57,7 +57,6 @@ export const getExamById = async (req, res) => {
         message: 'Chi tiết đề',
         data: examDetail
     });
-
 };
 
 // POST http://localhost:3000/api/exam

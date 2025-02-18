@@ -966,9 +966,21 @@
 			"item": [
 				{
 					"name": "/api/v1/code",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
 							"raw": "{{api_prefix}}/code",
 							"host": [
@@ -1152,13 +1164,22 @@
 					"request": {
 						"method": "POST",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"middleName\": \"Kim\",\r\n        \"lastName\": \"Hoàng\",\r\n        \"firstName\": \"Lan\",\r\n        \"username\": \"hoanglan\",\r\n        \"password\": \"lansecurepass\",\r\n        \"userType\": \"HS\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2006-03-05\",\r\n        \"phone\": \"0922334455\",\r\n        \"highSchool\": \"THPT Chuyên Lê Hồng Phong\",\r\n        \"class\": \"11A3\",\r\n        \"email\": \"hoang.lan@example.com\",\r\n        \"status\": \"HSDH\",\r\n        \"graduationYear\": 2024,\r\n        \"highSchoolScore\": 8.9,\r\n        \"university\": \"\",\r\n        \"avatarUrl\": \"https://example.com/avatar5.jpg\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{api_prefix}}/exam",
+							"raw": "{{api_prefix}}/user",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"exam"
+								"user"
 							]
 						}
 					},
@@ -1166,23 +1187,261 @@
 				},
 				{
 					"name": "/api/v1/user/:id",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
 					"request": {
 						"method": "GET",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{api_prefix}}/user/3",
+							"raw": "{{api_prefix}}/user/5",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
 								"user",
-								"3"
+								"5"
 							]
 						}
 					},
 					"response": []
 				}
 			]
+		},
+		{
+			"name": "Image",
+			"item": [
+				{
+					"name": "/api/v1/images/upload-single",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nmduc/Desktop/Background/1354386.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_prefix}}/images/upload-single",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"images",
+								"upload-single"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1//images/upload-multiple",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": "/C:/Users/nmduc/Desktop/Background/1347028.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_prefix}}/images/upload-multiple",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"images",
+								"upload-multiple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1//images/google/upload-single",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "image",
+									"type": "file",
+									"src": "/C:/Users/nmduc/Desktop/Background/1354386.jpeg"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_prefix}}/images/google/upload-single",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"images",
+								"google",
+								"upload-single"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1//images/google/upload-multiple",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "images",
+									"type": "file",
+									"src": [
+										"/C:/Users/nmduc/Desktop/Background/1347028.jpeg",
+										"/C:/Users/nmduc/Desktop/Background/1353834.jpeg"
+									]
+								}
+							]
+						},
+						"url": {
+							"raw": "{{api_prefix}}/images/google/upload-multiple",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"images",
+								"google",
+								"upload-multiple"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/images/delete google image",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"url\": \"https://firebasestorage.googleapis.com/v0/b/toan-thay-bee.firebasestorage.app/o/images%2F1739883480164-1347028.jpeg?alt=media&token=f710b6f6-19c6-4fb5-9f68-04962bae75a0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/images/delete",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"images",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/images/delete local",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"url\": \"https://firebasestorage.googleapis.com/v0/b/toan-thay-bee.firebasestorage.app/o/images%2F1739883480164-1347028.jpeg?alt=media&token=f710b6f6-19c6-4fb5-9f68-04962bae75a0\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/images/delete",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"images",
+								"delete"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Slide",
+			"item": [
+				{
+					"name": "/api/v1/slide",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"title\": \"Bài giảng Giải Tích\",\r\n    \"description\": \"Slide bài giảng về đạo hàm và tích phân.\",\r\n    \"images\": [\r\n        \"1739803220984-1347028.jpeg\",\r\n        \"1739803220984-Screenshot 2025-02-17 213015.png\"\r\n    ]\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/slide",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"slide"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "/healthcheck",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:3000/healthcheck",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "3000",
+					"path": [
+						"healthcheck"
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }

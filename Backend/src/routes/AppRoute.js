@@ -5,6 +5,8 @@ import validate from '../middlewares/validate.js';
 import PostCodeRequest from '../dtos/requests/code/PostCodeRequest.js';
 import PostUserRequest from '../dtos/requests/user/PostUserRequest.js';
 import upload from '../middlewares/imageUpload.js';
+import uploadGoogleImageMiddleware from '../middlewares/imageGoogleUpload.js';
+import { handleMulterError } from '../middlewares/handelMulter.js';
 
 const router = express.Router();
 
@@ -15,15 +17,39 @@ export const AppRoute = (app) => {
         asyncHandler(Controllers.UserController.postUser));
     router.get('/v1/user/:id', asyncHandler(Controllers.UserController.getUserById));
 
+
     // Image upload route
-    router.post('/v1/images/upload', 
-        upload.array('images', 5),
+    router.post('/v1/images/upload-single', 
+        upload.single('image'),
+        handleMulterError,
         asyncHandler(Controllers.ImageController.uploadImage)
     );
+
+    router.post('/v1/images/upload-multiple', 
+        upload.array('images', 5),
+        handleMulterError,
+        asyncHandler(Controllers.ImageController.uploadImages)
+    );
+
+    router.post('/v1/images/google/upload-single',
+        uploadGoogleImageMiddleware.single('image'),
+        handleMulterError,
+        asyncHandler(Controllers.ImageController.uploadImageToFirebase)
+    );
+
+    router.post('/v1/images/google/upload-multiple',
+        uploadGoogleImageMiddleware.array('images', 5),
+        handleMulterError,
+        asyncHandler(Controllers.ImageController.uploadMultipleImagesToFirebase)
+    );
+
+    router.delete('/v1/images/delete',Controllers.ImageController.deleteImage);
 
     router.get('/v1/images/:filename', 
         asyncHandler(Controllers.ImageController.viewImage)
     )
+
+
 
     // Exam routes
     router.get('/v1/exam', asyncHandler(Controllers.ExamController.getExam));
