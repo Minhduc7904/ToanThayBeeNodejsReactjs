@@ -7,11 +7,13 @@ import * as CheatController from '../controllers/CheatController.js';
 
 const router = express.Router();
 
-router.get('/v1/cheat', 
-    asyncHandler(CheatController.getLoi)
-);
+// Hảo
+
 router.get('/v1/cheat/attempt/:attemptId', 
     asyncHandler(CheatController.getLoiByLuotLamBai)
+);
+router.get('/v1/cheat/exam/:examId', 
+    asyncHandler(CheatController.getLoiByExamId)
 );
 router.post('/v1/cheat', 
     asyncHandler(CheatController.postLoi)

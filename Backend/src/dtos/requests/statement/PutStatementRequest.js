@@ -11,7 +11,7 @@ class PutStatementRequest {
     
     static validate(data) {
         const schema = Joi.object({
-            content: Joi.string().optional(),
+            content: Joi.string().optional(), 
             isCorrect: Joi.boolean().optional(),
             questionId: Joi.number().optional(),
             difficulty: Joi.string().optional(),

@@ -7,6 +7,8 @@ import * as AnswerController from '../controllers/AnswerController.js';
 
 const router = express.Router();
 
+
+
 router.get('/v1/answer/:id', 
     asyncHandler(AnswerController.getCauTraLoiById)
 );

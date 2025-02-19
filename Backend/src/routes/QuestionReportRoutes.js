@@ -6,6 +6,9 @@ import { requireRoles } from '../middlewares/jwtMiddleware.js';
 import * as QuestionReportController from '../controllers/QuestionReportController.js';
 
 const router = express.Router();
+
+// quang
+
 router.get('/v1/question-report', 
     asyncHandler(QuestionReportController.getBaoCaoCH)
 );

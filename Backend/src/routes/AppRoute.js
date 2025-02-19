@@ -15,8 +15,6 @@ import CodeRouters from './CodeRoutes.js';
 import StatementRoutes from './StatementRoutes.js';
 import SlideRoutes from './SlideRoutes.js';
 
-const router = express.Router();
-
 export const AppRoute = (app) => {
     // User routes
     app.use('/api/', UserRoutes);

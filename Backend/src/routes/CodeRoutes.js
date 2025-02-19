@@ -12,9 +12,11 @@ router.get('/v1/code',
     asyncHandler(CodeController.getAllCode)
 );
 router.get('/v1/code/:code',
+    requireRoles([UserType.ADMIN]),
     asyncHandler(CodeController.getCodeByCode)
 );
 router.post('/v1/code',
+    requireRoles([UserType.ADMIN]),
     validate(PostCodeRequest),
     asyncHandler(CodeController.postCode)
 );

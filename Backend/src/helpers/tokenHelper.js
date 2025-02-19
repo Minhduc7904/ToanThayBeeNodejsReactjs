@@ -23,9 +23,9 @@ const authenticateToken = async (req, res, next) => {
             return res.status(404).json({ message: 'Người dùng không tồn tại' });
         }
 
-        if (user.status === UserStatus.BLOCKED) {
-            return res.status(403).json({ message: 'Tài khoản đã bị khóa' });
-        }
+        // if (user.status === UserStatus.BLOCKED) {
+        //     return res.status(403).json({ message: 'Tài khoản đã bị khóa' });
+        // }
 
         req.user = user; // Gắn user vào request để các middleware sau có thể dùng
         next();

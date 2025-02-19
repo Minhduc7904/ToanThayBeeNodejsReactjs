@@ -9,6 +9,16 @@ require('dotenv').config();
 
 // http://localhost:3000/api/v1/user
 export const registerUser = async (req, res) => {
+    // {
+    //     "middleName": "Minh",
+    //     "firstName": "Đức",
+    //     "username": "minhduc7904",
+    //     "password": "070904",
+    //     "gender": true,
+    //     "birthDate": "2004-07-09",
+    //     "highSchool": "asdfasdf",
+    //     "class" : "l12"
+    // }
     const { email, username, phone } = req.body;
     if (!username && !email) {
         return res.status(400).json({ message: 'Tài khoản không được để trống' });
@@ -51,6 +61,19 @@ export const registerUser = async (req, res) => {
         message: 'Thêm người dùng thành công',
         user: new UserResponse(newUser)
     });
+    // {
+    //     "message": "Thêm người dùng thành công",
+    //     "user": {
+    //         "id": 2,
+    //         "middleName": "Minh",
+    //         "userType": "AD",
+    //         "gender": true,
+    //         "birthDate": "2004-07-09T00:00:00.000Z",
+    //         "highSchool": "asdfasdf",
+    //         "class": "l12",
+    //         "status": "HSDH"
+    //     }
+    // }
 };
 
 // http://localhost:3000/api/v1/user/login

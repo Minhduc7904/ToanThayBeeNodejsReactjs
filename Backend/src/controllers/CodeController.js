@@ -3,40 +3,36 @@ import db from "../models";
 const Op = Sequelize.Op;
 
 // Lấy danh sách tất cả mã code
-// GET http://localhost:3000/api/v1/code
+// GET http://localhost:3000/api/v1/code?search=abc&page=1&limit=10
 export const getAllCode = async (req, res, next) => {
-    try {
-        const search = req.query.search || '';
-        const page = parseInt(req.query.page, 10) || 1;
-        const limit = parseInt(req.query.limit, 10) || 10;
-        const offset = (page - 1) * limit;
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
 
-        let whereClause = {};
-        if (search.trim() !== '') {
-            whereClause = {
-                [Op.or]: [
-                    { code: { [Op.like]: `%${search}%` } },
-                    { mo_ta: { [Op.like]: `%${search}%` } },
-                    { kieu: { [Op.like]: `%${search}%` } }
-                ]
-            };
-        }
-
-        const [allCode, total] = await Promise.all([
-            db.AllCode.findAll({ where: whereClause, offset, limit }),
-            db.AllCode.count({ where: whereClause })
-        ]);
-
-        res.status(200).json({
-            message: 'Danh sách tất cả mã code',
-            data: allCode,
-            currentPage: page,
-            totalPages: Math.ceil(total / limit),
-            totalItems: total
-        });
-    } catch (error) {
-        next(error); // ✅ Đảm bảo lỗi được gửi đến middleware xử lý lỗi
+    let whereClause = {};
+    if (search.trim() !== '') {
+        whereClause = {
+            [Op.or]: [
+                { code: { [Op.like]: `%${search}%` } },
+                { description: { [Op.like]: `%${search}%` } },
+                { type: { [Op.like]: `%${search}%` } }
+            ]
+        };
     }
+
+    const [allCode, total] = await Promise.all([
+        db.AllCode.findAll({ where: whereClause, offset, limit }),
+        db.AllCode.count({ where: whereClause })
+    ]);
+
+    res.status(200).json({
+        message: 'Danh sách tất cả mã code',
+        data: allCode,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total
+    });
 };
 
 // Lấy chi tiết một mã code theo code
