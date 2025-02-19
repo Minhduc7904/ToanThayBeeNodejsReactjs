@@ -9,7 +9,7 @@ link: https://dbdiagram.io/d/67af289b263d6cf9a02c84d1
     },
     {
       "code": "LHD",
-      "kieu": "class status",
+      "kieu": "class status", 
       "mo_ta": "Hoạt động"
     },
     {

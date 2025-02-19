@@ -11,6 +11,7 @@ module.exports = {
           model: 'learningItem',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       studentId: {
         primaryKey: true,
@@ -20,6 +21,7 @@ module.exports = {
           model: 'user',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       isDone: {
         type: Sequelize.BOOLEAN

@@ -21,13 +21,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       status: {
+        allowNull: false,
         type: Sequelize.STRING,
         references: {
           model: 'allCode', 
           key: 'code'
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       slideId: { 
         type: Sequelize.INTEGER,

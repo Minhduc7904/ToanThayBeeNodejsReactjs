@@ -16,6 +16,7 @@ module.exports = {
           model: 'user',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       questionId: {
         allowNull: false,
@@ -24,8 +25,14 @@ module.exports = {
           model: 'question',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
-      noi_dung: {
+      isHandled: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: false
+      },
+      content: {
         allowNull: false,
         type: Sequelize.TEXT
       },
@@ -33,10 +40,6 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       },
-      updatedAt: {
-        allowNull: false,
-        type: Sequelize.DATE,
-      }
     });
   },
   async down(queryInterface, Sequelize) {

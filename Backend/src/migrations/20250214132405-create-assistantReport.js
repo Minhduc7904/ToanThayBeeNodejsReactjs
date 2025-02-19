@@ -16,6 +16,7 @@ module.exports = {
           model: 'user',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       assistantId: {
         allowNull: false,
@@ -24,6 +25,7 @@ module.exports = {
           model: 'user',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       content: {
         allowNull: false,

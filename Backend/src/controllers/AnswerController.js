@@ -2,8 +2,6 @@ import { Sequelize } from "../models";
 import db from "../models";
 // CauTraLoiController.js
 
-
-
 // Lấy chi tiết một câu trả lời theo id
 // GET http://localhost:3000/api/cautraloi/:id
 export const getCauTraLoiById = async (req, res) => {

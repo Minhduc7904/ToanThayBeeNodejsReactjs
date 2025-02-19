@@ -16,6 +16,7 @@ module.exports = {
           model: 'user',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       examId: {
         allowNull: false,
@@ -24,6 +25,7 @@ module.exports = {
           model: 'exam',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       startTime: {
         allowNull: false,

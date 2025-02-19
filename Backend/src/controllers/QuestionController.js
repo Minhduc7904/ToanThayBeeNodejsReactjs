@@ -68,19 +68,16 @@ export const postQuestion = async (req, res) => {
             return res.status(400).json({ message: "Dữ liệu không hợp lệ!" });
         }
 
-        // ✅ Kiểm tra `imageUrl` của câu hỏi
         if (!checkLocalImageExists(questionData.imageUrl)) {
             return res.status(400).json({ message: "❌ Ảnh câu hỏi không tồn tại trên server!" });
         }
 
-        // ✅ Kiểm tra `imageUrl` của từng đáp án
         for (let answer of answerOptions) {
             if (!checkLocalImageExists(answer.imageUrl)) {
                 return res.status(400).json({ message: `❌ Ảnh của đáp án '${answer.content}' không tồn tại trên server!` });
             }
         }
 
-        // ✅ Bước 1: Lưu câu hỏi vào bảng `Cau_hoi`
         const newQuestion = await db.Question.create(
             {
                 class: questionData.class,
@@ -96,7 +93,6 @@ export const postQuestion = async (req, res) => {
             { transaction }
         );
 
-        // ✅ Bước 2: Lưu danh sách mệnh đề vào bảng `Menh_De`
         const statements = await Promise.all(
             answerOptions.map(async (answer) => {
                 return await db.Statement.create(

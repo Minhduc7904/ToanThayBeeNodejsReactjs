@@ -3,7 +3,6 @@ import db from "../models/index.js";
 import { formatImageUrl, checkLocalImageExists } from "../utils/imageHelper.js";
 // 📌 GET http://localhost:3000/api/slides
 export const getSlides = async (req, res) => {
-    try {
         const search = req.query.search || '';
         const page = parseInt(req.query.page, 10) || 1;
         const limit = parseInt(req.query.limit, 10) || 10;
@@ -32,15 +31,11 @@ export const getSlides = async (req, res) => {
             totalPages: Math.ceil(total / limit),
             totalItems: total
         });
-    } catch (error) {
-        console.error("Lỗi khi lấy danh sách slide:", error);
-        return res.status(500).json({ message: "Lỗi server" });
-    }
+
 };
 
 // 📌 GET http://localhost:3000/api/slides/:id
 export const getSlideById = async (req, res) => {
-    try {
         const { id } = req.params;
         const slideDetail = await db.Slide.findByPk(id);
 
@@ -52,10 +47,7 @@ export const getSlideById = async (req, res) => {
             message: "Chi tiết slide",
             data: slideDetail
         });
-    } catch (error) {
-        console.error("Lỗi khi lấy slide:", error);
-        return res.status(500).json({ message: "Lỗi server" });
-    }
+
 };
 
 // 📌 API thêm slide mới với danh sách ảnh

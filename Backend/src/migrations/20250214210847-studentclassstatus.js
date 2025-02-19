@@ -11,6 +11,7 @@ module.exports = {
           model: 'user',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       classId: {
         allowNull: false,
@@ -20,13 +21,16 @@ module.exports = {
           model: 'class',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       status: {
+        allowNull: false,
         type: Sequelize.STRING,
         references: {
           model: 'allCode',
           key: 'code'
         },
+        onUpdate: 'CASCADE',
       },
     });
   },

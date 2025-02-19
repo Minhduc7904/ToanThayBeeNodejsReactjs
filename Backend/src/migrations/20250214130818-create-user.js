@@ -18,12 +18,10 @@ module.exports = {
         type: Sequelize.STRING
       },
       username: {
-        allowNull: false,
         unique: true,
         type: Sequelize.STRING
       },
       password: {
-        allowNull: false,
         type: Sequelize.STRING
       },
       userType: {
@@ -36,9 +34,11 @@ module.exports = {
         onUpdate: 'CASCADE'
       },
       gender: {
+        allowNull: false,
         type: Sequelize.BOOLEAN
       },
       birthDate: {
+        allowNull: false,
         type: Sequelize.DATE
       },
       phone: {
@@ -46,9 +46,11 @@ module.exports = {
         type: Sequelize.STRING
       },
       highSchool: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       class: {
+        allowNull: false,
         type: Sequelize.STRING
       },
       email: {
@@ -56,13 +58,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       status: {
+        allowNull: false,
         type: Sequelize.STRING,
         references: {
           model: 'allCode', 
           key: 'code'       
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       graduationYear: {
         type: Sequelize.INTEGER

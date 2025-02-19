@@ -24,7 +24,8 @@ module.exports = {
         references: {
           model: 'question',
           key: 'id'
-        }
+        },
+        onDelete: "CASCADE"
       },
       difficulty: {
         type: Sequelize.STRING,

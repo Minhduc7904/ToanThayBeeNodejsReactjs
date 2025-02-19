@@ -8,3 +8,5 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: "070904"
       MYSQL_DATABASE: "toan_thay_bee"
+
+docker compose -f ./deployments.yml up -d

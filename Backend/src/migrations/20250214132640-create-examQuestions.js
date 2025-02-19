@@ -16,6 +16,7 @@ module.exports = {
           model: 'question',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       examId: {
         allowNull: false,
@@ -24,6 +25,7 @@ module.exports = {
           model: 'exam',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
     });
   },

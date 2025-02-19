@@ -1,148 +1,65 @@
 import express from 'express';
-import * as Controllers from '../controllers/Controller.js';
-import asyncHandler from '../middlewares/asyncHandler.js';
-import validate from '../middlewares/validate.js';
-import PostCodeRequest from '../dtos/requests/code/PostCodeRequest.js';
-import PostUserRequest from '../dtos/requests/user/PostUserRequest.js';
-import upload from '../middlewares/imageUpload.js';
-import uploadGoogleImageMiddleware from '../middlewares/imageGoogleUpload.js';
-import { handleMulterError } from '../middlewares/handelMulter.js';
+import UserRoutes from './UserRoutes.js';
+import ImageRoutes from './ImageRoutes.js';
+import ExamRoutes from './ExamRoutes.js';
+import QuestionRoutes from './QuestionRoutes.js';
+import ClassRoutes from './ClassRoutes.js';
+import AssistantReportRoutes from './AssistantReportRoutes.js';
+import QuestionReportRoutes from './QuestionReportRoutes.js';
+import LessonRoutes from './LessonRoutes.js';
+import AttemptRoutes from './AttemptRoutes.js';
+import AnswerRoutes from './AnswerRoutes.js';
+import CheatRoutes from './CheatRoutes.js';
+import LearningItemRoutes from './LearningItemRoutes.js';
+import CodeRouters from './CodeRoutes.js';
+import StatementRoutes from './StatementRoutes.js';
+import SlideRoutes from './SlideRoutes.js';
 
 const router = express.Router();
 
 export const AppRoute = (app) => {
     // User routes
-    router.post('/v1/user',
-        validate(PostUserRequest),  
-        asyncHandler(Controllers.UserController.postUser));
-    router.get('/v1/user/:id', asyncHandler(Controllers.UserController.getUserById));
-
+    app.use('/api/', UserRoutes);
 
     // Image upload route
-    router.post('/v1/images/upload-single', 
-        upload.single('image'),
-        handleMulterError,
-        asyncHandler(Controllers.ImageController.uploadImage)
-    );
-
-    router.post('/v1/images/upload-multiple', 
-        upload.array('images', 5),
-        handleMulterError,
-        asyncHandler(Controllers.ImageController.uploadImages)
-    );
-
-    router.post('/v1/images/google/upload-single',
-        uploadGoogleImageMiddleware.single('image'),
-        handleMulterError,
-        asyncHandler(Controllers.ImageController.uploadImageToFirebase)
-    );
-
-    router.post('/v1/images/google/upload-multiple',
-        uploadGoogleImageMiddleware.array('images', 5),
-        handleMulterError,
-        asyncHandler(Controllers.ImageController.uploadMultipleImagesToFirebase)
-    );
-
-    router.delete('/v1/images/delete',Controllers.ImageController.deleteImage);
-
-    router.get('/v1/images/:filename', 
-        asyncHandler(Controllers.ImageController.viewImage)
-    )
-
-
+    app.use('/api/', ImageRoutes);
 
     // Exam routes
-    router.get('/v1/exam', asyncHandler(Controllers.ExamController.getExam));
-    router.get('/v1/exam/:id', asyncHandler(Controllers.ExamController.getExamById));
-    router.post('/v1/exam', asyncHandler(Controllers.ExamController.postExam));
-    router.put('/v1/exam/:id', asyncHandler(Controllers.ExamController.putExam));
-    router.delete('/v1/exam/:id', asyncHandler(Controllers.ExamController.deleteExam));
+    app.use('/api/', ExamRoutes);
 
     // Question routes
-    router.get('/v1/question', asyncHandler(Controllers.QuestionController.getQuestion));
-    router.get('/v1/question/:id', asyncHandler(Controllers.QuestionController.getQuestionById));
-    router.get('/v1/question/exam/:examId', asyncHandler(Controllers.QuestionController.getQuestionByExamId));
-    router.post('/v1/question', asyncHandler(Controllers.QuestionController.postQuestion));
-    router.put('/v1/question/:id', asyncHandler(Controllers.QuestionController.putQuestion));
-    router.delete('/v1/question/:id', asyncHandler(Controllers.QuestionController.deleteQuestion));
+    app.use('/api/', QuestionRoutes);
 
     // Class routes
-    router.get('/v1/class', asyncHandler(Controllers.ClassController.getClass));
-    router.get('/v1/class/:id', asyncHandler(Controllers.ClassController.getClassById));
-    router.post('/v1/class', asyncHandler(Controllers.ClassController.postClass));
-    router.put('/v1/class/:id', asyncHandler(Controllers.ClassController.putClass));
-    router.delete('/v1/class/:id', asyncHandler(Controllers.ClassController.deleteClass));
-
+    app.use('/api/', ClassRoutes);
+    
     // AssistantReport routes
-    router.get('/v1/assistant-report', asyncHandler(Controllers.AssistantReportController.getBaoCaoND));
-    router.get('/v1/assistant-report/:id', asyncHandler(Controllers.AssistantReportController.getBaoCaoNDById));
-    router.post('/v1/assistant-report', asyncHandler(Controllers.AssistantReportController.postBaoCaoND));
-    router.delete('/v1/assistant-report/:id', asyncHandler(Controllers.AssistantReportController.deleteBaoCaoND));
+    app.use('/api/', AssistantReportRoutes);
 
     // QuestionReport routes
-    router.get('/v1/question-report', asyncHandler(Controllers.QuestionReportController.getBaoCaoCH));
-    router.get('/v1/question-report/:id', asyncHandler(Controllers.QuestionReportController.getBaoCaoCHById));
-    router.post('/v1/question-report', asyncHandler(Controllers.QuestionReportController.postBaoCaoCH));
-    router.delete('/v1/question-report/:id', asyncHandler(Controllers.QuestionReportController.deleteBaoCaoCH));
+    app.use('/api/', QuestionReportRoutes);
 
     // Lesson routes
-    router.get('/v1/lesson', asyncHandler(Controllers.LessonController.getBuoiHoc));
-    router.get('/v1/lesson/:id', asyncHandler(Controllers.LessonController.getBuoiHocById));
-    router.get('/v1/lesson/class/:classId', asyncHandler(Controllers.LessonController.getBuoiHocByClassId));
-    router.post('/v1/lesson', asyncHandler(Controllers.LessonController.postBuoiHoc));
-    router.put('/v1/lesson/:id', asyncHandler(Controllers.LessonController.putBuoiHoc));
-    router.delete('/v1/lesson/:id', asyncHandler(Controllers.LessonController.deleteBuoiHoc));
+    app.use('/api/', LessonRoutes);
 
     // Attempt routes
-    router.get('/v1/attempt', asyncHandler(Controllers.AttemptController.getLuotLamBai));
-    router.get('/v1/attempt/:id', asyncHandler(Controllers.AttemptController.getLuotLamBaiById));
-    router.get('/v1/attempt/exam/:examId', asyncHandler(Controllers.AttemptController.getLuotLamBaiByDeId));
-    router.post('/v1/attempt', asyncHandler(Controllers.AttemptController.postLuotLamBai));
-    router.put('/v1/attempt/:id', asyncHandler(Controllers.AttemptController.putLuotLamBai));
-    router.delete('/v1/attempt/:id', asyncHandler(Controllers.AttemptController.deleteLuotLamBai));
+    app.use('/api/', AttemptRoutes);
 
     // Answer routes
-    router.get('/v1/answer/:id', asyncHandler(Controllers.AnswerController.getCauTraLoiById));
-    router.get('/v1/answer/attempt/:attemptId', asyncHandler(Controllers.AnswerController.getCauTraLoiByLuotLamBai));
-    router.post('/v1/answer', asyncHandler(Controllers.AnswerController.postCauTraLoi));
-    router.put('/v1/answer/:id', asyncHandler(Controllers.AnswerController.putCauTraLoi));
-    router.delete('/v1/answer/:id', asyncHandler(Controllers.AnswerController.deleteCauTraLoi));
-
+    app.use('/api/', AnswerRoutes);
+    
     // Cheat routes
-    router.get('/v1/cheat', asyncHandler(Controllers.CheatController.getLoi));
-    router.get('/v1/cheat/attempt/:attemptId', asyncHandler(Controllers.CheatController.getLoiByLuotLamBai));
-    router.post('/v1/cheat', asyncHandler(Controllers.CheatController.postLoi));
-    router.delete('/v1/cheat/:id', asyncHandler(Controllers.CheatController.deleteLoi));
-
+    app.use('/api/', CheatRoutes);
+    
     // LearningItem routes
-    router.get('/v1/learning-item', asyncHandler(Controllers.LearningItemController.getMucHocTap));
-    router.get('/v1/learning-item/:id', asyncHandler(Controllers.LearningItemController.getMucHocTapById));
-    router.get('/v1/learning-item/lesson/:lessonId', asyncHandler(Controllers.LearningItemController.getMucHocTapByBuoiHoc));
-    router.post('/v1/learning-item', asyncHandler(Controllers.LearningItemController.postMucHocTap));
-    router.put('/v1/learning-item/:id', asyncHandler(Controllers.LearningItemController.putMucHocTap));
-    router.delete('/v1/learning-item/:id', asyncHandler(Controllers.LearningItemController.deleteMucHocTap));
+    app.use('/api/', LearningItemRoutes);
 
     // Code routes
-    router.get('/v1/code', asyncHandler(Controllers.CodeController.getAllCode));
-    router.get('/v1/code/:code', asyncHandler(Controllers.CodeController.getCodeByCode));
-    router.post('/v1/code', 
-        validate(PostCodeRequest), 
-        asyncHandler(Controllers.CodeController.postCode));
-    router.put('/v1/code/:code', asyncHandler(Controllers.CodeController.putCode));
+    app.use('/api/', CodeRouters);
 
     // Statement routes
-    router.get('/v1/statement/question/:questionId', asyncHandler(Controllers.StatementController.getStatementByQuestionId));
-    router.get('/v1/statement/:id', asyncHandler(Controllers.StatementController.getStatementById));
-    router.post('/v1/statement', asyncHandler(Controllers.StatementController.postStatement));
-    router.put('/v1/statement/:id', asyncHandler(Controllers.StatementController.putStatement));
-    router.delete('/v1/statement/:id', asyncHandler(Controllers.StatementController.deleteStatement));
-
+    app.use('/api/', StatementRoutes);
+    
     // Slide routes
-    router.get('/v1/slide', asyncHandler(Controllers.SildeController.getSlides));
-    router.get('/v1/slide/:id', asyncHandler(Controllers.SildeController.getSlideById));
-    router.post('/v1/slide', asyncHandler(Controllers.SildeController.postSlide));
-    router.put('/v1/slide/:id', asyncHandler(Controllers.SildeController.putSlide));
-    router.delete('/v1/slide/:id', asyncHandler(Controllers.SildeController.deleteSlide));
-
-    app.use('/api/', router);
+    app.use('/api/', SlideRoutes);
 };

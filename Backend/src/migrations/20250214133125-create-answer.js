@@ -16,6 +16,7 @@ module.exports = {
           model: 'studentExamAttempt',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       questionId: {
         allowNull: false,
@@ -24,12 +25,16 @@ module.exports = {
           model: 'question',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       answerContent: {
         type: Sequelize.STRING
       },
       result: {
         type: Sequelize.BOOLEAN
+      },
+      score: {
+        type: Sequelize.FLOAT
       },
       createdAt: {
         allowNull: false,

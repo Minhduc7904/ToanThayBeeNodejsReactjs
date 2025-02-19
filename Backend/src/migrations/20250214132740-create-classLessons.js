@@ -11,6 +11,7 @@ module.exports = {
           model: 'class',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
       lessonId: {
         allowNull: false,
@@ -20,6 +21,7 @@ module.exports = {
           model: 'lesson',
           key: 'id'
         },
+        onDelete: "CASCADE"
       },
     });
   },

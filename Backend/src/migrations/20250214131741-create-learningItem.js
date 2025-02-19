@@ -14,13 +14,13 @@ module.exports = {
         type: Sequelize.STRING
       },
       typeOfLearningItem: {
+        allowNull: false,
         type: Sequelize.STRING,
         references: {
           model: 'allCode',
           key: 'code'        
         },
         onUpdate: 'CASCADE',
-        onDelete: 'SET NULL'
       },
       url: {
         type: Sequelize.TEXT
