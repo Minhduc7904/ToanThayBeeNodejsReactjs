@@ -1018,7 +1018,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"HSDH\",\n    \"type\": \"student status\",\n    \"description\": \"Học sinh đang học\"\n  }",
+							"raw": "{\n    \"code\": \"AD\",\n    \"type\": \"user type\",\n    \"description\": \"Admin\"\n  }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1040,20 +1040,35 @@
 				{
 					"name": "/api/v1/code/:id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"code\": \"123\",\n    \"kieu\": \"updated\",\n    \"mo_ta\": \"Updated code description\"\n}"
+							"raw": "{\n    \"type\": \"Updated code description123123\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
 						},
 						"url": {
-							"raw": "{{api_prefix}}/code/123",
+							"raw": "{{api_prefix}}/code/HS",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
 								"code",
-								"123"
+								"HS"
 							]
 						}
 					},
@@ -1160,13 +1175,13 @@
 			"name": "User",
 			"item": [
 				{
-					"name": "/api/v1/user",
+					"name": "/api/v1/user/register username",
 					"request": {
 						"method": "POST",
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"middleName\": \"Kim\",\r\n        \"lastName\": \"Hoàng\",\r\n        \"firstName\": \"Lan\",\r\n        \"username\": \"hoanglan\",\r\n        \"password\": \"lansecurepass\",\r\n        \"userType\": \"HS\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2006-03-05\",\r\n        \"phone\": \"0922334455\",\r\n        \"highSchool\": \"THPT Chuyên Lê Hồng Phong\",\r\n        \"class\": \"11A3\",\r\n        \"email\": \"hoang.lan@example.com\",\r\n        \"status\": \"HSDH\",\r\n        \"graduationYear\": 2024,\r\n        \"highSchoolScore\": 8.9,\r\n        \"university\": \"\",\r\n        \"avatarUrl\": \"https://example.com/avatar5.jpg\"\r\n    }",
+							"raw": "{\r\n        \"middleName\": \"Minh\",\r\n        \"firstName\": \"Đức\",\r\n        \"username\": \"minhduc7904\",\r\n        \"password\": \"070904\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2004-07-09\",\r\n        \"highSchool\": \"asdfasdf\",\r\n        \"class\" : \"l12\"\r\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1174,12 +1189,94 @@
 							}
 						},
 						"url": {
-							"raw": "{{api_prefix}}/user",
+							"raw": "{{api_prefix}}/user/register",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"user"
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/user/register email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"middleName\": \"Kiasdfam\",\r\n        \"firstName\": \"Lan\",\r\n        \"email\": \"adsafasdf@gmail.com\",\r\n        \"password\": \"lansecurepass\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2006-03-05\",\r\n        \"highSchool\": \"asdfasdf\",\r\n        \"class\" : \"l12\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/user/register",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"user",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/user/login email",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"password\": \"lansecurepass\",\r\n        \"email\": \"adsafasdf@gmail.com\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/user/login",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"user",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/user/login username",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n        \"password\": \"070904\",\r\n        \"username\": \"minhduc7904\"\r\n    }",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/user/login",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"user",
+								"login"
 							]
 						}
 					},
