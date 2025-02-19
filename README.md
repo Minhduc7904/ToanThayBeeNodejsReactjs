@@ -42,3 +42,4 @@ The platform is developed using modern web technologies:
 ```sh
 git clone https://github.com/Minhduc7904/toan-thay-bee.git
 cd toan-thay-bee
+## quang check
