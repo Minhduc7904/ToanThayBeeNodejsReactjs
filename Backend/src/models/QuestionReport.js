@@ -17,11 +17,16 @@ module.exports = (sequelize, DataTypes) => {
     userId: DataTypes.INTEGER,
     questionId: DataTypes.INTEGER,
     content: DataTypes.TEXT,
-    createdAt: DataTypes.DATE,
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW, 
+    },
   }, {
     sequelize,
     modelName: 'QuestionReport',
-    tableName: 'questionReport'
+    tableName: 'questionReport',
+    timestamps: false,
   });
   return QuestionReport;
 };

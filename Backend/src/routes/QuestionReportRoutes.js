@@ -10,16 +10,16 @@ const router = express.Router();
 // quang
 
 router.get('/v1/question-report', 
-    asyncHandler(QuestionReportController.getBaoCaoCH)
+    asyncHandler(QuestionReportController.getQuestionReport)
 );
 router.get('/v1/question-report/:id', 
-    asyncHandler(QuestionReportController.getBaoCaoCHById)
+    asyncHandler(QuestionReportController.getQuestionReportById)
 );
 router.post('/v1/question-report', 
-    asyncHandler(QuestionReportController.postBaoCaoCH)
+    asyncHandler(QuestionReportController.postQuestionReport)
 );
 router.delete('/v1/question-report/:id', 
-    asyncHandler(QuestionReportController.deleteBaoCaoCH)
+    asyncHandler(QuestionReportController.deleteQuestionReport)
 );
 
 export default router;
