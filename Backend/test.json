@@ -1,0 +1,182 @@
+{
+    "examData": {
+        "id": 1,
+        "name": "Đề thi Toán THPT",
+        "class": "l12",
+        "typeOfExam": "GK1",
+        "year": "2023-2024",
+        "duration": 90
+    },
+    "questions": [
+        {
+            "questionData": {
+                "class": "Math",
+                "content": "What is 2 + 2?",
+                "solutionUrl": "https://example.com/solution",
+                "needImage": true,
+                "typeOfQuestion": "TN"
+            },
+            "statements": [
+                {
+                    "content": "3",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "4",
+                    "isCorrect": true,
+                    "needImage": true
+                },
+                {
+                    "content": "5",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "6",
+                    "isCorrect": false,
+                    "needImage": true
+                }
+            ]
+        },
+        {
+            "questionData": {
+                "class": "Math",
+                "content": "What is 2 + 2?",
+                "solutionUrl": "https://example.com/solution",
+                "needImage": true,
+                "typeOfQuestion": "TN"
+            },
+            "statements": [
+                {
+                    "content": "3",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "4",
+                    "isCorrect": true,
+                    "needImage": true
+                },
+                {
+                    "content": "5",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "6",
+                    "isCorrect": false,
+                    "needImage": true
+                }
+            ]
+        }
+    ]
+}
+  
+{
+    "message": "✅ Thêm đề thi thành công!",
+    "exam": {
+        "id": 1,
+        "name": "Đề thi Toán THPT",
+        "class": "l12",
+        "typeOfExam": "GK1",
+        "year": "2023-2024",
+        "duration": 90
+    },
+    "questions": [
+        {
+            "question": {
+                "class": "Math",
+                "content": "What is 2 + 2?",
+                "solutionUrl": "https://example.com/solution",
+                "needImage": true,
+                "typeOfQuestion": "TN"
+            },
+            "statements": [
+                {
+                    "content": "3",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "4",
+                    "isCorrect": true,
+                    "needImage": true
+                },
+                {
+                    "content": "5",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "6",
+                    "isCorrect": false,
+                    "needImage": true
+                }
+            ]
+        },
+        {
+            "question": {
+                "class": "Math",
+                "content": "What is 2 + 2?",
+                "solutionUrl": "https://example.com/solution",
+                "needImage": true,
+                "typeOfQuestion": "TN"
+            },
+            "statements": [
+                {
+                    "content": "3",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "4",
+                    "isCorrect": true,
+                    "needImage": true
+                },
+                {
+                    "content": "5",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "6",
+                    "isCorrect": false,
+                    "needImage": true
+                }
+            ]
+        }
+    ]
+}
+
+
+{
+    "questionData": {
+        "class": "Math",
+        "content": "What is 2 + 2?",
+        "solutionUrl": "https://example.com/solution",
+        "typeOfQuestion": "TN"
+    },
+    "statementOptions": [
+        {
+            "content": "3",
+            "isCorrect": false,
+            "needImage": false
+        },
+        {
+            "content": "4",
+            "isCorrect": true,
+            "needImage": true
+        },
+        {
+            "content": "5",
+            "isCorrect": false,
+            "needImage": false
+        },
+        {
+            "content": "6",
+            "isCorrect": false,
+            "needImage": true
+        }
+    ]
+}

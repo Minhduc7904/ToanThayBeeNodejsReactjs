@@ -1,9 +1,10 @@
 import { Sequelize } from "../models";
 import db from "../models";
+import UserType from "../constants/UserType.js";
+import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
 
 // GET http://localhost:3000/api/exam
 export const getExam = async (req, res) => {
-
     const search = req.query.search || '';
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
@@ -45,13 +46,15 @@ export const getExam = async (req, res) => {
     });
 };
 
-
 // GET http://localhost:3000/api/exam/1
 export const getExamById = async (req, res) => {
     const { id } = req.params;
     const examDetail = await db.Exam.findByPk(id);
     if (!examDetail) {
-        return res.status(404).json({ message: 'Đề không tồn tại' });
+        return res.status(404).json({ message: 'Đề không công khai hoặc không tồn tại' });
+    }
+    if (!examDetail.public && req.user.userType === UserType.STUDENT) {
+        return res.status(401).json({ message: 'Đề không công khai hoặc không tồn tại' });
     }
     return res.status(200).json({
         message: 'Chi tiết đề',
@@ -61,15 +64,100 @@ export const getExamById = async (req, res) => {
 
 // POST http://localhost:3000/api/exam
 export const postExam = async (req, res) => {
-    const exam = await db.Exam.create(req.body);
-    if (!exam) {
-        return res.status(500).json({ message: 'Tạo mới đề thất bại' });
+    const transaction = await db.sequelize.transaction();
+    const uploadedFiles = [];
+
+    try {
+        const { examData, questions } = JSON.parse(req.body.data);
+        const examImage = req.files?.examImage?.[0];
+        const questionImages = req.files?.questionImages || [];
+        const statementImages = req.files?.statementImages || [];
+
+        if (!examData || !Array.isArray(questions) || !questions.length) {
+            return res.status(400).json({ message: "❌ Dữ liệu đề hoặc câu hỏi không hợp lệ!" });
+        }
+
+        // 📤 Upload ảnh đề thi (nếu có)
+        const examImageUrl = await uploadImage(examImage);
+        if (examImageUrl) uploadedFiles.push(examImageUrl);
+
+        // 📝 Tạo đề thi
+        const newExam = await db.Exam.create(
+            { ...examData, imageUrl: examImageUrl },
+            { transaction }
+        );
+
+        let questionImageIndex = 0;
+        let statementImageIndex = 0;
+
+        const createdQuestions = await Promise.all(
+            questions.map(async ({ questionData, statements }) => {
+                // 📤 Upload ảnh câu hỏi (nếu có)
+                let questionImageUrl = null;
+                if (questionData.needImage && questionImages[questionImageIndex]) {
+                    questionImageUrl = await uploadImage(questionImages[questionImageIndex]);
+                    if (questionImageUrl) uploadedFiles.push(questionImageUrl);
+                    questionImageIndex++;
+                }
+
+                // 📝 Tạo câu hỏi
+                const newQuestion = await db.Question.create(
+                    { ...questionData, imageUrl: questionImageUrl },
+                    { transaction }
+                );
+
+                // 🔗 Liên kết câu hỏi với đề thi
+                await db.ExamQuestions.create(
+                    { examId: newExam.id, questionId: newQuestion.id },
+                    { transaction }
+                );
+
+                let createdStatements = [];
+
+                if (Array.isArray(statements) && statements.length) {
+                    createdStatements = await Promise.all(
+                        statements.map(async (statement) => {
+                            let statementImageUrl = null;
+
+                            if (statement.needImage && statementImages[statementImageIndex]) {
+                                statementImageUrl = await uploadImage(statementImages[statementImageIndex]);
+                                if (statementImageUrl) uploadedFiles.push(statementImageUrl);
+                                statementImageIndex++;
+                            }
+
+                            return db.Statement.create(
+                                {
+                                    ...statement,
+                                    imageUrl: statementImageUrl,
+                                    questionId: newQuestion.id
+                                },
+                                { transaction }
+                            );
+                        })
+                    );
+                }
+
+                return { question: newQuestion, statements: createdStatements };
+            })
+        );
+
+        await transaction.commit();
+
+        return res.status(201).json({
+            message: "✅ Thêm đề thi thành công!",
+            exam: newExam,
+            questions: createdQuestions,
+        });
+
+    } catch (error) {
+        console.error('❌ Lỗi khi thêm đề thi:', error);
+        await cleanupUploadedFiles(uploadedFiles);
+        await transaction.rollback();
+
+        return res.status(500).json({ message: 'Lỗi server', error: error.message });
     }
-    return res.status(201).json({
-        message: 'Tạo mới đề thành công',
-        data: exam
-    });
 };
+
 
 // PUT http://localhost:3000/api/exam
 export const putExam = async (req, res) => {

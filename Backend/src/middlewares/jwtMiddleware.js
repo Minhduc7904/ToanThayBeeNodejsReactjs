@@ -14,15 +14,17 @@ import authenticateToken from '../helpers/tokenHelper';
  * 🎯 Middleware: Yêu cầu một trong các vai trò
  * @param {string[]} roles - Mảng vai trò cho phép (ví dụ: ['AD', 'MOD'])
  */
-export const requireRoles = (roles) => [
-    authenticateToken,
+export const requireRoles = (roles = []) => [
+    authenticateToken, // ✅ Middleware xác thực token trước
     (req, res, next) => {
-        if (!roles.includes(req.user.userType)) {
-            return res.status(403).json({ message: 'Bạn không có quyền truy cập' });
+        if (!roles.includes(req.user.userType) && roles.length !== 0) {
+            return res.status(403).json({ message: '❌ Bạn không có quyền truy cập.' });
         }
+
         next();
-    }
+    },
 ];
+
 
 
 

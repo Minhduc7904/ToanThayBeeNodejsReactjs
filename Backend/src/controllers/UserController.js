@@ -5,6 +5,9 @@ import bcrypt from "bcrypt";
 import UserType from "../constants/UserType";
 import UserStatus from "../constants/UserStatus";
 import jwt from "jsonwebtoken";
+import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from 'firebase/storage';
+import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
+
 require('dotenv').config();
 
 // http://localhost:3000/api/v1/user
@@ -103,27 +106,155 @@ export const login = async (req, res) => {
         { expiresIn: process.env.JWT_EXPIRES_IN || '30d' }
     );
 
+    await db.User.update({ currentToken: token }, { where: { id: user.id } });
+
     return res.status(200).json({
         message: 'Đăng nhập thành công',
         token,
         user: new UserResponse(user),
+        // user
     });
 };
 
+// http://localhost:3000/api/v1/user
+export const updateUserInfo = async (req, res) => {
+    const user = req.user;
+    const forbiddenFields = ['username', 'password', 'userType', 'status', 'avatarUrl'];
+
+    const updatedData = Object.keys(req.body)
+        .filter(key => !forbiddenFields.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = req.body[key];
+            return obj;
+        }, {});
+
+    if (Object.keys(updatedData).length === 0) {
+        return res.status(400).json({ message: 'Không có trường hợp lệ để cập nhật.' });
+    }
+
+    const [updated] = await db.User.update(updatedData, { where: { id: user.id } });
+
+    if (!updated) {
+        return res.status(404).json({ message: 'Người dùng không tồn tại' });
+    }
+
+    const updatedUser = await db.User.findByPk(user.id);
+    return res.status(200).json({ message: 'Cập nhật người dùng thành công', data: new UserResponse(updatedUser) });
+}
 
 // http://localhost:3000/api/v1/user/:id
 export const putUser = async (req, res) => {
     const { id } = req.params;
-    const [updated] = await db.User.update(req.body, {
+
+    const forbiddenFields = ['username', 'password', 'userType', 'status', 'avatarUrl'];
+
+    const updatedData = Object.keys(req.body)
+        .filter(key => !forbiddenFields.includes(key))
+        .reduce((obj, key) => {
+            obj[key] = req.body[key];
+            return obj;
+        }, {});
+
+    if (Object.keys(updatedData).length === 0) {
+        return res.status(400).json({ message: 'Không có trường hợp lệ để cập nhật.' });
+    }
+
+    const [updated] = await db.User.update(updatedData, {
         where: { id }
     });
+
 
     if (!updated) {
         return res.status(404).json({ message: 'Người dùng không tồn tại' });
     }
 
     const updatedUser = await db.User.findByPk(id);
-    return res.status(200).json({ message: 'Cập nhật người dùng thành công', data: updatedUser });
+    return res.status(200).json({ message: 'Cập nhật người dùng thành công', data: new UserResponse(updatedUser) });
+};
+
+export const logout = async (req, res) => {
+    const user = req.user;
+
+    if (!user) {
+        return res.status(401).json({ message: 'Không xác định được người dùng.' });
+    }
+
+    await db.User.update(
+        { currentToken: null },
+        { where: { id: user.id } }
+    );
+
+    return res.status(200).json({ message: 'Đăng xuất thành công.' });
+};
+
+
+export const changeUserType = async (req, res) => {
+    const { id } = req.params;
+    const { userType } = req.body;
+    const [updated] = await db.User.update({ userType, currentToken: null }, { where: { id } });
+    if (!updated) {
+        return res.status(404).json({ message: 'Người dùng không tồn tại' });
+    }
+
+    const updatedUser = await db.User.findByPk(id);
+    return res.status(200).json({
+        message: 'Cập nhật role người dùng thành công',
+        data: new UserResponse(updatedUser)
+    });
+};
+
+export const changeUserStatus = async (req, res) => {
+    const { id } = req.params;
+    const { status } = req.body;
+    const [updated] = await db.User.update({ status, currentToken: null }, { where: { id } });
+    if (!updated) {
+        return res.status(404).json({ message: 'Người dùng không tồn tại' });
+    }
+    const updatedUser = await db.User.findByPk(id);
+    return res.status(200).json({
+        message: 'Cập nhật trạng thái người dùng thành công',
+        data: new UserResponse(updatedUser)
+    });
+};
+
+export const changePassword = async (req, res) => {
+    const user = req.user;
+    const { oldPassword, newPassword, confirmPassword } = req.body;
+
+    // 🔎 Kiểm tra đủ trường
+    if (!oldPassword || !newPassword || !confirmPassword) {
+        return res.status(400).json({ message: 'Vui lòng điền đầy đủ các trường.' });
+    }
+
+    // 🛡️ Xác nhận mật khẩu mới và confirmPassword trùng nhau
+    if (newPassword !== confirmPassword) {
+        return res.status(400).json({ message: 'Mật khẩu xác nhận không khớp.' });
+    }
+
+    // 🔒 Kiểm tra mật khẩu cũ đúng không
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+        return res.status(400).json({ message: 'Mật khẩu cũ không đúng.' });
+    }
+
+    // 🚫 Không cho phép dùng lại mật khẩu cũ
+    const isSamePassword = await bcrypt.compare(newPassword, user.password);
+    if (isSamePassword) {
+        return res.status(400).json({ message: 'Mật khẩu mới không được trùng với mật khẩu cũ.' });
+    }
+
+    // 🔑 Mã hóa mật khẩu mới
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    await db.User.update(
+        {
+            password: hashedPassword,
+            currentToken: null
+        },
+        { where: { id: user.id } }
+    );
+
+    return res.status(200).json({ message: 'Đổi mật khẩu thành công. Vui lòng đăng nhập lại.' });
 };
 
 // http://localhost:3000/api/v1/user/:id
@@ -134,10 +265,14 @@ export const getUserById = async (req, res) => {
     if (!userDetail) {
         return res.status(404).json({ message: 'Người dùng không tồn tại' });
     }
-    return res.status(200).json({ message: 'Chi tiết người dùng', data: userDetail });
+    return res.status(200).json({
+        message: 'Chi tiết người dùng',
+        user: new UserResponse(userDetail)
+        // userDetail 
+    });
 }
 
-
+// http://localhost:3000/api/v1/user
 export const getAllUsers = async (req, res) => {
     const search = req.query.search || '';
     const page = parseInt(req.query.page, 10) || 1;
@@ -172,6 +307,8 @@ export const getAllUsers = async (req, res) => {
         })
     ]);
 
+    console.log(userList)
+
     const formattedUsers = userList.map(user => new UserResponse(user));
 
     return res.status(200).json({
@@ -182,3 +319,69 @@ export const getAllUsers = async (req, res) => {
         totalItems: total
     });
 }
+
+// http://localhost:3000/api/v1/user/avatar
+export const updateAvatar = async (req, res) => {
+    const transaction = await db.sequelize.transaction();
+    const { id } = req.user;
+
+    try {
+        // 🔍 Tìm câu hỏi
+        const user = await db.User.findByPk(id, { transaction });
+
+        if (!user) {
+            await transaction.rollback();
+            return res.status(404).json({ message: '❌ Người dùng không tồn tại' });
+        }
+
+        const oldAvatarUrl = user.avatarUrl;
+        const newAvatarFile = req.file;
+
+        if (!newAvatarFile) {
+            await transaction.rollback();
+            return res.status(400).json({ message: '❌ Vui lòng chọn ảnh để tải lên.' });
+        }
+        const newAvartarUrl = await uploadImage(newAvatarFile);
+
+        if (!newAvartarUrl) {
+            await transaction.rollback();
+            return res.status(500).json({ message: '❌ Lỗi khi tải ảnh mới lên.' });
+        }
+
+        const [updated] = await db.User.update(
+            { avatarUrl: newAvartarUrl },
+            { where: { id }, transaction }
+        );
+
+        if (!updated) {
+            await cleanupUploadedFiles([newAvartarUrl]);
+            await transaction.rollback();
+            return res.status(500).json({ message: '❌ Lỗi khi cập nhật avatar.' });
+        }
+
+        if (oldAvatarUrl) {
+            try {
+                await cleanupUploadedFiles([oldAvatarUrl]);
+                console.log(`✅ Đã xóa ảnh cũ: ${oldAvatarUrl}`);
+            } catch (err) {
+                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldAvatarUrl}`, err);
+                await cleanupUploadedFiles([newAvartarUrl]);
+                await transaction.rollback();
+                return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message });
+            }
+        }
+
+        await transaction.commit();
+
+        return res.status(200).json({
+            message: '✅ Cập nhật avartar thành công.',
+            oldAvatarUrl,
+            newAvartarUrl,
+        });
+
+    } catch (error) {
+        console.error('❌ Lỗi khi cập nhật avartar:', error);
+        await transaction.rollback();
+        return res.status(500).json({ message: 'Lỗi server.', error: error.message });
+    }
+};

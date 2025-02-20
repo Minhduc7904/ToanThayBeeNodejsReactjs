@@ -19,6 +19,7 @@ router.get('/v1/class/:id',
 router.get('/v1/class/', 
     asyncHandler(ClassController.ge)
 );
+
 router.post('/v1/class', 
     asyncHandler(ClassController.postClass)
 );
@@ -26,6 +27,7 @@ router.post('/v1/class',
 router.put('/v1/class/:id', 
     asyncHandler(ClassController.putClass)
 );
+
 router.delete('/v1/class/:id', 
     asyncHandler(ClassController.deleteClass)
 );

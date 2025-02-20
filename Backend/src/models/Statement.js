@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       Statement.belongsTo(models.Question, { foreignKey: 'questionId', as: 'question' });
       
-      Statement.belongsTo(models.AllCode, { foreignKey: 'difficulty', as: 'difficultyy' });
+      Statement.belongsTo(models.AllCode, { foreignKey: 'difficulty', as: 'difficultyCode' });
     }
   }
   Statement.init({

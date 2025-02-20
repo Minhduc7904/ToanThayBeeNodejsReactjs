@@ -10,7 +10,12 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Exam.belongsToMany(models.Question, {
+        through: 'ExamQuestions',       // Bảng trung gian
+        foreignKey: 'examId',             // Khóa ngoại trong bảng trung gian
+        otherKey: 'questionId',           // Khóa liên kết đến bảng Question
+        as: 'questions',                  // Tên alias khi include
+      });
     }
   }
   Exam.init({

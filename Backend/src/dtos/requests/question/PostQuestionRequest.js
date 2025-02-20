@@ -10,7 +10,6 @@ class PostQuestionRequest {
         this.chapter = data.chapter;
         this.description = data.description;
         this.solutionUrl = data.solutionUrl;
-        this.imageUrl = data.imageUrl
     }
     
     static validate(data) {
@@ -23,7 +22,6 @@ class PostQuestionRequest {
             chapter: Joi.string().optional(),
             description: Joi.string().optional().allow(''),
             solutionUrl: Joi.string().uri().optional(),
-            imageUrl: Joi.string().uri().optional()
         });
 
         return schema.validate(data);

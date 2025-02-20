@@ -8,7 +8,7 @@ import path from 'path';
 import fs from 'fs';
 import { getDownloadURL, getStorage, ref, uploadBytesResumable, deleteObject } from 'firebase/storage';
 import config from '../config/firebaseConfig';
-const storage = getStorage();
+
 
 export async function uploadImages(req, res) {
     console.log(req.files);
@@ -52,8 +52,8 @@ export async function uploadImageToFirebase(req, res) {
     if (!req.file) {
         throw new Error('Please select an image to upload');
     }
-
-    const newFileName = `${Date.now()}-${req.file.originalname}`;
+    const storage = getStorage();
+    const newFileName = `${Date.now()}-${req.file.originalname}`;   
     const storageRef = ref(storage, `images/${newFileName}`);
     const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, {
         contentType: req.file.mimetype,
@@ -72,7 +72,7 @@ export async function uploadMultipleImagesToFirebase(req, res) {
     if (!req.files || req.files.length === 0) {
         throw new Error('Please select an image to upload');
     }
-
+    const storage = getStorage();
     const uploadedFiles = await Promise.all(req.files.map(async (file) => {
         const newFileName = `${Date.now()}-${file.originalname}`;
         const storageRef = ref(storage, `images/${newFileName}`);
@@ -101,7 +101,7 @@ export async function deleteImage(req, res) {
         if (!url) {
             return res.status(400).json({ error: "Image URL is required" });
         }
-
+        const storage = getStorage();
         if (url.includes("https://firebasestorage")) {
             
             const fileRef = ref(storage, url);

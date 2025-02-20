@@ -8,7 +8,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      User.hasMany(models.AssistantReport, { foreignKey: 'userId', as: 'reports' });
+      User.hasMany(models.AssistantReport, { foreignKey: 'assistantId', as: 'assistantReports' });
     }
   }
   User.init({
@@ -27,7 +28,11 @@ module.exports = (sequelize, DataTypes) => {
     graduationYear: DataTypes.INTEGER, 
     highSchoolScore: DataTypes.FLOAT, 
     university: DataTypes.STRING,     
-    avatarUrl: DataTypes.TEXT,        
+    avatarUrl: DataTypes.TEXT,
+    currentToken: {
+      type: DataTypes.TEXT,
+      allowNull: true,
+    },
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

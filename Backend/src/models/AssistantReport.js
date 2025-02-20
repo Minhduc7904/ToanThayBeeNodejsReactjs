@@ -10,7 +10,8 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      AssistantReport.belongsTo(models.User, { foreignKey: 'userId', as: 'user' })
+      AssistantReport.belongsTo(models.User, { foreignKey: 'assistantId', as: 'assistant' })
     }
   }
   AssistantReport.init({
@@ -18,11 +19,16 @@ module.exports = (sequelize, DataTypes) => {
     assistantId: DataTypes.INTEGER,
     content: DataTypes.TEXT,
     star: DataTypes.INTEGER,
-    createdAt: DataTypes.DATE,
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW, 
+    },
   }, {
     sequelize,
     modelName: 'AssistantReport',
-    tableName: 'assistantReport'
+    tableName: 'assistantReport',
+    timestamps: false,
   });
   return AssistantReport;
 };

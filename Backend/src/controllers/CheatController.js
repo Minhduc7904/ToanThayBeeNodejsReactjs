@@ -33,14 +33,12 @@ export const getLoiByLuotLamBai = async (req, res) => {
 // Thêm một lỗi mới
 // POST http://localhost:3000/api/loi
 export const postLoi = async (req, res) => {
-    // Ví dụ sử dụng model Loi (nếu có)
-    //   try {
-    //     const loi = await Loi.create(req.body);
-    //     res.status(201).json(loi);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(201).json({ message: 'Hello from postLoi' });
+    try {
+        const CheatList = await db.Cheat.create(req.body);
+        res.status(201).json(CheatList);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
 };
 
 // Xóa một lỗi theo id

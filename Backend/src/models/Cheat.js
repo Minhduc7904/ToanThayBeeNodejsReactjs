@@ -1,26 +1,32 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Cheat extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
       // define association here
     }
   }
+
   Cheat.init({
-    typeOfCheat: DataTypes.STRING,
-    attemptId: DataTypes.INTEGER,
-    createdAt: DataTypes.DATE,
+    typeOfCheat: {
+      type: DataTypes.STRING,
+      allowNull: false,
+    },
+    attemptId: {
+      type: DataTypes.INTEGER,
+    },
+    createdAt: {
+      type: DataTypes.DATE,
+      allowNull: false,
+      defaultValue: DataTypes.NOW, // ✅ Tự động lấy thời gian hiện tại khi thêm dữ liệu
+    },
   }, {
     sequelize,
     modelName: 'Cheat',
-    tableName: 'cheat'
+    tableName: 'cheat',
+    timestamps: false, // ✅ Không tự thêm createdAt và updatedAt
   });
+
   return Cheat;
 };

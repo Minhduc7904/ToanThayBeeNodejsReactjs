@@ -29,9 +29,11 @@ module.exports = {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW, // ✅ Thêm dòng này để tự động lấy thời gian hiện tại
       },
-    });
+    }, { timestamps: false });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('cheat');
   }

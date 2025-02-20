@@ -23,6 +23,12 @@ const authenticateToken = async (req, res, next) => {
             return res.status(404).json({ message: 'Người dùng không tồn tại' });
         }
 
+        if (user.currentToken !== token) {
+            return res.status(401).json({
+                message: 'Phiên đăng nhập không hợp lệ hoặc đã bị đăng xuất.'
+            });
+        }
+
         // if (user.status === UserStatus.BLOCKED) {
         //     return res.status(403).json({ message: 'Tài khoản đã bị khóa' });
         // }

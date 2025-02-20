@@ -3,7 +3,7 @@ class responseUser {
         this.id = user.id;
         this.email = user.email;
         this.middleName = user.middleName;
-        this.lastName = user.lastName;
+        this.firstName = user.firstName;
         this.userType = user.userType;
         this.gender = user.gender;
         this.birthDate = user.birthDate;
