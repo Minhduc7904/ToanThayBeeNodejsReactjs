@@ -3,25 +3,21 @@ import db from "../models";
 
 // http://localhost:3000/api/v1/statement/cauhoi/:id
 export const getStatementByQuestionId = async (req, res, next) => {
-    try {
-        const { questionId } = req.params;
-        const statements = await db.Statement.findAll({
-            include: {
-                model: db.Question,
-                as: 'question',
-                where: { questionId },
-                attributes: []
-            }
-        });
-
-        if (!statements || statements.length === 0) {
-            return res.status(404).json({ message: 'Không tìm thấy mệnh đề nào cho câu hỏi này' });
+    const { questionId } = req.params;
+    const statements = await db.Statement.findAll({
+        include: {
+            model: db.Question,
+            as: 'question',
+            where: { questionId },
+            attributes: []
         }
+    });
 
-        return res.status(200).json({ message: 'Danh sách mệnh đề', data: statements });
-    } catch (error) {
-        next(error);
+    if (!statements || statements.length === 0) {
+        return res.status(404).json({ message: 'Không tìm thấy mệnh đề nào cho câu hỏi này' });
     }
+
+    return res.status(200).json({ message: 'Danh sách mệnh đề', data: statements });
 };
 
 

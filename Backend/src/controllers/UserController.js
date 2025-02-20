@@ -83,31 +83,31 @@ export const login = async (req, res) => {
     if ((!username && !email) || !password) {
         return res.status(400).json({ message: 'Vui lòng nhập tài khoản và mật khẩu' });
     }
-        const user = await db.User.findOne({
-            where: username ? { username } : { email },
-        });
-        if (!user) {
-            return res.status(404).json({ message: 'Tài khoản không tồn tại' });
-        }
-        // 🔑 So sánh mật khẩu
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(401).json({ message: 'Mật khẩu không đúng' });
-        }
-        // ✅ Tạo token JWT
-        const token = jwt.sign(
-            { 
-                id: user.id, 
-            },
-            process.env.JWT_SECRET,
-            { expiresIn: process.env.JWT_EXPIRES_IN || '30d' }
-        );
+    const user = await db.User.findOne({
+        where: username ? { username } : { email },
+    });
+    if (!user) {
+        return res.status(404).json({ message: 'Tài khoản không tồn tại' });
+    }
+    // 🔑 So sánh mật khẩu
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+        return res.status(401).json({ message: 'Mật khẩu không đúng' });
+    }
+    // ✅ Tạo token JWT
+    const token = jwt.sign(
+        {
+            id: user.id,
+        },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_EXPIRES_IN || '30d' }
+    );
 
-        return res.status(200).json({
-            message: 'Đăng nhập thành công',
-            token,
-            user: new UserResponse(user),
-        });
+    return res.status(200).json({
+        message: 'Đăng nhập thành công',
+        token,
+        user: new UserResponse(user),
+    });
 };
 
 
@@ -135,4 +135,50 @@ export const getUserById = async (req, res) => {
         return res.status(404).json({ message: 'Người dùng không tồn tại' });
     }
     return res.status(200).json({ message: 'Chi tiết người dùng', data: userDetail });
+}
+
+
+export const getAllUsers = async (req, res) => {
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
+    let whereClause = {};
+    if (search.trim() !== '') {
+        whereClause = {
+            [Op.or]: [
+                { middleName: { [Op.like]: `%${search}%` } },
+                { firstName: { [Op.like]: `%${search}%` } },
+                { userType: { [Op.like]: `%${search}%` } },
+                { birthDate: { [Op.like]: `%${search}%` } },
+                { highSchool: { [Op.like]: `%${search}%` } },
+                { class: { [Op.like]: `%${search}%` } },
+                { status: { [Op.like]: `%${search}%` } },
+                { graduationYear: { [Op.like]: `%${search}%` } },
+                { university: { [Op.like]: `%${search}%` } }
+            ]
+        };
+    }
+
+    const [userList, total] = await Promise.all([
+        db.User.findAll({
+            where: whereClause,
+            offset,
+            limit
+        }),
+        db.User.count({
+            where: whereClause
+        })
+    ]);
+
+    const formattedUsers = userList.map(user => new UserResponse(user));
+
+    return res.status(200).json({
+        message: 'Danh sách người dùng',
+        data: formattedUsers,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total
+    });
 }

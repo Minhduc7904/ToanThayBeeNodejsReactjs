@@ -11,13 +11,20 @@ const router = express.Router();
 
 router.post('/v1/user/register',
     validate(PostUserRequest),  
-    asyncHandler(UserController.registerUser));
+    asyncHandler(UserController.registerUser)
+);
 
 router.post('/v1/user/login', 
     validate(LoginUserRequest),
-    asyncHandler(UserController.login));
+    asyncHandler(UserController.login)
+);
     
+router.get('/v1/user', 
+    asyncHandler(UserController.getAllUsers)
+);
+
 router.get('/v1/user/:id', 
-    asyncHandler(UserController.getUserById));
+    asyncHandler(UserController.getUserById)
+);
 
 export default router;

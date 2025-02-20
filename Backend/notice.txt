@@ -1,0 +1,38 @@
+Các cách đặt tên biến:
+- camelCase: Chữ cái đầu của từ đầu tiên viết thường, các từ sau viết hoa chữ cái đầu. VD: userName, getUserInfo(),...
+- PascalCase: Chữ cái đầu của tất cả các từ đều viết hoa. VD: UserName, GetUserInfo(),...
+- snake_case: Các từ cách nhau bằng dấu gạch dưới _, tất cả viết thường. VD: user_name, get_user_info(),...
+- kebab-case: Các từ viết thường, cách nhau bằng dấu gạch ngang -
+- UPPER_SNAKE_CASE: Toàn bộ viết hoa, cách nhau bằng dấu _. VD: PI,...
+
+Quy tắc đặt tên:
+- Tên biến, hàm: camelCase
+- Tên class, object: PascalCase (tên class phải là danh từ)
+- Tên hàm, phương thức: camelCase 
+    + Sử dụng động từ để bắt đầu tên hàm. VD: getUserInfo(),...
+    + Với hàm trả về Boolean, bắt đầu bằng is, has, can. VD: isCorrect(),...
+- Tên file: 
+    + JavaScript: Dùng kebab-case hoặc snake_case (Thống nhất sử dụng 1 cái)
+    + React Component: Dùng PascalCase
+    + File cấu hình: .env, config.json,...
+- Tên thư mục:
+    + Thường dùng kebab-case hoặc snake_case (Thống nhất sử dụng 1 cái)
+    + Một số trường hợp dùng PascalCase. VD: Components/, Model/,... (trong React, Angular)
+- Tên database (SQL, MongoDB):
+    + Tên bảng (table): số nhiều, dùng snake_case. VD: users, order_items, product_reviews
+    + Tên cột (column): dùng snake_case, số ít. VD: user_id, created_at, total_price
+    + Tên khóa chính (primary key):. VD: id, user_id, order_id
+    + Tên khóa ngoại (foreign key):. VD: user_id, product_id
+- Tên API endpoint:
+    + Dùng RESTful với danh từ số nhiều
+        ✅ GET /users (Lấy danh sách users)
+        ✅ GET /users/{id} (Lấy chi tiết user)
+        ✅ POST /users (Tạo user mới)
+        ✅ PUT /users/{id} (Cập nhật user)
+        ✅ DELETE /users/{id} (Xóa user)
+    + Không dùng động từ trong URL:
+        ❌ GET /getUserInfo
+        ❌ POST /createUser
+    
+NÊN SỬ DỤNG TẤT CẢ BẰNG TIẾNG ANH
+
