@@ -14,11 +14,8 @@ const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3001"; // Lấ
 
 app.use("/images", express.static(path.join(__dirname, "public")));
 
-app.use(cors({
-    origin: frontendUrl,
-    methods: "GET,POST,PUT,DELETE",
-    credentials: true
-}));
+const allowedOrigins = [process.env.FRONTEND_URL || '*']; // Cho phép tạm thời
+app.use(cors({ origin: allowedOrigins }));
 
 app.use(express.json())
 express.urlencoded({ extended: true })

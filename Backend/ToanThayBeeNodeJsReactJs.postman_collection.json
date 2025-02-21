@@ -432,16 +432,27 @@
 			"name": "Class",
 			"item": [
 				{
-					"name": "/api/v1/class",
+					"name": "/api/v1/user/class",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/class",
+							"raw": "{{api_prefix}}/user/class",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
+								"user",
 								"class"
 							]
 						}
@@ -449,71 +460,313 @@
 					"response": []
 				},
 				{
-					"name": "/api/v1/class/:id",
+					"name": "/api/v1/admin/class",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "GET",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/class/3",
+							"raw": "{{api_prefix}}/admin/class",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"class",
-								"3"
+								"admin",
+								"class"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/class",
+					"name": "/api/v1/user/class/:id",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/user/class/4",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"user",
+								"class",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/admin/class/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/admin/class/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"admin",
+								"class",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/user/class/joined",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/user/class/joined",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"user",
+								"class",
+								"joined"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/admin/class",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"name\": \"Lớp Đại 12A\",\r\n    \"academicYear\": \"2023-2024\",\r\n    \"status\": \"LDH\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/admin/class",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"admin",
+								"class"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/user/class/:classId/join",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "POST",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/class",
+							"raw": "{{api_prefix}}/user/class/5/join",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
-								"class"
+								"user",
+								"class",
+								"5",
+								"join"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/class/:id",
+					"name": "api/v1/admin/user/:studentId/class/:classId/accept",
 					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
 						"method": "PUT",
 						"header": [],
 						"url": {
-							"raw": "{{api_prefix}}/class/3",
+							"raw": "{{api_prefix}}/admin/user/2/class/2/accept",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
+								"admin",
+								"user",
+								"2",
 								"class",
-								"3"
+								"2",
+								"accept"
 							]
 						}
 					},
 					"response": []
 				},
 				{
-					"name": "/api/v1/class/:id",
+					"name": "/admin/class/:id",
 					"request": {
-						"method": "DELETE",
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "PUT",
 						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"public\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
 						"url": {
-							"raw": "{{api_prefix}}/class/3",
+							"raw": "{{api_prefix}}/admin/class/2",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
+								"admin",
 								"class",
-								"3"
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/admin/class/:id",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/admin/class/4",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"admin",
+								"class",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/admin/user/:studentId/class/:classId/kick",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{api_prefix}}/admin/user/2/class/2/kick",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"2",
+								"class",
+								"2",
+								"kick"
 							]
 						}
 					},
@@ -1303,7 +1556,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n            \"code\": \"AS\",\n            \"type\": \"user type\",\n            \"description\": \"Trợ giảng\"\n        }",
+							"raw": "{\n            \"code\": \"JS\",\n            \"type\": \"wait status\",\n            \"description\": \"đã tham gia lớp học\"\n        }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1689,7 +1942,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n    \"userType\": \"AS\"\r\n}",
+							"raw": "{\r\n    \"userType\": \"AD\"\r\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1697,14 +1950,14 @@
 							}
 						},
 						"url": {
-							"raw": "{{api_prefix}}/admin/user/3/user-type",
+							"raw": "{{api_prefix}}/admin/user/8/user-type",
 							"host": [
 								"{{api_prefix}}"
 							],
 							"path": [
 								"admin",
 								"user",
-								"3",
+								"8",
 								"user-type"
 							]
 						}
@@ -1773,6 +2026,48 @@
 							"path": [
 								"admin",
 								"user",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/api/v1/admin/user/:classId",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{jwt_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{api_prefix}}/admin/user/class/2",
+							"host": [
+								"{{api_prefix}}"
+							],
+							"path": [
+								"admin",
+								"user",
+								"class",
 								"2"
 							]
 						}

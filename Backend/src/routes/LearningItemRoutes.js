@@ -7,23 +7,20 @@ import * as LearningItemController from '../controllers/LearningItemController.j
 
 const router = express.Router();
 
-router.get('/v1/learning-item', 
-    asyncHandler(LearningItemController.getMucHocTap)
-);
 router.get('/v1/learning-item/:id', 
-    asyncHandler(LearningItemController.getMucHocTapById)
+    asyncHandler(LearningItemController.getLearningItemById)
 );
 router.get('/v1/learning-item/lesson/:lessonId', 
-    asyncHandler(LearningItemController.getMucHocTapByBuoiHoc)
+    asyncHandler(LearningItemController.getLearningItemByLesson)
 );
 router.post('/v1/learning-item', 
-    asyncHandler(LearningItemController.postMucHocTap)
+    asyncHandler(LearningItemController.postLearningItem)
 );
 router.put('/v1/learning-item/:id', 
-    asyncHandler(LearningItemController.putMucHocTap)
+    asyncHandler(LearningItemController.putLearningItem)
 );
 router.delete('/v1/learning-item/:id', 
-    asyncHandler(LearningItemController.deleteMucHocTap)
+    asyncHandler(LearningItemController.deleteLearningItem)
 );
 
 export default router;

@@ -10,13 +10,18 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Lesson.belongsTo(models.Class, {
+        foreignKey: 'classId', // 🔑 Liên kết với cột classId trong Lesson
+        as: 'class',           // 👉 Alias khi cần include ngược lại
+      });
     }
   }
   Lesson.init({
     name: DataTypes.STRING,
     description: DataTypes.TEXT,
     learningItemCount: DataTypes.INTEGER,
+    day: DataTypes.DATE,
+    classId: DataTypes.INTEGER,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

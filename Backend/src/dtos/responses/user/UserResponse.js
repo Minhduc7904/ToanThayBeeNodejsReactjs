@@ -1,5 +1,5 @@
 class responseUser {
-    constructor(user) {
+    constructor(user, status=null) {
         this.id = user.id;
         this.email = user.email;
         this.middleName = user.middleName;
@@ -14,6 +14,7 @@ class responseUser {
         this.graduationYear = user.graduationYear;
         this.highSchoolScore = user.highSchoolScore;
         this.university = user.university;
+        this.studentClassStatus = status;
     }
 }
 

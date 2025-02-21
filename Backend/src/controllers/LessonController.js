@@ -2,96 +2,83 @@ import { Sequelize } from "../models";
 import db from "../models";
 // BuoiHocController.js
 
-// Lấy danh sách tất cả các buổi học
-// GET http://localhost:3000/api/buoi-hoc
-export const getBuoiHoc = async (req, res) => {
-    // Ví dụ sử dụng model BuoiHoc (nếu có)
-    //   try {
-    //     const buoiHoc = await BuoiHoc.findAll();
-    //     res.json(buoiHoc);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from getBuoiHoc' });
-};
-
 // Lấy chi tiết một buổi học theo id
 // GET http://localhost:3000/api/buoi-hoc/:id
-export const getBuoiHocById = async (req, res) => {
-    // Ví dụ sử dụng model BuoiHoc (nếu có)
-    //   try {
-    //     const buoiHoc = await BuoiHoc.findByPk(req.params.id);
-    //     if (!buoiHoc) {
-    //       return res.status(404).json({ message: 'Buổi học không tồn tại' });
-    //     }
-    //     res.json(buoiHoc);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from getBuoiHocById' });
+export const getLessonById = async (req, res) => {
+    const { id } = req.params
+    const lesson = await db.Lesson.findOne({ where: { id } })
+    if (!lesson) {
+        return res.status(404).json({
+            message: `Không tìm thấy buổi học với ID: ${id}!`
+        });
+    }
+    return res.status(200).json({
+        message: '✅ Lấy thông tin buổi học thành công!',
+        data: lesson
+    });
 };
 
 // Lấy danh sách buổi học theo id của lớp
 // GET http://localhost:3000/api/buoi-hoc/lop/:ma_lop
-export const getBuoiHocByLopId = async (req, res) => {
-    // Ví dụ sử dụng model BuoiHoc và mối quan hệ với Lop (nếu có)
-    //   try {
-    //     const buoiHocList = await BuoiHoc.findAll({
-    //       where: { ma_lop: req.params.ma_lop }
-    //     });
-    //     res.json(buoiHocList);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: `Hello from getBuoiHocByLopId, ma_lop: ${req.params.ma_lop}` });
+export const getLessonByClassId = async (req, res) => {
+    const { classId } = req.params;
+
+    const lessons = await db.Lesson.findAll({
+        where: { classId },
+        include: [
+            {
+                model: db.Class,
+                as: 'class', // 🔑 Trùng với alias trong Lesson.belongsTo
+                attributes: ['id', 'name', 'description'], // Lấy thuộc tính cần thiết từ Class
+            },
+        ],
+        order: [['createdAt', 'ASC']], // 👉 Sắp xếp theo thời gian tạo
+    });
+
+    return res.status(200).json({
+        message: '✅ Lấy danh sách buổi học thành công!',
+        data: lessons,
+    });
 };
 
 // Thêm một buổi học mới
 // POST http://localhost:3000/api/buoi-hoc
-export const postBuoiHoc = async (req, res) => {
-    // Ví dụ sử dụng model BuoiHoc (nếu có)
-    //   try {
-    //     const buoiHoc = await BuoiHoc.create(req.body);
-    //     res.status(201).json(buoiHoc);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(201).json({ message: 'Hello from postBuoiHoc' });
+export const insertLesson = async (req, res) => {
+    const newLesson = await db.Lesson.create(req.body);
+    return res.status(201).json({
+        message: '✅ Tạo buổi học mới thành công!',
+        data: newLesson,
+    });
 };
 
 // Cập nhật thông tin một buổi học
 // PUT http://localhost:3000/api/buoi-hoc/:id
-export const putBuoiHoc = async (req, res) => {
-    // Ví dụ sử dụng model BuoiHoc (nếu có)
-    //   try {
-    //     const [updated] = await BuoiHoc.update(req.body, {
-    //       where: { id: req.params.id }
-    //     });
-    //     if (updated) {
-    //       const updatedBuoiHoc = await BuoiHoc.findByPk(req.params.id);
-    //       return res.status(200).json(updatedBuoiHoc);
-    //     }
-    //     throw new Error('Buổi học không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from putBuoiHoc' });
+export const changeLesson = async (req, res) => {
+    const id = req.params.id;
+    const lesson = await db.Lesson.findOne({ where: { id } });
+    if (!lesson) {
+        return res.status(404).json({
+            message: `Không tìm thấy buổi học với ID: ${id}!`
+        });
+    }
+    await lesson.update(req.body);
+    return res.status(200).json({
+        message: '✅ Cập nhật thông tin buổi học thành công!',
+    });
 };
 
 // Xóa một buổi học theo id
 // DELETE http://localhost:3000/api/buoi-hoc/:id
-export const deleteBuoiHoc = async (req, res) => {
-    // Ví dụ sử dụng model BuoiHoc (nếu có)
-    //   try {
-    //     const deleted = await BuoiHoc.destroy({
-    //       where: { id: req.params.id }
-    //     });
-    //     if (deleted) {
-    //       return res.status(200).json({ message: 'Buổi học đã được xóa thành công' });
-    //     }
-    //     throw new Error('Buổi học không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from deleteBuoiHoc' });
+export const deleteLesson = async (req, res) => {
+    const { id } = req.params;
+    const lesson = await db.Lesson.findOne({ where: { id } });
+    if (!lesson) {
+        return res.status(404).json({
+            message: `Không tìm thấy buổi học với ID: ${id}!`
+        });
+    }
+    const deleted = await lesson.destroy();
+    return res.status(200).json({
+        message: '✅ Xóa buổi học thành công!',
+    });
 };

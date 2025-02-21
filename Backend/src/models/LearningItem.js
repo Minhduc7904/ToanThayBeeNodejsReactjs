@@ -15,6 +15,7 @@ module.exports = (sequelize, DataTypes) => {
   }
   LearningItem.init({
     name: DataTypes.STRING,
+    lessonId: DataTypes.INTEGER,
     typeOfLearningItem: DataTypes.STRING,
     url: DataTypes.TEXT,
     deadline: DataTypes.DATE,

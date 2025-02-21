@@ -8,20 +8,38 @@ module.exports = {
     database: process.env.DB_DEV_DATABASE,
     host: process.env.DB_DEV_HOST,
     port: process.env.DB_DEV_PORT,
-    dialect: "mysql"
+    dialect: "mysql",
+    pool: {
+      max: parseInt(process.env.DB_POOL_MAX, 10) || 5,
+      min: parseInt(process.env.DB_POOL_MIN, 10) || 0,
+      acquire: parseInt(process.env.DB_POOL_ACQUIRE, 10) || 30000,
+      idle: parseInt(process.env.DB_POOL_IDLE, 10) || 10000,
+    },
   },
   test: {
     username: "root",
     password: null,
     database: "database_test",
     host: "127.0.0.1",
-    dialect: "mysql"
+    dialect: "mysql",
+    pool: {
+      max: parseInt(process.env.DB_POOL_MAX, 10) || 20,
+      min: parseInt(process.env.DB_POOL_MIN, 10) || 5,
+      acquire: parseInt(process.env.DB_POOL_ACQUIRE, 10) || 60000,
+      idle: parseInt(process.env.DB_POOL_IDLE, 10) || 15000,
+    },
   },
   production: {
     username: "root",
     password: null,
     database: "database_production",
     host: "127.0.0.1",
-    dialect: "mysql"
+    dialect: "mysql",
+    pool: {
+      max: parseInt(process.env.DB_POOL_MAX, 10) || 20,
+      min: parseInt(process.env.DB_POOL_MIN, 10) || 5,
+      acquire: parseInt(process.env.DB_POOL_ACQUIRE, 10) || 60000,
+      idle: parseInt(process.env.DB_POOL_IDLE, 10) || 15000,
+    },
   }
 };

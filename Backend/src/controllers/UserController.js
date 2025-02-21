@@ -313,12 +313,64 @@ export const getAllUsers = async (req, res) => {
 
     return res.status(200).json({
         message: 'Danh sách người dùng',
-        data: formattedUsers,
+        // data: formattedUsers,
+        data: userList,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total
     });
 }
+
+// http://localhost:3000/api/v1/user/class/:classId
+export const getUsersByClass = async (req, res) => {
+    const classId = req.params.classId;
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+
+    if (!classId) {
+        return res.status(400).json({ message: '❌ Thiếu classId!' });
+    }
+
+    const whereClause = search.trim() ? {
+        [Op.or]: [
+            { name: { [Op.like]: `%${search}%` } },
+            { email: { [Op.like]: `%${search}%` } },
+        ],
+    } : {};
+
+    // Truy vấn người dùng trong lớp kèm status từ StudentClassStatus
+    const users = await db.StudentClassStatus.findAll({
+        where: { classId },
+        include: [
+            {
+                model: db.User,
+                as: 'student',
+                where: whereClause,
+            },
+        ],
+        limit,
+        offset,
+    });
+    // Map kết quả sang UserResponse, lấy status từ lớp liên kết
+    const formattedUsers = users.map(userRecord => {
+        const user = userRecord.student; // Lấy từ alias 'student'
+        const status = userRecord.status; // Lấy status từ StudentClassStatus
+        return new UserResponse(user, status); // Truyền vào UserResponse
+    });
+    const total = formattedUsers.length
+
+    return res.status(200).json({
+        message: '✅ Lấy danh sách người dùng trong lớp thành công!',
+        data: formattedUsers,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+    });
+};
+
+
 
 // http://localhost:3000/api/v1/user/avatar
 export const updateAvatar = async (req, res) => {

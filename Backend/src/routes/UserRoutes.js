@@ -2,6 +2,7 @@ import express from 'express';
 import asyncHandler from '../middlewares/asyncHandler.js';
 import validate from '../middlewares/validate.js';
 import PostUserRequest from '../dtos/requests/user/PostUserRequest.js';
+import PutUserRequest from '../dtos/requests/user/PutUserRequest.js';
 import LoginUserRequest from '../dtos/requests/user/LoginUserRequest.js';
 import UserType from '../constants/UserType.js';
 import { requireRoles } from '../middlewares/jwtMiddleware.js';
@@ -34,6 +35,11 @@ router.get('/v1/admin/user',
     asyncHandler(UserController.getAllUsers)
 );
 
+router.get('/v1/admin/user/class/:classId', 
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    asyncHandler(UserController.getUsersByClass)
+);
+
 // Route lấy thông tin người dùng theo ID
 router.get('/v1/admin/user/:id', 
     requireRoles([UserType.ADMIN, UserType.TEACHER]),
@@ -42,12 +48,14 @@ router.get('/v1/admin/user/:id',
 
 // Route cập nhật thông tin người dùng theo ID 
 router.put('/v1/admin/user/:id', 
+    validate(PutUserRequest),
     requireRoles([UserType.ADMIN, UserType.TEACHER]),
     asyncHandler(UserController.putUser)
 );
 
 // Route cập nhật thông tin người dùng của chính mình
 router.put('/v1/user',
+    validate(PutUserRequest),
     requireRoles([]),
     asyncHandler(UserController.updateUserInfo)
 );
@@ -60,12 +68,14 @@ router.put('/v1/user/password',
 
 // Route cập nhật trạng thái người dùng
 router.put('/v1/admin/user/:id/status',
+    validate(PutUserRequest),
     requireRoles([UserType.ADMIN, UserType.TEACHER]),
     asyncHandler(UserController.changeUserStatus)
 );
 
 // Route cập nhật loại người dùng
 router.put('/v1/admin/user/:id/user-type', 
+    validate(PutUserRequest),
     requireRoles([UserType.ADMIN, UserType.TEACHER]),
     asyncHandler(UserController.changeUserType)
 );

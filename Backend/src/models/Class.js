@@ -10,7 +10,15 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      Class.hasMany(models.StudentClassStatus, {
+        foreignKey: 'classId',
+        as: 'classStatuses',
+      });
+      Class.hasMany(models.Lesson, {
+        foreignKey: 'classId', // 🔑 Trùng với khóa ngoại trong bảng Lesson
+        as: 'lessons',         // 👉 Alias khi include
+      });
+      
     }
   }
   Class.init({
@@ -22,6 +30,7 @@ module.exports = (sequelize, DataTypes) => {
     lessonCount: DataTypes.INTEGER,
     dayOfWeek: DataTypes.STRING,
     studyTime: DataTypes.STRING,
+    public: DataTypes.BOOLEAN,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

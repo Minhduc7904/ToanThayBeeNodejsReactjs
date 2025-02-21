@@ -18,7 +18,7 @@ module.exports = {
       },
       academicYear: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       status: {
         allowNull: false,
