@@ -1,19 +1,19 @@
-import Joi from "joi";
+import Joi from "joi"
 
 class PutUserRequest {
     constructor(data) {
-        this.middleName = data.middleName;
-        this.firstName = data.firstName;
-        this.gender = data.gender;
-        this.birthDate = data.birthDate;
-        this.phone = data.phone;
-        this.highSchool = data.highSchool;
-        this.class = data.class;
-        this.email = data.email;
-        this.graduationYear = data.graduationYear;
-        this.highSchoolScore = data.highSchoolScore;
-        this.university = data.university;
-        this.avatarUrl = data.avatarUrl;
+        this.middleName = data.middleName
+        this.firstName = data.firstName
+        this.gender = data.gender
+        this.birthDate = data.birthDate
+        this.phone = data.phone
+        this.highSchool = data.highSchool
+        this.class = data.class
+        this.email = data.email
+        this.graduationYear = data.graduationYear
+        this.highSchoolScore = data.highSchoolScore
+        this.university = data.university
+        this.avatarUrl = data.avatarUrl
     }
 
     static validate(data) {
@@ -30,10 +30,10 @@ class PutUserRequest {
             highSchoolScore: Joi.number().min(0).max(10).optional(),
             university: Joi.string().max(100).optional().allow(''),
             avatarUrl: Joi.string().uri().optional(),
-        });
+        })
 
-        return schema.validate(data);
+        return schema.validate(data)
     }
 }
 
-export default PutUserRequest;
+export default PutUserRequest

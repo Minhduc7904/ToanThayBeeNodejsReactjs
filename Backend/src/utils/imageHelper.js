@@ -1,19 +1,19 @@
-import path from "path";
-import fs from "fs";
+import path from "path"
+import fs from "fs"
 
 export const formatImageUrl = (imageUrl) => {
-    if (!imageUrl) return null;
+    if (!imageUrl) return null
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-        return imageUrl;
+        return imageUrl
     }
-    return `/uploads/${imageUrl}`;
-};
+    return `/uploads/${imageUrl}`
+}
 
 export const checkLocalImageExists = (imageUrl) => {
-    if (!imageUrl) return true;
+    if (!imageUrl) return true
     if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
-        return true;
+        return true
     }
-    const imagePath = path.join(__dirname, `../public/uploads/${imageUrl}`);
-    return fs.existsSync(imagePath);
-};
+    const imagePath = path.join(__dirname, `../public/uploads/${imageUrl}`)
+    return fs.existsSync(imagePath)
+}

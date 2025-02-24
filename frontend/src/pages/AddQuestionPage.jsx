@@ -1,6 +1,6 @@
-import React from "react";
-import QuestionForm from "../components/QuestionForm";
-import { ToastContainer } from "react-toastify";
+import React from "react"
+import QuestionForm from "../components/QuestionForm"
+import { ToastContainer } from "react-toastify"
 
 const AddQuestionPage = () => {
     return (
@@ -9,7 +9,7 @@ const AddQuestionPage = () => {
             <QuestionForm />
             <ToastContainer position="top-right" autoClose={3000} />
         </div>
-    );
-};
+    )
+}
 
-export default AddQuestionPage;
+export default AddQuestionPage

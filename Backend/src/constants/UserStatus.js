@@ -3,4 +3,4 @@ const UserStatus = {
     BLOCKED: 'BLOCKED',
 }
 
-export default UserStatus;
+export default UserStatus

@@ -5,4 +5,4 @@ const UserType = {
     ASSISTANT: "AS"
 }
 
-export default UserType;
+export default UserType

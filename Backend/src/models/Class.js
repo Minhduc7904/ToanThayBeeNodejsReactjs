@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Class extends Model {
     /**
@@ -13,11 +13,11 @@ module.exports = (sequelize, DataTypes) => {
       Class.hasMany(models.StudentClassStatus, {
         foreignKey: 'classId',
         as: 'classStatuses',
-      });
+      })
       Class.hasMany(models.Lesson, {
-        foreignKey: 'classId', // 🔑 Trùng với khóa ngoại trong bảng Lesson
-        as: 'lessons',         // 👉 Alias khi include
-      });
+        foreignKey: 'classId', 
+        as: 'lessons',        
+      })
       
     }
   }
@@ -37,6 +37,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Class',
     tableName: 'class'
-  });
-  return Class;
-};
+  })
+  return Class
+}

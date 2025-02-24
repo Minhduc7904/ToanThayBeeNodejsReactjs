@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class StudentClassStatus extends Model {
     /**
@@ -12,13 +12,13 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       StudentClassStatus.belongsTo(models.User, {
         foreignKey: 'studentId',
-        as: 'student', // 🔑 Trùng với as trong include
-      });
+        as: 'student',
+      })
       StudentClassStatus.belongsTo(models.Class, {
         foreignKey: 'classId',
-        as: 'class', // 🔑 Trùng với as trong include
-      });
-      StudentClassStatus.belongsTo(models.Class, { foreignKey: 'classId' });
+        as: 'class', 
+      })
+      StudentClassStatus.belongsTo(models.Class, { foreignKey: 'classId' })
     }
 
   }
@@ -33,12 +33,16 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       primaryKey: true
     },
-    status: DataTypes.STRING
+    status: DataTypes.STRING,
+    createdAt: {
+      type: DataTypes.DATE,
+      defaultValue: sequelize.literal('CURRENT_TIMESTAMP')
+    }
   }, {
     sequelize,
     modelName: 'StudentClassStatus',
     tableName: 'studentClassStatus',
     timestamps: false
-  });
-  return StudentClassStatus;
-};
+  })
+  return StudentClassStatus
+}

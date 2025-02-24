@@ -1,48 +1,96 @@
-import { Sequelize } from "../models";
-import db from "../models";
-// BaoCaoCHController.js
+import { Sequelize } from "../models"
+import db from "../models"
+import { Op, literal } from 'sequelize'
 
-// Lấy danh sách tất cả các báo cáo câu hỏi
-// GET http://localhost:3000/api/baocaocauhoi
+const { QuestionReport } = db
+
 export const getQuestionReport = async (req, res) => {
+    const search = req.query.search || ''
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 10
+    const offset = (page - 1) * limit
 
-    const questionReport = await db.QuestionReport.findAll();
-    return res.json(questionReport);
+    const whereClause = search.trim()
+        ? {
+            [Op.or]: [
+                { content: { [Op.like]: `%${search}%` } },
+                literal(`CONCAT(user.middleName, ' ', user.firstName) LIKE '%${search}%'`),
+                literal(`question.content LIKE '%${search}%'`),
+            ],
+        }
+        : {}
 
-};
+    const { rows: reports, count: total } = await QuestionReport.findAndCountAll({
+        where: whereClause,
+        include: [
+            {
+                model: db.User,
+                as: 'user',
+                attributes: ['id', 'middleName', 'firstName'], 
+            },
+            {
+                model: db.Question,
+                as: 'question',
+                attributes: ['id', 'content'], 
+            },
+        ],
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+    })
 
-// Lấy chi tiết một báo cáo câu hỏi theo id
-// GET http://localhost:3000/api/baocaocauhoi/:id
+    return res.status(200).json({
+        message: '✅ Lấy danh sách báo cáo câu hỏi thành công!',
+        data: reports,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+    })
+}
+
 export const getQuestionReportById = async (req, res) => {
+    const report = await QuestionReport.findByPk(req.params.id, {
+        include: [
+            { model: db.User, as: 'user', attributes: ['id', 'middleName', 'firstName'] },
+            { model: db.Question, as: 'question', attributes: ['id', 'content'] },
+        ],
+    })
 
-    const questionReport = await db.QuestionReport.findByPk(req.params.id);
-    if (!questionReport) {
-        return res.status(404).json({ message: 'Báo cáo không tồn tại' });
+    if (!report) {
+        return res.status(404).json({ message: "❌ Không tìm thấy báo cáo" })
     }
-    return res.json(questionReport);
+    return res.status(200).json({
+        message: "✅ Lấy chi tiết báo cáo câu hỏi thành công!",
+        data: report,
+    })
+}
 
-};
-
-// Thêm một báo cáo câu hỏi mới
-// POST http://localhost:3000/api/baocaocauhoi
-// {
-//     "userId": 2,
-//     "questionId": 3,
-//     "content": "cc"
-// }
 export const postQuestionReport = async (req, res) => {
-    const questionReport = await db.QuestionReport.create(req.body);
-    return res.status(201).json(questionReport);
-};
+    const data = req.body
 
-// Xóa một báo cáo câu hỏi theo id
-// DELETE http://localhost:3000/api/baocaocauhoi/:id
-export const deleteQuestionReport = async (req, res) => {
-    const deleted = await db.QuestionReport.destroy({
-        where: { id: req.params.id }
-    });
-    if (deleted) {
-        return res.status(200).json({ message: 'Báo cáo đã được xóa thành công' });
+    const question = await db.Question.findByPk(data.questionId)
+    if (!question) {
+        return res.status(400).json({ message: "❌ Câu hỏi không tồn tại" })
     }
-    return res.status(404).json({ message: 'Không tìm thấy báo cáo' });
-};
+
+    const newReport = await QuestionReport.create(data)
+
+    return res.status(201).json({
+        message: "✅ Tạo báo cáo câu hỏi thành công!",
+        newReport,
+    })
+}
+
+export const deleteQuestionReport = async (req, res) => {
+    const report = await QuestionReport.findByPk(req.params.id)
+
+    if (!report) {
+        return res.status(404).json({ message: "❌ Không tìm thấy báo cáo" })
+    }
+
+    await report.destroy()
+
+    return res.status(200).json({
+        message: "✅ Xóa báo cáo câu hỏi thành công!"
+    })
+}

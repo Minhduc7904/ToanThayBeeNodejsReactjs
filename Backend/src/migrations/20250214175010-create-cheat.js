@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -31,10 +31,10 @@ module.exports = {
         type: Sequelize.DATE,
         defaultValue: Sequelize.NOW, // ✅ Thêm dòng này để tự động lấy thời gian hiện tại
       },
-    }, { timestamps: false });
+    }, { timestamps: false })
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('cheat');
+    await queryInterface.dropTable('cheat')
   }
-};
+}

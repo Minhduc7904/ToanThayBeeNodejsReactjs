@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -18,7 +18,7 @@ module.exports = {
         type: Sequelize.STRING,
         references: {
           model: 'allCode',
-          key: 'code'        
+          key: 'code'
         },
         onUpdate: 'CASCADE',
       },
@@ -28,6 +28,15 @@ module.exports = {
       deadline: {
         type: Sequelize.DATE
       },
+      lessonId: {
+        type: Sequelize.INTEGER,
+        allowNull: false, 
+        references: {
+          model: 'lesson',
+          key: 'id',       
+        },
+        onDelete: 'CASCADE', 
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -36,9 +45,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       }
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('learningItem');
+    await queryInterface.dropTable('learningItem')
   }
-};
+}

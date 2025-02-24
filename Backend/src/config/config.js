@@ -1,5 +1,5 @@
-const path = require("path");
-require("dotenv").config({ path: path.resolve(__dirname, "../../.env") }); // 👈 Load từ backend/
+const path = require("path")
+require("dotenv").config({ path: path.resolve(__dirname, "../../.env") }) // 👈 Load từ backend/
 
 module.exports = {
   development: {
@@ -42,4 +42,4 @@ module.exports = {
       idle: parseInt(process.env.DB_POOL_IDLE, 10) || 15000,
     },
   }
-};
+}

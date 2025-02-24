@@ -1,12 +1,12 @@
-import Joi from "joi";
+import Joi from "joi"
 
 class PutStatementRequest {
     constructor(data) {
-        this.content = data.content;
-        this.isCorrect = data.isCorrect;
-        this.questionId = data.questionId;
-        this.difficulty = data.difficulty;
-        this.imageUrl = data.imageUrl;
+        this.content = data.content
+        this.isCorrect = data.isCorrect
+        this.questionId = data.questionId
+        this.difficulty = data.difficulty
+        this.imageUrl = data.imageUrl
     }
     
     static validate(data) {
@@ -16,10 +16,10 @@ class PutStatementRequest {
             questionId: Joi.number().optional(),
             difficulty: Joi.string().optional(),
             imageUrl: Joi.string().uri().optional()
-        });
+        })
 
-        return schema.validate(data);
+        return schema.validate(data)
     }
 }
 
-export default PutStatementRequest;
+export default PutStatementRequest

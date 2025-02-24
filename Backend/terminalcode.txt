@@ -31,8 +31,8 @@ npx sequelize-cli db:migrate:undo:all
 xem database
 docker exec -it mysql_container bash
 mysql -u root -p
-show databases;
-use toan_thay_bee;
+show databases
+use toan_thay_bee
 
 yarn add express
 yarn add dotenv notdemon

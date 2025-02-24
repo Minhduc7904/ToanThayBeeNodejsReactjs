@@ -1,10 +1,10 @@
-import Joi from "joi";
+import Joi from "joi"
 
 class PutCodeRequest {
     constructor(data) {
-        this.code = data.code;
-        this.type = data.type;
-        this.description = data.description;
+        this.code = data.code
+        this.type = data.type
+        this.description = data.description
     }
     
     static validate(data) {
@@ -12,10 +12,10 @@ class PutCodeRequest {
             code: Joi.string().optional(),
             type: Joi.string().optional(),
             description: Joi.string().optional().allow(''),
-        });
+        })
 
-        return schema.validate(data);
+        return schema.validate(data)
     }
 }
 
-export default PutCodeRequest;
+export default PutCodeRequest

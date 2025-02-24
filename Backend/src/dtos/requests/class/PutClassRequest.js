@@ -1,15 +1,15 @@
-import Joi from "joi";
+import Joi from "joi"
 
 class PutClassRequest {
     constructor(data) {
-        this.name = data.name;
-        this.description = data.description;
-        this.academicYear = data.academicYear;
-        this.status = data.status;
-        this.slideId = data.slideId;
-        this.dayOfWeek = data.dayOfWeek;
-        this.studyTime = data.studyTime;
-        this.public = data.public;
+        this.name = data.name
+        this.description = data.description
+        this.academicYear = data.academicYear
+        this.status = data.status
+        this.slideId = data.slideId
+        this.dayOfWeek = data.dayOfWeek
+        this.studyTime = data.studyTime
+        this.public = data.public
     }
     
     static validate(data) {
@@ -22,10 +22,10 @@ class PutClassRequest {
             dayOfWeek: Joi.string().optional(),
             studyTime: Joi.string().optional(),
             public: Joi.boolean().optional(),
-        });
+        })
 
-        return schema.validate(data);
+        return schema.validate(data)
     }
 }
 
-export default PutClassRequest;
+export default PutClassRequest

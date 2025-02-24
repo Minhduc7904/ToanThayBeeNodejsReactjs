@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -39,6 +39,9 @@ module.exports = {
       imageUrl: {
         type: Sequelize.TEXT
       },
+      order: {
+        type: Sequelize.INTEGER,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -47,9 +50,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       }
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('statement');
+    await queryInterface.dropTable('statement')
   }
-};
+}

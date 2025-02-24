@@ -1,5 +1,5 @@
-'use strict';
-const { Model } = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
 
 module.exports = (sequelize, DataTypes) => {
   class Cheat extends Model {
@@ -19,14 +19,14 @@ module.exports = (sequelize, DataTypes) => {
     createdAt: {
       type: DataTypes.DATE,
       allowNull: false,
-      defaultValue: DataTypes.NOW, // ✅ Tự động lấy thời gian hiện tại khi thêm dữ liệu
+      defaultValue: DataTypes.NOW, 
     },
   }, {
     sequelize,
     modelName: 'Cheat',
     tableName: 'cheat',
-    timestamps: false, // ✅ Không tự thêm createdAt và updatedAt
-  });
+    timestamps: false, 
+  })
 
-  return Cheat;
-};
+  return Cheat
+}

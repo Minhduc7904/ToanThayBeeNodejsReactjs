@@ -1,5 +1,5 @@
-'use strict';
-const { Model } = require('sequelize');
+'use strict'
+const { Model } = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Question extends Model {
     /**
@@ -9,12 +9,12 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Question.belongsToMany(models.Exam, {
-        through: 'ExamQuestions',       // Bảng trung gian
-        foreignKey: 'questionId',         // Khóa ngoại trong bảng trung gian
-        otherKey: 'examId',               // Khóa liên kết đến bảng Exam
-        as: 'exams',                      // Tên alias khi include
-      });
-      Question.hasMany(models.Statement, { foreignKey: 'questionId', as: 'statements' });
+        through: 'ExamQuestions',       
+        foreignKey: 'questionId',        
+        otherKey: 'examId',             
+        as: 'exams',                      
+      })
+      Question.hasMany(models.Statement, { foreignKey: 'questionId', as: 'statements' })
     }
   }
   Question.init({
@@ -22,6 +22,7 @@ module.exports = (sequelize, DataTypes) => {
     content: DataTypes.TEXT,
     typeOfQuestion: DataTypes.STRING,
     correctAnswer: DataTypes.STRING,
+    solution: DataTypes.TEXT,
     difficulty: DataTypes.STRING,
     chapter: DataTypes.STRING,
     description: DataTypes.TEXT,
@@ -33,6 +34,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Question',
     tableName: 'question'
-  });
-  return Question;
-};
+  })
+  return Question
+}

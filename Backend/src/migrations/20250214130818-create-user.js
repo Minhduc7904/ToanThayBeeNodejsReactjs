@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -28,8 +28,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
         references: {
-          model: 'allCode', 
-          key: 'code'        
+          model: 'allCode',
+          key: 'code'
         },
         onUpdate: 'CASCADE'
       },
@@ -61,8 +61,8 @@ module.exports = {
         allowNull: false,
         type: Sequelize.STRING,
         references: {
-          model: 'allCode', 
-          key: 'code'       
+          model: 'allCode',
+          key: 'code'
         },
         onUpdate: 'CASCADE',
       },
@@ -78,6 +78,9 @@ module.exports = {
       avatarUrl: {
         type: Sequelize.TEXT
       },
+      currentToken: {
+        type: Sequelize.TEXT,
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -86,9 +89,9 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE,
       }
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('user');
+    await queryInterface.dropTable('user')
   }
-};
+}

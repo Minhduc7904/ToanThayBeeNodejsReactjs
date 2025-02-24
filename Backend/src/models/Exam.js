@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Exam extends Model {
     /**
@@ -11,11 +11,11 @@ module.exports = (sequelize, DataTypes) => {
      */
     static associate(models) {
       Exam.belongsToMany(models.Question, {
-        through: 'ExamQuestions',       // Bảng trung gian
-        foreignKey: 'examId',             // Khóa ngoại trong bảng trung gian
-        otherKey: 'questionId',           // Khóa liên kết đến bảng Question
-        as: 'questions',                  // Tên alias khi include
-      });
+        through: 'ExamQuestions',       
+        foreignKey: 'examId',             
+        otherKey: 'questionId',           
+        as: 'questions',                  
+      })
     }
   }
   Exam.init({
@@ -36,6 +36,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Exam',
     tableName: 'exam'
-  });
-  return Exam;
-};
+  })
+  return Exam
+}

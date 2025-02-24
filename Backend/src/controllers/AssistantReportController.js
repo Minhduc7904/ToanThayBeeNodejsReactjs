@@ -1,17 +1,15 @@
-import { Sequelize } from "../models";
-import db from "../models";
-import { Op, literal } from 'sequelize';
-// AssistantReportController.js
-const { AssistantReport } = db;
-// Lấy danh sách tất cả các báo cáo người dùng
-// GET http://localhost:3000/api/AssistantReport?search=...
-export const getAssistantReport = async (req, res) => {
-    const search = req.query.search || '';
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
-    const offset = (page - 1) * limit;
+import UserType from "../constants/UserType"
+import { Sequelize } from "../models"
+import db from "../models"
+import { Op, literal } from 'sequelize'
+const { AssistantReport } = db
 
-    // 📄 Thiết lập điều kiện tìm kiếm
+export const getAssistantReport = async (req, res) => {
+    const search = req.query.search || ''
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 10
+    const offset = (page - 1) * limit
+
     const whereClause = search.trim()
         ? {
             [Op.or]: [
@@ -20,9 +18,8 @@ export const getAssistantReport = async (req, res) => {
                 literal(`CONCAT(assistant.middleName, ' ', assistant.firstName) LIKE '%${search}%'`),
             ],
         }
-        : {};
+        : {}
 
-    // 📥 Truy vấn báo cáo kèm tên người dùng và trợ lý
     const { rows: reports, count: total } = await db.AssistantReport.findAndCountAll({
         where: whereClause,
         include: [
@@ -40,7 +37,7 @@ export const getAssistantReport = async (req, res) => {
         limit,
         offset,
         order: [['createdAt', 'DESC']],
-    });
+    })
 
     return res.status(200).json({
         message: '✅ Lấy danh sách báo cáo thành công!',
@@ -48,36 +45,35 @@ export const getAssistantReport = async (req, res) => {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total,
-    });
+    })
 
-};
+}
 
 
-// Lấy chi tiết một báo cáo người dùng theo id
-// GET http://localhost:3000/api/AssistantReport/:id
 export const getAssistantReportById = async (req, res) => {
-    const report = await AssistantReport.findByPk(req.params.id);
-    if (!report) return res.status(404).json({ message: "Không tìm thấy báo cáo" });
-    return res.status(200).json(report);
-};
+    const report = await AssistantReport.findByPk(req.params.id)
+    if (!report) return res.status(404).json({ message: "Không tìm thấy báo cáo" })
+    return res.status(200).json(report)
+}
 
-// Thêm một báo cáo mới
-// POST http://localhost:3000/api/AssistantReport
 export const postAssistantReport = async (req, res) => {
-    const newReport = await AssistantReport.create(req.body);
+    const data = req.body
+    const assistant = await db.User.findByPk(data.assistantId)
+    if (assistant.userType !== UserType.ASSISTANT) return res.status(400).json({ message: "Người dùng không phải trợ giảng" })
+
+    const newReport = await AssistantReport.create(data)
+
     return res.status(201).json({
         message: 'Tạo báo cáo thành công',
         newReport
-    });
-};
+    })
+}
 
-// Xóa một báo cáo người dùng theo id
-// DELETE http://localhost:3000/api/AssistantReport/:id
 export const deleteAssistantReport = async (req, res) => {
-    const report = await AssistantReport.findByPk(req.params.id);
-    if (!report) return res.status(404).json({ message: "Không tìm thấy báo cáo" });
+    const report = await AssistantReport.findByPk(req.params.id)
+    if (!report) return res.status(404).json({ message: "Không tìm thấy báo cáo" })
 
-    const del = await report.destroy();
-    if (!del) return res.status(500).json({ message: "Xóa báo cáo thất bại" });
-    return res.status(200).json({ message: "Xóa báo cáo thành công" });
-};
+    const del = await report.destroy()
+    if (!del) return res.status(500).json({ message: "Xóa báo cáo thất bại" })
+    return res.status(200).json({ message: "Xóa báo cáo thành công" })
+}

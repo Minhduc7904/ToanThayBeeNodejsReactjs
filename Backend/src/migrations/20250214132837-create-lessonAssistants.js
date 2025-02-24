@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -23,9 +23,9 @@ module.exports = {
         },
         onDelete: "CASCADE"
       },
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('lessonAssistants');
+    await queryInterface.dropTable('lessonAssistants')
   }
-};
+}

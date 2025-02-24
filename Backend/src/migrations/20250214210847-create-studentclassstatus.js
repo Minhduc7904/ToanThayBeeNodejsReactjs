@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -32,9 +32,14 @@ module.exports = {
         },
         onUpdate: 'CASCADE',
       },
-    });
+      createdAt: {
+        allowNull: false,
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.literal('CURRENT_TIMESTAMP')
+      },
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('studentClassStatus');
+    await queryInterface.dropTable('studentClassStatus')
   }
-};
+}

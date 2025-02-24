@@ -1,97 +1,128 @@
-import { Sequelize } from "../models";
-import db from "../models";
-// MucHocTapController.js
+import { Sequelize } from "../models"
+import db from "../models"
 
-// Lấy danh sách tất cả mục học tập
-// GET http://localhost:3000/api/muc-hoc-tap
-export const getMucHocTap = async (req, res) => {
-    // Ví dụ sử dụng model MucHocTap (nếu có)
-    //   try {
-    //     const mucHocTapList = await MucHocTap.findAll();
-    //     res.json(mucHocTapList);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from getMucHocTap' });
-};
+export const getLearningItemById = async (req, res) => {
+    const { id } = req.params
+    const learningItem = await db.LearningItem.findOne({ where: { id } })
+    if (!learningItem) {
+        return res.status(404).json({
+            message: `❌ Không tìm thấy mục học tập với ID: ${id}!`
+        })
+    }
+    return res.status(200).json({
+        message: '✅ Lấy thông tin mục học tập thành công!',
+        data: learningItem
+    })
 
-// Lấy chi tiết một mục học tập theo id
-// GET http://localhost:3000/api/muc-hoc-tap/:id
-export const getMucHocTapById = async (req, res) => {
-    // Ví dụ sử dụng model MucHocTap (nếu có)
-    //   try {
-    //     const mucHocTap = await MucHocTap.findByPk(req.params.id);
-    //     if (!mucHocTap) {
-    //       return res.status(404).json({ message: 'Mục học tập không tồn tại' });
-    //     }
-    //     res.json(mucHocTap);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from getMucHocTapById' });
-};
+}
 
-// Lấy danh sách mục học tập theo ID buổi học
-// GET http://localhost:3000/api/muc-hoc-tap/buoi-hoc/:ma_buoi_hoc
-export const getMucHocTapByBuoiHoc = async (req, res) => {
-    // Ví dụ sử dụng model MucHocTap và liên kết với BuoiHoc (nếu có)
-    //   try {
-    //     const mucHocTapList = await MucHocTap.findAll({
-    //       where: { ma_buoi_hoc: req.params.ma_buoi_hoc }
-    //     });
-    //     res.json(mucHocTapList);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: `Hello from getMucHocTapByBuoiHoc, ma_buoi_hoc: ${req.params.ma_buoi_hoc}` });
-};
+export const getLearningItemByLesson = async (req, res) => {
+    const { lessonId } = req.params
+    const find = await db.Lesson.findByPk(lessonId)
+    if (!find) {
+        return res.status(404).json({
+            message: `❌ Không tìm thấy buổi học với ID: ${lessonId}!`
+        })
+    }
+    const learningItems = await db.LearningItem.findAll({
+        where: { lessonId },
+        include: [
+            {
+                model: db.Lesson,
+                as: 'lesson',
+                attributes: ['id', 'name', 'description']
+            }
+        ],
+        order: [['createdAt', 'ASC']]
+    })
 
-// Thêm một mục học tập mới
-// POST http://localhost:3000/api/muc-hoc-tap
-export const postMucHocTap = async (req, res) => {
-    // Ví dụ sử dụng model MucHocTap (nếu có)
-    //   try {
-    //     const mucHocTap = await MucHocTap.create(req.body);
-    //     res.status(201).json(mucHocTap);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(201).json({ message: 'Hello from postMucHocTap' });
-};
+    return res.status(200).json({
+        message: '✅ Lấy danh sách mục học tập thành công!',
+        data: learningItems
+    })
 
-// Cập nhật thông tin một mục học tập
-// PUT http://localhost:3000/api/muc-hoc-tap/:id
-export const putMucHocTap = async (req, res) => {
-    // Ví dụ sử dụng model MucHocTap (nếu có)
-    //   try {
-    //     const [updated] = await MucHocTap.update(req.body, {
-    //       where: { id: req.params.id }
-    //     });
-    //     if (updated) {
-    //       const updatedMucHocTap = await MucHocTap.findByPk(req.params.id);
-    //       return res.status(200).json(updatedMucHocTap);
-    //     }
-    //     throw new Error('Mục học tập không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from putMucHocTap' });
-};
+}
 
-// Xóa một mục học tập theo id
-// DELETE http://localhost:3000/api/muc-hoc-tap/:id
-export const deleteMucHocTap = async (req, res) => {
-    // Ví dụ sử dụng model MucHocTap (nếu có)
-    //   try {
-    //     const deleted = await MucHocTap.destroy({
-    //       where: { id: req.params.id }
-    //     });
-    //     if (deleted) {
-    //       return res.status(200).json({ message: 'Mục học tập đã được xóa thành công' });
-    //     }
-    //     throw new Error('Mục học tập không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from deleteMucHocTap' });
-};
+export const postLearningItem = async (req, res) => {
+    const t = await db.sequelize.transaction()
+    try {
+        const newLearningItem = await db.LearningItem.create(req.body, { transaction: t })
+
+        const lessonUpdated = await db.Lesson.increment(
+            { learningItemCount: 1 },
+            {
+                where: { id: req.body.lessonId },
+                transaction: t
+            }
+        )
+
+        if (!lessonUpdated[0]) {
+            throw new Error("❌ Không tìm thấy buổi học để cập nhật learningItemCount.")
+        }
+
+        await t.commit()
+
+        return res.status(201).json({
+            message: "✅ Thêm mục học tập mới thành công và cập nhật learningItemCount!",
+            data: newLearningItem
+        })
+    } catch (error) {
+        await t.rollback()
+        return res.status(500).json({
+            message: "❌ Lỗi khi thêm mục học tập hoặc cập nhật learningItemCount.",
+            error: error.message
+        })
+    }
+}
+
+export const putLearningItem = async (req, res) => {
+    const { id } = req.params
+    const learningItem = await db.LearningItem.findOne({ where: { id } })
+    if (!learningItem) {
+        return res.status(404).json({
+            message: `❌ Không tìm thấy mục học tập với ID: ${id}!`
+        })
+    }
+
+    await learningItem.update(req.body)
+    return res.status(200).json({
+        message: "✅ Cập nhật thông tin mục học tập thành công!",
+        data: learningItem
+    })
+}
+
+export const deleteLearningItem = async (req, res) => {
+    const { id } = req.params
+    const t = await db.sequelize.transaction()
+
+    try {
+        const learningItem = await db.LearningItem.findOne({ where: { id } })
+        if (!learningItem) {
+            return res.status(404).json({
+                message: `❌ Không tìm thấy mục học tập với ID: ${id}!`
+            })
+        }
+
+        await learningItem.destroy({ transaction: t })
+
+        await db.Lesson.decrement(
+            { learningItemCount: 1 },
+            {
+                where: { id: learningItem.lessonId },
+                transaction: t
+            }
+        )
+
+        await t.commit()
+
+        return res.status(200).json({
+            message: "✅ Xóa mục học tập thành công và cập nhật learningItemCount!"
+        })
+    } catch (error) {
+        await t.rollback()
+        return res.status(500).json({
+            message: "❌ Lỗi khi xóa mục học tập hoặc cập nhật learningItemCount.",
+            error: error.message
+        })
+    }
+}

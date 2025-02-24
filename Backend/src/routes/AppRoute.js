@@ -1,63 +1,63 @@
-import express from 'express';
-import UserRoutes from './UserRoutes.js';
-import ImageRoutes from './ImageRoutes.js';
-import ExamRoutes from './ExamRoutes.js';
-import QuestionRoutes from './QuestionRoutes.js';
-import ClassRoutes from './ClassRoutes.js';
-import AssistantReportRoutes from './AssistantReportRoutes.js';
-import QuestionReportRoutes from './QuestionReportRoutes.js';
-import LessonRoutes from './LessonRoutes.js';
-import AttemptRoutes from './AttemptRoutes.js';
-import AnswerRoutes from './AnswerRoutes.js';
-import CheatRoutes from './CheatRoutes.js';
-import LearningItemRoutes from './LearningItemRoutes.js';
-import CodeRouters from './CodeRoutes.js';
-import StatementRoutes from './StatementRoutes.js';
-import SlideRoutes from './SlideRoutes.js';
+import express from 'express'
+import UserRoutes from './UserRoutes.js'
+import ImageRoutes from './ImageRoutes.js'
+import ExamRoutes from './ExamRoutes.js'
+import QuestionRoutes from './QuestionRoutes.js'
+import ClassRoutes from './ClassRoutes.js'
+import AssistantReportRoutes from './AssistantReportRoutes.js'
+import QuestionReportRoutes from './QuestionReportRoutes.js'
+import LessonRoutes from './LessonRoutes.js'
+import AttemptRoutes from './AttemptRoutes.js'
+import AnswerRoutes from './AnswerRoutes.js'
+import CheatRoutes from './CheatRoutes.js'
+import LearningItemRoutes from './LearningItemRoutes.js'
+import CodeRouters from './CodeRoutes.js'
+import StatementRoutes from './StatementRoutes.js'
+import SlideRoutes from './SlideRoutes.js'
 
 export const AppRoute = (app) => {
     // User routes
-    app.use('/api/', UserRoutes);
+    app.use('/api/', UserRoutes)
 
     // Image upload route
-    app.use('/api/', ImageRoutes);
+    app.use('/api/', ImageRoutes)
 
     // Exam routes
-    app.use('/api/', ExamRoutes);
+    app.use('/api/', ExamRoutes)
 
     // Question routes
-    app.use('/api/', QuestionRoutes);
+    app.use('/api/', QuestionRoutes)
 
     // Class routes
-    app.use('/api/', ClassRoutes);
+    app.use('/api/', ClassRoutes)
     
     // AssistantReport routes
-    app.use('/api/', AssistantReportRoutes);
+    app.use('/api/', AssistantReportRoutes)
 
     // QuestionReport routes
-    app.use('/api/', QuestionReportRoutes);
+    app.use('/api/', QuestionReportRoutes)
 
     // Lesson routes
-    app.use('/api/', LessonRoutes);
+    app.use('/api/', LessonRoutes)
 
     // Attempt routes
-    app.use('/api/', AttemptRoutes);
+    app.use('/api/', AttemptRoutes)
 
     // Answer routes
-    app.use('/api/', AnswerRoutes);
+    app.use('/api/', AnswerRoutes)
     
     // Cheat routes
-    app.use('/api/', CheatRoutes);
+    app.use('/api/', CheatRoutes)
     
     // LearningItem routes
-    app.use('/api/', LearningItemRoutes);
+    app.use('/api/', LearningItemRoutes)
 
     // Code routes
-    app.use('/api/', CodeRouters);
+    app.use('/api/', CodeRouters)
 
     // Statement routes
-    app.use('/api/', StatementRoutes);
+    app.use('/api/', StatementRoutes)
     
     // Slide routes
-    app.use('/api/', SlideRoutes);
-};
+    app.use('/api/', SlideRoutes)
+}

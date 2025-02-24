@@ -1,182 +1,41 @@
 {
     "examData": {
-        "id": 1,
-        "name": "Đề thi Toán THPT",
-        "class": "l12",
-        "typeOfExam": "GK1",
-        "year": "2023-2024",
+        "name": "Đề ôn tập thi giữa kì 2",
+        "class": "12",
+        "typeOfExam": "GK2",
+        "year": "2024-2025",
         "duration": 90
     },
     "questions": [
         {
             "questionData": {
-                "class": "Math",
-                "content": "What is 2 + 2?",
+                "class": "12",
+                "content": "Nguyên hàm của hàm số \\\\( f(x)=\\\\mathrm{e}^{x} \\\\) là",
                 "solutionUrl": "https://example.com/solution",
-                "needImage": true,
+                "needImage": false,
                 "typeOfQuestion": "TN"
             },
             "statements": [
-                {
-                    "content": "3",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "4",
-                    "isCorrect": true,
-                    "needImage": true
-                },
-                {
-                    "content": "5",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "6",
-                    "isCorrect": false,
-                    "needImage": true
-                }
+                { "content": "\\\\( \\\\frac{\\\\mathrm{e}^{x+1}}{x+1}+C \\\\).", "isCorrect": false, "needImage": false },
+                { "content": "\\\\( \\\\frac{(\\\\mathrm{e}+1)^{x}}{\\\\mathrm{e}+1}+C \\\\).", "isCorrect": true, "needImage": false },
+                { "content": "\\\\( -\\\\mathrm{e}^{-x}+C \\\\).", "isCorrect": false, "needImage": false },
+                { "content": "\\\\( \\\\mathrm{e}^{x}+C \\\\).", "isCorrect": false, "needImage": false }
             ]
         },
         {
             "questionData": {
-                "class": "Math",
-                "content": "What is 2 + 2?",
+                "class": "12",
+                "content": "Hàm số \\\\( F(x)=\\\\cos 3 x \\\\) là một nguyên hàm của hàm số nào dưới đây?",
                 "solutionUrl": "https://example.com/solution",
-                "needImage": true,
+                "needImage": false,
                 "typeOfQuestion": "TN"
             },
             "statements": [
-                {
-                    "content": "3",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "4",
-                    "isCorrect": true,
-                    "needImage": true
-                },
-                {
-                    "content": "5",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "6",
-                    "isCorrect": false,
-                    "needImage": true
-                }
+                { "content": "\\\\( f_{1}(x)=3 \\\\sin 3 x \\\\).", "isCorrect": false, "needImage": false },
+                { "content": "\\\\( f_{2}(x)=\\\\sin x^{2} \\\\).", "isCorrect": true, "needImage": false },
+                { "content": "\\\\( f_{3}(x)=-3 \\\\sin 3 x \\\\).", "isCorrect": false, "needImage": false },
+                { "content": "\\\\( f_{4}(x)=-\\\\frac{1}{3} \\\\sin 3 x \\\\).", "isCorrect": false, "needImage": false }
             ]
-        }
-    ]
-}
-  
-{
-    "message": "✅ Thêm đề thi thành công!",
-    "exam": {
-        "id": 1,
-        "name": "Đề thi Toán THPT",
-        "class": "l12",
-        "typeOfExam": "GK1",
-        "year": "2023-2024",
-        "duration": 90
-    },
-    "questions": [
-        {
-            "question": {
-                "class": "Math",
-                "content": "What is 2 + 2?",
-                "solutionUrl": "https://example.com/solution",
-                "needImage": true,
-                "typeOfQuestion": "TN"
-            },
-            "statements": [
-                {
-                    "content": "3",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "4",
-                    "isCorrect": true,
-                    "needImage": true
-                },
-                {
-                    "content": "5",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "6",
-                    "isCorrect": false,
-                    "needImage": true
-                }
-            ]
-        },
-        {
-            "question": {
-                "class": "Math",
-                "content": "What is 2 + 2?",
-                "solutionUrl": "https://example.com/solution",
-                "needImage": true,
-                "typeOfQuestion": "TN"
-            },
-            "statements": [
-                {
-                    "content": "3",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "4",
-                    "isCorrect": true,
-                    "needImage": true
-                },
-                {
-                    "content": "5",
-                    "isCorrect": false,
-                    "needImage": false
-                },
-                {
-                    "content": "6",
-                    "isCorrect": false,
-                    "needImage": true
-                }
-            ]
-        }
-    ]
-}
-
-
-{
-    "questionData": {
-        "class": "Math",
-        "content": "What is 2 + 2?",
-        "solutionUrl": "https://example.com/solution",
-        "typeOfQuestion": "TN"
-    },
-    "statementOptions": [
-        {
-            "content": "3",
-            "isCorrect": false,
-            "needImage": false
-        },
-        {
-            "content": "4",
-            "isCorrect": true,
-            "needImage": true
-        },
-        {
-            "content": "5",
-            "isCorrect": false,
-            "needImage": false
-        },
-        {
-            "content": "6",
-            "isCorrect": false,
-            "needImage": true
         }
     ]
 }

@@ -1,15 +1,15 @@
-import Joi from "joi";
+import Joi from "joi"
 
 class PostQuestionRequest {
     constructor(data) {
-        this.class = data.class;
-        this.content = data.content;
-        this.typeOfQuestion = data.typeOfQuestion;
-        this.correctAnswer = data.correctAnswer;
-        this.difficulty = data.difficulty;
-        this.chapter = data.chapter;
-        this.description = data.description;
-        this.solutionUrl = data.solutionUrl;
+        this.class = data.class
+        this.content = data.content
+        this.typeOfQuestion = data.typeOfQuestion
+        this.correctAnswer = data.correctAnswer
+        this.difficulty = data.difficulty
+        this.chapter = data.chapter
+        this.description = data.description
+        this.solutionUrl = data.solutionUrl
     }
     
     static validate(data) {
@@ -22,10 +22,10 @@ class PostQuestionRequest {
             chapter: Joi.string().optional(),
             description: Joi.string().optional().allow(''),
             solutionUrl: Joi.string().uri().optional(),
-        });
+        })
 
-        return schema.validate(data);
+        return schema.validate(data)
     }
 }
 
-export default PostQuestionRequest;
+export default PostQuestionRequest

@@ -1,97 +1,92 @@
-import { Sequelize } from "../models";
-import db from "../models";
-// LuotLamBaiController.js
+import { Op } from 'sequelize'
+import db from "../models"
 
-// Lấy danh sách tất cả các lượt làm bài
-// GET http://localhost:3000/api/luot-lam-bai
-export const getLuotLamBai = async (req, res) => {
-    // Ví dụ sử dụng model LuotLamBai (nếu có)
-    //   try {
-    //     const luotLamBai = await LuotLamBai.findAll();
-    //     res.json(luotLamBai);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from getLuotLamBai' });
-};
+export const getAttempts = async (req, res) => {
+    const search = req.query.search || ''
+    const page = parseInt(req.query.page, 10) || 1
+    const limit = parseInt(req.query.limit, 10) || 10
+    const offset = (page - 1) * limit
 
-// Lấy chi tiết một lượt làm bài theo id
-// GET http://localhost:3000/api/luot-lam-bai/:id
-export const getLuotLamBaiById = async (req, res) => {
-    // Ví dụ sử dụng model LuotLamBai (nếu có)
-    //   try {
-    //     const luotLamBai = await LuotLamBai.findByPk(req.params.id);
-    //     if (!luotLamBai) {
-    //       return res.status(404).json({ message: 'Lượt làm bài không tồn tại' });
-    //     }
-    //     res.json(luotLamBai);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from getLuotLamBaiById' });
-};
+    const whereClause = {
+        ...(search.trim() && {
+            [Op.or]: [
+                { studentId: { [Op.like]: `%${search}%` } },
+                { examId: { [Op.like]: `%${search}%` } },
+                { startTime: { [Op.like]: `%${search}%` } },
+                { endTime: { [Op.like]: `%${search}%` } },
+                { score: { [Op.like]: `%${search}%` } },
+            ],
+        }),
+    }
 
-// Lấy danh sách lượt làm bài theo id đề thi
-// GET http://localhost:3000/api/luot-lam-bai/de/:ma_de
-export const getLuotLamBaiByDeId = async (req, res) => {
-    // Ví dụ sử dụng model LuotLamBai và mối quan hệ với De (nếu có)
-    //   try {
-    //     const luotLamBaiList = await LuotLamBai.findAll({
-    //       where: { ma_de: req.params.ma_de }
-    //     });
-    //     res.json(luotLamBaiList);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: `Hello from getLuotLamBaiByDeId, ma_de: ${req.params.ma_de}` });
-};
+    const { rows: attempts, count: total } = await db.StudentExamAttempt.findAndCountAll({
+        where: whereClause,
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+    })
 
-// Thêm một lượt làm bài mới
-// POST http://localhost:3000/api/luot-lam-bai
-export const postLuotLamBai = async (req, res) => {
-    // Ví dụ sử dụng model LuotLamBai (nếu có)
-    //   try {
-    //     const luotLamBai = await LuotLamBai.create(req.body);
-    //     res.status(201).json(luotLamBai);
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(201).json({ message: 'Hello from postLuotLamBai' });
-};
+    return res.status(200).json({
+        message: '✅ Lấy danh sách lượt làm bài thành công!',
+        data: attempts,
+        currentPage: page,
+        totalPages: Math.ceil(total / limit),
+        totalItems: total,
+    })
 
-// Cập nhật thông tin một lượt làm bài
-// PUT http://localhost:3000/api/luot-lam-bai/:id
-export const putLuotLamBai = async (req, res) => {
-    // Ví dụ sử dụng model LuotLamBai (nếu có)
-    //   try {
-    //     const [updated] = await LuotLamBai.update(req.body, {
-    //       where: { id: req.params.id }
-    //     });
-    //     if (updated) {
-    //       const updatedLuotLamBai = await LuotLamBai.findByPk(req.params.id);
-    //       return res.status(200).json(updatedLuotLamBai);
-    //     }
-    //     throw new Error('Lượt làm bài không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from putLuotLamBai' });
-};
+}
 
-// Xóa một lượt làm bài theo id
-// DELETE http://localhost:3000/api/luot-lam-bai/:id
-export const deleteLuotLamBai = async (req, res) => {
-    // Ví dụ sử dụng model LuotLamBai (nếu có)
-    //   try {
-    //     const deleted = await LuotLamBai.destroy({
-    //       where: { id: req.params.id }
-    //     });
-    //     if (deleted) {
-    //       return res.status(200).json({ message: 'Lượt làm bài đã được xóa thành công' });
-    //     }
-    //     throw new Error('Lượt làm bài không tồn tại');
-    //   } catch (error) {
-    //     res.status(500).json({ message: error.message });
-    //   }
-    res.status(200).json({ message: 'Hello from deleteLuotLamBai' });
-};
+export const getAttemptById = async (req, res) => {
+    const { id } = req.params
+    const attempt = await db.StudentExamAttempt.findByPk(id)
+
+    if (!attempt) {
+        return res.status(404).json({ message: '❌ Không tìm thấy lượt làm bài.' })
+    }
+
+    return res.status(200).json({ message: '✅ Lấy chi tiết lượt làm bài thành công!', data: attempt })
+}
+
+export const getAttemptByExamId = async (req, res) => {
+    const { examId } = req.params
+    const attempts = await db.StudentExamAttempt.findAll({
+        where: { examId },
+        order: [['createdAt', 'DESC']],
+    })
+
+    return res.status(200).json({
+        message: '✅ Lấy danh sách lượt làm bài theo mã đề thành công!',
+        data: attempts,
+    })
+
+}
+
+export const postAttempt = async (req, res) => {
+    const studentId = req.user.id
+    const { examId } = req.body
+    const newAttempt = await db.StudentExamAttempt.create({
+        studentId,
+        examId,
+        startTime: new Date(),
+        endTime: null,
+        score: null,
+    })
+    return res.status(201).json({ message: '✅ Thêm lượt làm bài thành công!', data: newAttempt })
+}
+
+export const putAttempt = async (req, res) => {
+    return res.status(200).json({ message: '🔧 Chức năng đang phát triển!' })
+}
+
+export const deleteAttempt = async (req, res) => {
+    const { id } = req.params
+    const attempt = await db.StudentExamAttempt.findByPk(id)
+
+    if (!attempt) {
+        return res.status(404).json({ message: '❌ Không tìm thấy lượt làm bài để xóa.' })
+    }
+
+    await attempt.destroy()
+
+    return res.status(200).json({ message: '✅ Xóa lượt làm bài thành công!' })
+}

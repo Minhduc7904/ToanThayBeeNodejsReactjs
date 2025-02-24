@@ -5,4 +5,4 @@ const StudentClassStatus = {
     JOINED: "JS",
 }
 
-export default StudentClassStatus;
+export default StudentClassStatus

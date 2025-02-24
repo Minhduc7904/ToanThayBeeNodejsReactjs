@@ -1,4 +1,4 @@
-'use strict';
+'use strict'
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
   async up(queryInterface, Sequelize) {
@@ -38,9 +38,9 @@ module.exports = {
       score: {
         type: Sequelize.FLOAT
       },
-    });
+    })
   },
   async down(queryInterface, Sequelize) {
-    await queryInterface.dropTable('studentExamAttempt');
+    await queryInterface.dropTable('studentExamAttempt')
   }
-};
+}

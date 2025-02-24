@@ -1,7 +1,7 @@
-'use strict';
+'use strict'
 const {
   Model
-} = require('sequelize');
+} = require('sequelize')
 module.exports = (sequelize, DataTypes) => {
   class Slide extends Model {
     /**
@@ -10,7 +10,7 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Slide.hasMany(models.SlideImage, { foreignKey: "slideId", onDelete: "CASCADE" });
+      Slide.hasMany(models.SlideImage, { foreignKey: "slideId", onDelete: "CASCADE" })
     }
   }
   Slide.init({
@@ -20,6 +20,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Slide',
     tableName: 'slides'
-  });
-  return Slide;
-};
+  })
+  return Slide
+}
