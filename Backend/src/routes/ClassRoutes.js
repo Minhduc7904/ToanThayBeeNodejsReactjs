@@ -7,10 +7,8 @@ import UserType from '../constants/UserType.js'
 import { requireRoles } from '../middlewares/jwtMiddleware.js'
 import * as ClassController from '../controllers/ClassController.js'
 
-
 const router = express.Router()
 
-// bách
 router.get('/v1/user/class', 
     requireRoles([]),
     asyncHandler(ClassController.getPublicClass)
