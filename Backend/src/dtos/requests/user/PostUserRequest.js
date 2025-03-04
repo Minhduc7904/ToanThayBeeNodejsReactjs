@@ -2,7 +2,7 @@ import Joi from "joi"
 
 class PostUserRequest {
     constructor(data) {
-        this.middleName = data.middleName
+        this.lastName = data.lastName
         this.firstName = data.firstName
         this.username = data.username
         this.password = data.password
@@ -20,16 +20,16 @@ class PostUserRequest {
 
     static validate(data) {
         const schema = Joi.object({
-            middleName: Joi.string().max(50).required(),
+            lastName: Joi.string().max(50).required(),
             firstName: Joi.string().max(50).required(),
             username: Joi.string().min(3).max(30).optional(),
             password: Joi.string().min(6).max(50).optional(),
             gender: Joi.boolean().required(),
             birthDate: Joi.date().less("now").required(),
-            phone: Joi.string().pattern(/^[0-9]{10,15}$/).optional(),
+            phone: Joi.alternatives().try(Joi.string().pattern(/^[0-9]{10,15}$/), Joi.allow(null)).optional(),
             highSchool: Joi.string().max(100).required(),
             class: Joi.string().max(50).required(),
-            email: Joi.string().email().optional(),
+            email: Joi.alternatives().try(Joi.string().email(), Joi.allow(null)).optional(),
             graduationYear: Joi.number().integer().min(1900).max(new Date().getFullYear()).optional(),
             highSchoolScore: Joi.number().min(0).max(10).optional(),
             university: Joi.string().max(100).optional().allow(''),

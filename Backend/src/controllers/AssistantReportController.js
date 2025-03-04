@@ -14,8 +14,8 @@ export const getAssistantReport = async (req, res) => {
         ? {
             [Op.or]: [
                 { content: { [Op.like]: `%${search}%` } },
-                literal(`CONCAT(user.middleName, ' ', user.firstName) LIKE '%${search}%'`),
-                literal(`CONCAT(assistant.middleName, ' ', assistant.firstName) LIKE '%${search}%'`),
+                literal(`CONCAT(user.lastName, ' ', user.firstName) LIKE '%${search}%'`),
+                literal(`CONCAT(assistant.lastName, ' ', assistant.firstName) LIKE '%${search}%'`),
             ],
         }
         : {}
@@ -26,12 +26,12 @@ export const getAssistantReport = async (req, res) => {
             {
                 model: db.User,
                 as: 'user',
-                attributes: ['id', 'middleName', 'firstName'], // ✅ Lấy tên người dùng
+                attributes: ['id', 'lastName', 'firstName'], // ✅ Lấy tên người dùng
             },
             {
                 model: db.User,
                 as: 'assistant',
-                attributes: ['id', 'middleName', 'firstName'], // ✅ Lấy tên trợ lý
+                attributes: ['id', 'lastName', 'firstName'], // ✅ Lấy tên trợ lý
             },
         ],
         limit,

@@ -1,28 +1,32 @@
+// index.js
 import express from 'express'
 import cors from 'cors'
 import dotenv from 'dotenv'
-import { AppRoute } from './routes/AppRoute'
+import cookieParser from "cookie-parser"
+import { AppRoute } from './routes/AppRoute.js'
 import db from "./models"
 import os from "os"
 import path from "path"
-// import cookieParser from "cookie-parser"
 dotenv.config()
 
 const app = express()
 const port = process.env.PORT || 3000
 const hostname = process.env.HOSTNAME
-const frontendUrl = process.env.FRONTEND_URL || "http://localhost:3001" 
+const frontendUrl = process.env.FRONTEND_URL || "http://localhost:4000" 
 
 app.use("/images", express.static(path.join(__dirname, "public")))
 
-// app.use(cookieParser())
-// app.use(cors({
-//     origin: frontendUrl,
-//     credentials: true,
-// }))
+// Kích hoạt cookieParser
+app.use(cookieParser())
+
+// Cấu hình CORS cho phép gửi cookie kèm theo
+app.use(cors({
+    origin: frontendUrl,
+    credentials: true,
+}))
 
 app.use(express.json())
-express.urlencoded({ extended: true })
+app.use(express.urlencoded({ extended: true }))
 
 app.get("/healthcheck", async (req, res) => {
     try {

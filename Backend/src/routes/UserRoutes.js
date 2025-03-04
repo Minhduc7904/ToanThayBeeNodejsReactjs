@@ -35,6 +35,7 @@ router.get('/v1/admin/user',
     asyncHandler(UserController.getAllUsers)
 )
 
+// Route lấy tất cả người dùng theo class
 router.get('/v1/admin/user/class/:classId', 
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(UserController.getUsersByClass)

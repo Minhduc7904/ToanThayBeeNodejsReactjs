@@ -56,40 +56,47 @@ export const registerUser = async (req, res) => {
 }
 
 export const login = async (req, res) => {
-    const { username, email, password } = req.body
+    const { username, email, password } = req.body;
 
     if ((!username && !email) || !password) {
-        return res.status(400).json({ message: 'Vui lòng nhập tài khoản và mật khẩu' })
+        return res.status(400).json({ message: 'Vui lòng nhập tài khoản và mật khẩu' });
     }
+
     const user = await db.User.findOne({
         where: username ? { username } : { email },
-    })
+    });
     if (!user) {
-        return res.status(404).json({ message: 'Tài khoản không tồn tại' })
+        return res.status(404).json({ message: 'Tài khoản không tồn tại' });
     }
 
-    const isMatch = await bcrypt.compare(password, user.password)
+    const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({ message: 'Mật khẩu không đúng' })
+        return res.status(401).json({ message: 'Mật khẩu không đúng' });
     }
 
+    // Tạo token với JWT
     const token = jwt.sign(
-        {
-            id: user.id,
-        },
+        { id: user.id },
         process.env.JWT_SECRET,
         { expiresIn: process.env.JWT_EXPIRES_IN || '30d' }
-    )
+    );
 
-    await db.User.update({ currentToken: token }, { where: { id: user.id } })
+    // Cập nhật token hiện tại cho user trong database
+    await db.User.update({ currentToken: token }, { where: { id: user.id } });
+
+    // Set token vào HttpOnly cookie
+    res.cookie('token', token, {
+        httpOnly: true, // Không cho phép truy cập từ JS phía client
+        secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS ở production
+        sameSite: 'strict',
+        maxAge: 2592000000, // 30 ngày (30 * 24 * 60 * 60 * 1000 ms)
+    });
 
     return res.status(200).json({
         message: 'Đăng nhập thành công',
-        token,
         user: new UserResponse(user),
-        // user
-    })
-}
+    });
+};
 
 export const updateUserInfo = async (req, res) => {
     const user = req.user
@@ -152,10 +159,18 @@ export const logout = async (req, res) => {
         return res.status(401).json({ message: 'Không xác định được người dùng.' })
     }
 
+    // Cập nhật currentToken của người dùng trong DB thành null
     await db.User.update(
         { currentToken: null },
         { where: { id: user.id } }
     )
+
+    // Xoá cookie chứa token khỏi trình duyệt
+    res.clearCookie('token', {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production', // chỉ áp dụng HTTPS ở môi trường production
+        sameSite: 'strict',
+    })
 
     return res.status(200).json({ message: 'Đăng xuất thành công.' })
 }
@@ -249,7 +264,7 @@ export const getAllUsers = async (req, res) => {
     if (search.trim() !== '') {
         whereClause = {
             [Op.or]: [
-                { middleName: { [Op.like]: `%${search}%` } },
+                { lastName: { [Op.like]: `%${search}%` } },
                 { firstName: { [Op.like]: `%${search}%` } },
                 { userType: { [Op.like]: `%${search}%` } },
                 { birthDate: { [Op.like]: `%${search}%` } },

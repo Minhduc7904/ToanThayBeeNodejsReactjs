@@ -14,7 +14,7 @@ export const getQuestionReport = async (req, res) => {
         ? {
             [Op.or]: [
                 { content: { [Op.like]: `%${search}%` } },
-                literal(`CONCAT(user.middleName, ' ', user.firstName) LIKE '%${search}%'`),
+                literal(`CONCAT(user.lastName, ' ', user.firstName) LIKE '%${search}%'`),
                 literal(`question.content LIKE '%${search}%'`),
             ],
         }
@@ -26,7 +26,7 @@ export const getQuestionReport = async (req, res) => {
             {
                 model: db.User,
                 as: 'user',
-                attributes: ['id', 'middleName', 'firstName'], 
+                attributes: ['id', 'lastName', 'firstName'], 
             },
             {
                 model: db.Question,
@@ -51,7 +51,7 @@ export const getQuestionReport = async (req, res) => {
 export const getQuestionReportById = async (req, res) => {
     const report = await QuestionReport.findByPk(req.params.id, {
         include: [
-            { model: db.User, as: 'user', attributes: ['id', 'middleName', 'firstName'] },
+            { model: db.User, as: 'user', attributes: ['id', 'lastName', 'firstName'] },
             { model: db.Question, as: 'question', attributes: ['id', 'content'] },
         ],
     })

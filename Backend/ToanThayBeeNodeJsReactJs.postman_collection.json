@@ -1721,7 +1721,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"middleName\": \"Minh\",\r\n        \"firstName\": \"Đức\",\r\n        \"username\": \"minhduc7905\",\r\n        \"password\": \"070904\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2004-07-09\",\r\n        \"highSchool\": \"asdfasdf\",\r\n        \"class\" : \"l12\"\r\n    }",
+							"raw": "{\r\n        \"lastName\": \"Minh\",\r\n        \"firstName\": \"Đức\",\r\n        \"username\": \"minhduc7905\",\r\n        \"password\": \"070904\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2004-07-09\",\r\n        \"highSchool\": \"asdfasdf\",\r\n        \"class\" : \"l12\"\r\n    }",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -1748,7 +1748,7 @@
 						"header": [],
 						"body": {
 							"mode": "raw",
-							"raw": "{\r\n        \"middleName\": \"Kiasdfam\",\r\n        \"firstName\": \"Lan\",\r\n        \"email\": \"adsafasdf@gmail.com\",\r\n        \"password\": \"lansecurepass\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2006-03-05\",\r\n        \"highSchool\": \"asdfasdf\",\r\n        \"class\" : \"l12\"\r\n    }",
+							"raw": "{\r\n        \"lastName\": \"Kiasdfam\",\r\n        \"firstName\": \"Lan\",\r\n        \"email\": \"adsafasdf@gmail.com\",\r\n        \"password\": \"lansecurepass\",\r\n        \"gender\": true,\r\n        \"birthDate\": \"2006-03-05\",\r\n        \"highSchool\": \"asdfasdf\",\r\n        \"class\" : \"l12\"\r\n    }",
 							"options": {
 								"raw": {
 									"language": "json"

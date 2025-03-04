@@ -2,7 +2,7 @@ import Joi from "joi"
 
 class PutUserRequest {
     constructor(data) {
-        this.middleName = data.middleName
+        this.lastName = data.lastName
         this.firstName = data.firstName
         this.gender = data.gender
         this.birthDate = data.birthDate
@@ -18,7 +18,7 @@ class PutUserRequest {
 
     static validate(data) {
         const schema = Joi.object({
-            middleName: Joi.string().max(50).optional(),
+            lastName: Joi.string().max(50).optional(),
             firstName: Joi.string().max(50).optional(),
             gender: Joi.boolean().optional(),
             birthDate: Joi.date().less("now").optional(),

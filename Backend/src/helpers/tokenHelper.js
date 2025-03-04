@@ -1,15 +1,16 @@
+// tokenHelper.js
 import jwt from 'jsonwebtoken'
 import db from '../models'
 import { UserStatus } from '../constants/UserStatus'
-const dotenv = require('dotenv')
+import dotenv from 'dotenv'
 dotenv.config()
 
 /**
- * 🔒 Lấy token từ header "Authorization" và xác thực
+ * 🔒 Lấy token từ cookie và xác thực
  */
 const authenticateToken = async (req, res, next) => {
-    const authHeader = req.headers['authorization']
-    const token = authHeader && authHeader.split(' ')[1] // Format: Bearer <token>
+    // Lấy token từ cookie có tên "token"
+    const token = req.cookies.token
 
     if (!token) {
         return res.status(401).json({ message: 'Token không được cung cấp' })
@@ -28,10 +29,6 @@ const authenticateToken = async (req, res, next) => {
                 message: 'Phiên đăng nhập không hợp lệ hoặc đã bị đăng xuất.'
             })
         }
-
-        // if (user.status === UserStatus.BLOCKED) {
-        //     return res.status(403).json({ message: 'Tài khoản đã bị khóa' })
-        // }
 
         req.user = user // Gắn user vào request để các middleware sau có thể dùng
         next()

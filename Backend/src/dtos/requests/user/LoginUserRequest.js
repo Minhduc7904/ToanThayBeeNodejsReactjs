@@ -9,9 +9,9 @@ class LoginUserRequest {
 
     static validate(data) {
         const schema = Joi.object({
-            email: Joi.string().email().optional(),
-            username: Joi.string().min(3).max(30).optional(),
-            password: Joi.string().min(6).max(50).optional(),
+            email: Joi.string().email().optional().allow(''),
+            username: Joi.string().min(3).max(30).optional().allow(''),
+            password: Joi.string().min(6).max(50).optional().allow(''),
         })
 
         return schema.validate(data)
