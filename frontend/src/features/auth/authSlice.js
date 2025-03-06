@@ -1,92 +1,125 @@
-// src/features/auth/authSlice.js
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
-import { loginAPI, registerAPI, logoutAPI } from '../../services/authApi.js';
+import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import { loginAPI, registerAPI, logoutAPI, checkLoginAPI } from "../../services/authApi.js";
 
 // Thunk đăng nhập
 export const login = createAsyncThunk(
-    'auth/login',
+    "auth/login",
     async (credentials, { rejectWithValue }) => {
         try {
             const response = await loginAPI(credentials);
-            // Giả sử API trả về: { user } và server đã set HttpOnly cookie chứa token
-            const { user } = response.data;
+            const { user } = response.data; // API trả về { user }
             return user;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return rejectWithValue(error.response?.data || "Đăng nhập thất bại");
+        }
+    }
+);
+
+// Thunk kiểm tra đăng nhập
+export const checkLogin = createAsyncThunk(
+    "auth/checkLogin",
+    async (_, { rejectWithValue }) => {
+        try {
+            const response = await checkLoginAPI();
+            return response.data.user; // API trả về { user }
+        } catch (error) {
+            return rejectWithValue(error.response?.data || "Không thể xác thực");
         }
     }
 );
 
 // Thunk đăng ký
 export const register = createAsyncThunk(
-    'auth/register',
+    "auth/register",
     async (userData, { rejectWithValue }) => {
         try {
             const response = await registerAPI(userData);
-            // Giả sử API trả về: { user } và server set cookie
             const { user } = response.data;
             return user;
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return rejectWithValue(error.response?.data || "Đăng ký thất bại");
         }
     }
 );
 
 // Thunk đăng xuất
 export const logout = createAsyncThunk(
-    'auth/logout',
+    "auth/logout",
     async (_, { rejectWithValue }) => {
         try {
             await logoutAPI();
-            return; // Không cần trả về gì, chỉ clear state
+            return; // Chỉ cần xóa user khỏi state
         } catch (error) {
-            return rejectWithValue(error.response.data);
+            return rejectWithValue(error.response?.data || "Đăng xuất thất bại");
         }
     }
 );
 
 const authSlice = createSlice({
-    name: 'auth',
+    name: "auth",
     initialState: {
         user: null,
-        loading: false,
+        loading: false, // Mặc định loading để checkLogin chạy
         error: null,
+        isChecking: true, // Dùng để biết lần đầu checkLogin có đang chạy không
+
     },
     reducers: {
-        // Có thể bổ sung các reducer đồng bộ nếu cần
+
     },
     extraReducers: (builder) => {
-        // Xử lý login
-        builder.addCase(login.pending, (state) => {
-            state.loading = true;
-            state.error = null;
-        });
-        builder.addCase(login.fulfilled, (state, action) => {
+        builder
+            // Xử lý login
+            .addCase(login.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+                state.isChecking = false;
+            })
+            .addCase(login.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+            })
+            .addCase(login.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload;
+            })
+
+            // Xử lý checkLogin
+            .addCase(checkLogin.pending, (state) => {
+                state.loading = true;
+                state.isChecking = true;
+            })
+            .addCase(checkLogin.fulfilled, (state, action) => {
+                state.loading = false;
+                state.isChecking = false; // Chỉ set false khi API hoàn tất
+                state.user = action.payload;
+            })
+            .addCase(checkLogin.rejected, (state) => {
+                state.loading = false;
+                state.isChecking = false;
+                state.user = null;
+            })
+
+            // Xử lý register
+            .addCase(register.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+        .addCase(register.fulfilled, (state, action) => {
             state.loading = false;
             state.user = action.payload;
-        });
-        builder.addCase(login.rejected, (state, action) => {
+        })
+        .addCase(register.rejected, (state, action) => {
             state.loading = false;
             state.error = action.payload;
-        });
-        // Xử lý register
-        builder.addCase(register.pending, (state) => {
-            state.loading = true;
-            state.error = null;
-        });
-        builder.addCase(register.fulfilled, (state, action) => {
-            state.loading = false;
-            state.user = action.payload;
-        });
-        builder.addCase(register.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-        });
+        })
+
         // Xử lý logout
-        builder.addCase(logout.fulfilled, (state) => {
+        .addCase(logout.fulfilled, (state) => {
             state.user = null;
         });
-    },
+},
 });
 
+export const { resetAuthState } = authSlice.actions;
 export default authSlice.reducer;

@@ -1,18 +1,21 @@
-import checkBoxChecked from "../../assets/icons/Group.svg";
-import checkBoxUnchecked from "../../assets/icons/Checkbox.svg";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import checkBoxUnchecked from "../../assets/icons/Group.svg";
+import checkBoxChecked from "../../assets/icons/Checkbox.svg";
 
-export const AuthCheckbox = ({ check = () => { }, cancel = () => { } }) => {
-    const [isChecked, setIsChecked] = useState(false);
+export const AuthCheckbox = () => {
+    // ✅ Thêm state để theo dõi trạng thái
+    const [isChecked, setIsChecked] = useState(localStorage.getItem("rememberMe") === "true");
 
+    // ✅ Cập nhật `isChecked` khi component mount
+    useEffect(() => {
+        setIsChecked(localStorage.getItem("rememberMe") === "true");
+    }, []);
+
+    // ✅ Khi click vào checkbox, cập nhật state & localStorage
     const handleClick = () => {
-        if (!isChecked) {
-            check();
-        }
-        else {
-            cancel();
-        }
-        setIsChecked(!isChecked);
+        const newChecked = !isChecked;
+        setIsChecked(newChecked);
+        localStorage.setItem("rememberMe", newChecked.toString());
     };
 
     return (

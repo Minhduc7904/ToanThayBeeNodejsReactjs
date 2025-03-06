@@ -98,6 +98,42 @@ export const login = async (req, res) => {
     });
 };
 
+export const checkLogin = async (req, res) => {
+    try {
+        // Lấy token từ cookie
+        const token = req.cookies.token;
+        if (!token) {
+            return res.status(401).json({ message: 'Chưa đăng nhập' });
+        }
+
+        // Giải mã token
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+
+        // Tìm user trong database
+        const user = await db.User.findOne({
+            where: { id: decoded.id },
+            attributes: ['id', 'lastName', 'firstName', 'email', 'userType'], // Lấy các thông tin cần thiết
+        });
+
+        if (!user) {
+            return res.status(404).json({ message: 'Người dùng không tồn tại' });
+        }
+
+        return res.status(200).json({
+            message: 'Người dùng đã đăng nhập',
+            user: {
+                id: user.id,
+                lastName: user.lastName,
+                firstName: user.firstName,
+                email: user.email,
+                userType: user.userType, // Trả về userType
+            },
+        });
+    } catch (error) {
+        return res.status(403).json({ message: 'Phiên đăng nhập không hợp lệ', error: error.message });
+    }
+};
+
 export const updateUserInfo = async (req, res) => {
     const user = req.user
     const forbiddenFields = ['username', 'password', 'userType', 'status', 'avatarUrl']

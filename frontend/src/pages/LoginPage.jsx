@@ -1,5 +1,5 @@
 // src/pages/LoginPage.jsx
-import { useState } from 'react';
+import { use, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
@@ -7,13 +7,17 @@ import AuthLayout from '../layouts/AuthLayout';
 import Input from '../components/input/InputForAuthPage';
 import Button from '../components/button/ButtonForAuthPage';
 import GoogleLoginButton from '../components/button/GoogleLoginButton';
+import LoadingSpinner from '../components/loading/LoadingSpinner';
 import { AuthCheckbox } from '../components/checkBox/AuthCheckbox';
 
 export default function LoginPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const { loading, error } = useSelector((state) => state.auth);
-    const [formData, setFormData] = useState({ email: '', password: '' });
+    const [formData, setFormData] = useState({
+        username: localStorage.getItem("savedUsername") || "",
+        password: "",
+    });
 
     const handleChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -22,10 +26,21 @@ export default function LoginPage() {
         alert('Đang phát triển');
     };
 
+    const handleCheckboxChange = () => {
+        const rememberMe = localStorage.getItem('rememberMe') === "true"; // Chuyển thành boolean
+        localStorage.setItem('rememberMe', (!rememberMe).toString()); // Lưu ngược lại giá trị trước đó
+    };
+
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         const resultAction = await dispatch(login(formData));
         if (login.fulfilled.match(resultAction)) {
+            if (localStorage.getItem('rememberMe') === "true") {
+                localStorage.setItem("savedUsername", formData.username);
+            } else {
+                localStorage.removeItem("savedUsername");
+            }
             navigate('/dashboard');
         }
     };
@@ -87,9 +102,7 @@ export default function LoginPage() {
                 {/* Nút Đăng nhập & liên kết */}
                 <div className="flex flex-col gap-4">
                     <Button type="submit" disabled={loading} variant="secondary" className="w-full">
-                        <p className="text-center text-white text-lg font-normal font-bevietnam">
-                            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
-                        </p>
+                        {loading ? <LoadingSpinner size="1.5rem" color="border-white" /> : "Đăng nhập"}
                     </Button>
                     {error && (
                         <p className="text-red-500 text-center text-base font-bevietnam">
@@ -100,7 +113,7 @@ export default function LoginPage() {
                     <div className="flex flex-row justify-between text-center">
                         <div>
                             <span className="text-[#666666] text-base font-normal font-bevietnam">
-                                Không có tài khoản? {" "}	
+                                Không có tài khoản? {" "}
                             </span>
                             <Link
                                 to="/register"

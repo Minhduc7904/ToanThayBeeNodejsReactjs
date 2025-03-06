@@ -24,6 +24,10 @@ router.post('/v1/user/login',
     asyncHandler(UserController.login)
 )
 
+router.get('/v1/user/check-login',
+    UserController.checkLogin
+)
+
 router.post('/v1/user/logout', 
     requireRoles([]), 
     UserController.logout

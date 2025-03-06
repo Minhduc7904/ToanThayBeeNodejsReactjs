@@ -1,7 +1,6 @@
 import Logo from '../../assets/icons/logo 1.svg';
 
-
-export const BeeMathLogo = ( {className = ""}  ) => {
+export const BeeMathLogo = ( {className = ""} ) => {
     return (
         <div className={`${className}`}>
             <img
@@ -12,3 +11,4 @@ export const BeeMathLogo = ( {className = ""}  ) => {
         </div>
     )
 }
+
