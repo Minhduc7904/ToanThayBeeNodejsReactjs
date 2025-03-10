@@ -15,7 +15,7 @@ import { ErrorRequest } from '../components/error/errorRequest';
 export default function RegisterPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error } = useSelector(state => state.auth);
+    const { loading, errorRegister } = useSelector(state => state.auth);
     const [formData, setFormData] = useState({
         lastName: '',
         firstName: '', username: '', password: '',
@@ -153,9 +153,9 @@ export default function RegisterPage() {
                                 Tiếp theo
                             </p>
                         </Button>
-                        {error && (
+                        {errorRegister && (
                             <p className="text-red-500 text-center text-base font-bevietnam">
-                                {error.message || error}
+                                {errorRegister.message || errorRegister}
                             </p>
                         )}
                     </div>
@@ -199,9 +199,9 @@ export default function RegisterPage() {
                                 Mật khẩu không khớp
                             </p>
                         )}
-                        {error && (
+                        {errorRegister && (
                             <p className="text-red-500 text-center text-base font-bevietnam">
-                                {error.message || error}
+                                {errorRegister.message || errorRegister}
                             </p>
                         )}
 

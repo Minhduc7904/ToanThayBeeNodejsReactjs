@@ -19,14 +19,16 @@ router.get('/v1/admin/question/exam/:examId',
     asyncHandler(QuestionController.getQuestionByExamId)
 )
 router.post('/v1/admin/question',
-    validate(PostQuestionRequest),
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    // validate(PostQuestionRequest),
+    
     uploadGoogleImageMiddleware.fields([
         { name: 'questionImage', maxCount: 1 },
         { name: 'statementImages', maxCount: 4 }
     ]),
     asyncHandler(QuestionController.postQuestion)
 )
+
 router.put('/v1/admin/question/:id',
     validate(PutQuestionRequest),
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),

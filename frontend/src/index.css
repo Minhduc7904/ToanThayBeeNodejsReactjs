@@ -66,6 +66,41 @@ button {
   margin-bottom: 1rem;
 }
 
+/* Custom toàn bộ scrollbar */
+* {
+  scrollbar-width: thin; /* Firefox: Làm mỏng thanh cuộn */
+  scrollbar-color: #b0b0b0 #f0f0f0; /* Firefox: Màu thumb và track */
+}
+
+/* Custom scrollbar cho Chrome, Edge, Safari */
+::-webkit-scrollbar {
+  width: 5px; /* Độ rộng của thanh cuộn */
+}
+
+/* Phần kéo (thumb) */
+::-webkit-scrollbar-thumb {
+  background-color: #b0b0b0; /* Màu của phần kéo */
+  border-radius: 6px; /* Bo tròn thanh kéo */
+  transition: background 0.3s; /* Hiệu ứng màu khi hover */
+}
+
+/* Khi hover vào thanh kéo */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #909090; /* Màu tối hơn khi hover */
+}
+
+/* Phần nền của thanh cuộn */
+::-webkit-scrollbar-track {
+  background: #f0f0f0; /* Màu nền của thanh cuộn */
+  border-radius: 6px;
+}
+
+/* Ẩn scrollbar khi không cần thiết */
+::-webkit-scrollbar-track-piece {
+  background: transparent;
+}
+
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
   .container {

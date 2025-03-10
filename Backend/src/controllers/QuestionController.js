@@ -4,6 +4,7 @@ import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
 import UserType from "../constants/UserType.js"
 
 export const getQuestion = async (req, res, next) => {
+    const sortOrder = req.query.sortOrder || 'DESC'
     const search = req.query.search || ''
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
@@ -31,9 +32,10 @@ export const getQuestion = async (req, res, next) => {
                 {
                     model: db.Statement,
                     as: 'statements',
-                    attributes: ['content'],
+                    attributes: ['content', 'order', 'isCorrect'],
                 },
             ],
+            order: [['createdAt', sortOrder]],
         }),
         db.Question.count({ where: whereClause }),
     ])

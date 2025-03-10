@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { BeeMathLogo } from "../logo/BeeMathLogo";
-import { toggleCloseSidebar } from "../../features/auth/sidebarSlice";
+import { toggleCloseSidebar } from "../../features/sidebar/sidebarSlice";
 
 const HeaderSidebar = () => {
     const [isHovered, setIsHovered] = useState(false);

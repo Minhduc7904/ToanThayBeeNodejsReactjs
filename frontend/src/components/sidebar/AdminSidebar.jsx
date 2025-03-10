@@ -1,7 +1,7 @@
 import { BeeMathLogo } from '../logo/BeeMathLogo';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useSelector, useDispatch } from 'react-redux';
-import { toggleCloseSidebar, toggleDropdown } from '../../features/auth/sidebarSlice';
+import { toggleCloseSidebar, toggleDropdown } from '../../features/sidebar/sidebarSlice';
 import { logout } from '../../features/auth/authSlice';
 import MenuSidebar from './MenuSidebar';
 import Choice from './Choice';
@@ -65,7 +65,7 @@ const AdminSidebar = () => {
 
 
     return (
-        <div className={`flex flex-col justify-between bg-white ${closeSidebar ? '' : 'w-[18rem]'}  h-full p-[1.25rem] rounded-[34px] shadow-[0px_1px_8px_2px_rgba(20,20,20,0.08)]`}>
+        <div className={`flex flex-col justify-between bg-white ${closeSidebar ? '' : 'w-[18rem]'}  h-full p-[1.25rem]  shadow-[0px_1px_8px_2px_rgba(20,20,20,0.08)]`}>
             <div className="flex-col w-full justify-start items-start gap-5 inline-flex">
                 <HeaderSidebar />
                 <div className="flex flex-col gap-3 w-full">

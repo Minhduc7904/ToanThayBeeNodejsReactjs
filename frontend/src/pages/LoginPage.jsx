@@ -1,5 +1,5 @@
 // src/pages/LoginPage.jsx
-import { use, useState } from 'react';
+import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
@@ -8,12 +8,14 @@ import Input from '../components/input/InputForAuthPage';
 import Button from '../components/button/ButtonForAuthPage';
 import GoogleLoginButton from '../components/button/GoogleLoginButton';
 import LoadingSpinner from '../components/loading/LoadingSpinner';
+import { clearError } from '../features/auth/authSlice';
+import { ErrorRequest } from '../components/error/errorRequest';
 import { AuthCheckbox } from '../components/checkBox/AuthCheckbox';
 
 export default function LoginPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, error } = useSelector((state) => state.auth);
+    const { loading, errorLogin, errorCheckLogin } = useSelector((state) => state.auth);
     const [formData, setFormData] = useState({
         username: localStorage.getItem("savedUsername") || "",
         password: "",
@@ -25,12 +27,6 @@ export default function LoginPage() {
     const handleGoogleLogin = () => {
         alert('Đang phát triển');
     };
-
-    const handleCheckboxChange = () => {
-        const rememberMe = localStorage.getItem('rememberMe') === "true"; // Chuyển thành boolean
-        localStorage.setItem('rememberMe', (!rememberMe).toString()); // Lưu ngược lại giá trị trước đó
-    };
-
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -104,11 +100,6 @@ export default function LoginPage() {
                     <Button type="submit" disabled={loading} variant="secondary" className="w-full">
                         {loading ? <LoadingSpinner size="1.5rem" color="border-white" /> : "Đăng nhập"}
                     </Button>
-                    {error && (
-                        <p className="text-red-500 text-center text-base font-bevietnam">
-                            {error.message || error}
-                        </p>
-                    )}
 
                     <div className="flex flex-row justify-between text-center">
                         <div>
@@ -134,6 +125,18 @@ export default function LoginPage() {
                 {/* Nút Google */}
                 <GoogleLoginButton onClick={handleGoogleLogin} />
             </form>
+            {errorCheckLogin && (
+                <ErrorRequest
+                    formErrors={[errorCheckLogin?.message || "Có lỗi xảy ra"]}
+                    clearErrors={() => dispatch(clearError())}
+                />
+            )}
+            {errorLogin && (
+                <ErrorRequest
+                    formErrors={[errorLogin?.message || "Có lỗi xảy ra"]}
+                    clearErrors={() => dispatch(clearError())}
+                />
+            )}
         </AuthLayout >
     );
 }

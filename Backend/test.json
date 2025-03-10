@@ -10,32 +10,81 @@
         {
             "questionData": {
                 "class": "12",
-                "content": "Nguyên hàm của hàm số \\\\( f(x)=\\\\mathrm{e}^{x} \\\\) là",
+                "content": "Nguyên hàm của hàm số \\\\\\\\\\( f(x)=\\\\\\\\mathrm{e}^{x} \\\\\\\\\\) là",
                 "solutionUrl": "https://example.com/solution",
                 "needImage": false,
                 "typeOfQuestion": "TN"
             },
             "statements": [
-                { "content": "\\\\( \\\\frac{\\\\mathrm{e}^{x+1}}{x+1}+C \\\\).", "isCorrect": false, "needImage": false },
-                { "content": "\\\\( \\\\frac{(\\\\mathrm{e}+1)^{x}}{\\\\mathrm{e}+1}+C \\\\).", "isCorrect": true, "needImage": false },
-                { "content": "\\\\( -\\\\mathrm{e}^{-x}+C \\\\).", "isCorrect": false, "needImage": false },
-                { "content": "\\\\( \\\\mathrm{e}^{x}+C \\\\).", "isCorrect": false, "needImage": false }
+                {
+                    "content": "\\\\\\\\\\( \\\\\\\\frac{\\\\\\\\mathrm{e}^{x+1}}{x+1}+C \\\\\\\\\\).",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "\\\\\\\\\\( \\\\\\\\frac{(\\\\\\\\mathrm{e}+1)^{x}}{\\\\\\\\mathrm{e}+1}+C \\\\\\\\\\).",
+                    "isCorrect": true,
+                    "needImage": false
+                },
+                {
+                    "content": "\\\\\\\\\\( -\\\\\\\\mathrm{e}^{-x}+C \\\\\\\\\\).",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "\\\\\\\\\\( \\\\\\\\mathrm{e}^{x}+C \\\\\\\\\\).",
+                    "isCorrect": false,
+                    "needImage": false
+                }
             ]
         },
         {
             "questionData": {
                 "class": "12",
-                "content": "Hàm số \\\\( F(x)=\\\\cos 3 x \\\\) là một nguyên hàm của hàm số nào dưới đây?",
+                "content": "Hàm số \\\\\\\\\\( F(x)=\\\\\\\\cos 3 x \\\\\\\\\\) là một nguyên hàm của hàm số nào dưới đây?",
                 "solutionUrl": "https://example.com/solution",
                 "needImage": false,
                 "typeOfQuestion": "TN"
             },
             "statements": [
-                { "content": "\\\\( f_{1}(x)=3 \\\\sin 3 x \\\\).", "isCorrect": false, "needImage": false },
-                { "content": "\\\\( f_{2}(x)=\\\\sin x^{2} \\\\).", "isCorrect": true, "needImage": false },
-                { "content": "\\\\( f_{3}(x)=-3 \\\\sin 3 x \\\\).", "isCorrect": false, "needImage": false },
-                { "content": "\\\\( f_{4}(x)=-\\\\frac{1}{3} \\\\sin 3 x \\\\).", "isCorrect": false, "needImage": false }
+                {
+                    "content": "\\\\\\\\\\( f_{1}(x)=3 \\\\\\\\sin 3 x \\\\\\\\\\).",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "\\\\\\\\\\( f_{2}(x)=\\\\\\\\sin x^{2} \\\\\\\\\\).",
+                    "isCorrect": true,
+                    "needImage": false
+                },
+                {
+                    "content": "\\\\\\\\\\( f_{3}(x)=-3 \\\\\\\\sin 3 x \\\\\\\\\\).",
+                    "isCorrect": false,
+                    "needImage": false
+                },
+                {
+                    "content": "\\\\\\\\\\( f_{4}(x)=-\\\\\\\\frac{1}{3} \\\\\\\\sin 3 x \\\\\\\\\\).",
+                    "isCorrect": false,
+                    "needImage": false
+                }
             ]
         }
     ]
 }
+
+{
+    "questionData": {
+        "class": "12",
+        "content": "Một doanh nghiệp dự định sản xuất không quá 500 sản phẩm. Nếu doanh nghiệp sản xuất \\( x \\) sản phẩm \\( (1 \\leq x \\leq 500) \\) thì doanh thu nhận được khi bán hết số sản phẩm đó là \\( F(x)=x^{3}-1999 x^{2}+1001000 x+250000 \\) (đồng), trong khi chi phí sản xuất bình quân cho một sản phẩm lả \\( G(x)=x+1000+\\frac{250000}{x} \\) (âò̀ng). Doanh nghiệp cần sản xuất bao nhiêu sản phẩm để lợi nhuận thu được là lớn nhất?",
+        "solutionUrl": "https://example.com/solution",
+        "typeOfQuestion": "TLN",
+        "correctAnswer": "250"
+    }
+}
+PHÀN III. Thí sinh trả lời từ câu 1 đến câu 6 .
+Câu 1. Cho hình lăng trụ đứng \\( A B C \\cdot A^{\\prime} B^{\\prime} C^{\\prime} \\) có \\( A B=5, B C=6, C A=7 \\). Khoảng cách giữa hai đường thẳng \\( A A^{\\prime} \\) và \\( B C \\) bằng bao nhiêu? (làm tròn kết quả đến hàng phần mười).
+Câu 2. Một trò chơi điện tử quy định như sau: Có 4 trụ \\( A, B, C, D \\) với số lượng các thử thách trên đường đi giữa các cặp trụ được mô tả trong hình bên. Người chơi xuất phát từ một trụ nào đó, đi qua tất cả các trụ còn lại, mỗi khi đi qua một trụu thì trụ đó sẽ bi phá hủy và không thể quay trở lại trụ đó được nữa, nhưng người chơi vẫn phải trở về trụ ban đầu. Tổng số thử thách của đường đi thoả mãn điều kiện trên nhận giá trị nhỏ nhất là bao nhiêu?
+Câu 3. Hệ thống định vị toàn cầu GPS là một hệ thống cho phép xác định vị trí của một vật thể trong không gian. Trong cùng một thời điểm, vị trí của một điểm \\( M \\) trong không gian sẽ được xác định bởi bốn vệ tỉnh cho trước nhờ các bộ thu phát tín hiệu đặt trên các vệ tinh. Giả sử trong không gian với hệ tọa độ \\( O x y z \\), có bốn vệ tinh lần lượt đặt tại các điểm \\( A(3 ; 1 ; 0), B(3 ; 6 ; 6) \\), \\( C(4 ; 6 ; 2), D(6 ; 2 ; 14) \\); vị trí \\( M(a ; b ; c) \\) thỏa mãn \\( M A=3, M B=6, M C=5, M D=13 \\). Khoảng cách từ điểm \\( M \\) đến điểm \\( O \\) bằng bao nhiêu?
+Câu 4. Kiến trúc sư thiết kế một khu sinh hoạt cộng đồng có dạng hình chữ nhật với chiều rộng và chiều dài lần lượt là 60 m và 80 m . Trong đó, phần được tô mảu đậm lả sân chơi, phần còn lại để trồng hoa. Mỗi phần trồng hoa có đường biên cong là một phần của parabol với đỉnh thuộc một trục đối xứng của hình chữ nhật và khoảng cách từ đỉnh đó đến trung điểm cạnh tương ứng của hình chữ nhật bằng 20 m (xem hình minh họa). Diện tích của phần sân chơi là bao nhiêu mét vuông?
+Câu 5. Một doanh nghiệp dự định sản xuất không quá 500 sản phẩm. Nếu doanh nghiệp sản xuất \\( x \\) sản phẩm \\( (1 \\leq x \\leq 500) \\) thì doanh thu nhận được khi bán hết số sản phẩm đó là \\( F(x)=x^{3}-1999 x^{2}+1001000 x+250000 \\) (đồng), trong khi chi phí sản xuất bình quân cho một sản phẩm lả \\( G(x)=x+1000+\\frac{250000}{x} \\) (âò̀ng). Doanh nghiệp cần sản xuất bao nhiêu sản phẩm để lợi nhuận thu được là lớn nhất?
+Câu 6. Có hai chiếc hộp, hộp I có 6 quả bóng màu đỏ và 4 quả bóng màu vàng, hộp II có 7 quả bóng màu đỏ và 3 quả bóng màu vàng, các quả bóng có cùng kích thước và khối lượng. Lấy ngẫu nhiên một quả bóng từ hộp I bỏ vào hộp II. Sau đó, lấy ra ngẫu nhiên một quả bóng từ hộp II. Tính xác suất để quả bóng được lấy ra từ hộp II là quả bóng được chuyển từ hộp I sang, biết rằng quả bóng đó có mảu đỏ (làm tròn kết quả đến hàng phần trăm).

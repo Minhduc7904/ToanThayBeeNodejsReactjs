@@ -1,5 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginAPI, registerAPI, logoutAPI, checkLoginAPI } from "../../services/authApi.js";
+import { act } from "react";
 
 // Thunk đăng nhập
 export const login = createAsyncThunk(
@@ -60,19 +61,24 @@ const authSlice = createSlice({
     initialState: {
         user: null,
         loading: false, // Mặc định loading để checkLogin chạy
-        error: null,
+        errorLogin: null,
+        errorRegister: null,
         isChecking: true, // Dùng để biết lần đầu checkLogin có đang chạy không
-
+        errorCheckLogin: null,
     },
     reducers: {
-
+        clearError: (state) => {
+            state.errorLogin = null;
+            state.errorRegister = null;
+            state.errorCheckLogin = null;
+        }
     },
     extraReducers: (builder) => {
         builder
             // Xử lý login
             .addCase(login.pending, (state) => {
                 state.loading = true;
-                state.error = null;
+                state.errorLogin = null;
                 state.isChecking = false;
             })
             .addCase(login.fulfilled, (state, action) => {
@@ -81,7 +87,7 @@ const authSlice = createSlice({
             })
             .addCase(login.rejected, (state, action) => {
                 state.loading = false;
-                state.error = action.payload;
+                state.errorLogin = action.payload;
             })
 
             // Xử lý checkLogin
@@ -94,32 +100,33 @@ const authSlice = createSlice({
                 state.isChecking = false; // Chỉ set false khi API hoàn tất
                 state.user = action.payload;
             })
-            .addCase(checkLogin.rejected, (state) => {
+            .addCase(checkLogin.rejected, (state, action) => {
                 state.loading = false;
                 state.isChecking = false;
                 state.user = null;
+                state.errorCheckLogin = action.payload;
             })
 
             // Xử lý register
             .addCase(register.pending, (state) => {
                 state.loading = true;
-                state.error = null;
+                state.errorRegister = null;
             })
-        .addCase(register.fulfilled, (state, action) => {
-            state.loading = false;
-            state.user = action.payload;
-        })
-        .addCase(register.rejected, (state, action) => {
-            state.loading = false;
-            state.error = action.payload;
-        })
+            .addCase(register.fulfilled, (state, action) => {
+                state.loading = false;
+                state.user = action.payload;
+            })
+            .addCase(register.rejected, (state, action) => {
+                state.loading = false;
+                state.errorRegister = action.payload;
+            })
 
-        // Xử lý logout
-        .addCase(logout.fulfilled, (state) => {
-            state.user = null;
-        });
-},
+            // Xử lý logout
+            .addCase(logout.fulfilled, (state) => {
+                state.user = null;
+            });
+    },
 });
 
-export const { resetAuthState } = authSlice.actions;
+export const { clearError } = authSlice.actions;
 export default authSlice.reducer;

@@ -18,20 +18,20 @@ const ProtectedRoute = ({ allowedRoles }) => {
     if (isChecking) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <LoadingSpinner color="border-black" size="5rem"/>
+                <LoadingSpinner color="border-black" size="5rem" />
             </div>
-        ) // Chờ checkLogin hoàn tất trước khi quyết định
+        )
     }
 
-if (!user) {
-    return <Navigate to="/login" replace />;
-}
+    if (!user) {
+        return <Navigate to="/login" replace />;
+    }
 
-if (allowedRoles && !allowedRoles.includes(user.userType)) {
-    return <Navigate to="/dashboard" replace />;
-}
+    if (allowedRoles && !allowedRoles.includes(user.userType)) {
+        return <Navigate to="/dashboard" replace />;
+    }
 
-return <Outlet />;
+    return <Outlet />;
 };
 
 export default ProtectedRoute;

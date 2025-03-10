@@ -7,6 +7,7 @@ import UserStatus from "../constants/UserStatus"
 import jwt from "jsonwebtoken"
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from 'firebase/storage'
 import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
+import { Op } from "sequelize"
 
 require('dotenv').config()
 
@@ -66,12 +67,12 @@ export const login = async (req, res) => {
         where: username ? { username } : { email },
     });
     if (!user) {
-        return res.status(404).json({ message: 'Tài khoản không tồn tại' });
+        return res.status(403).json({ message: 'Tài khoản hoặc mật khẩu không đúng' });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-        return res.status(401).json({ message: 'Mật khẩu không đúng' });
+        return res.status(403).json({ message: 'Tài khoản hoặc mật khẩu không đúng' });
     }
 
     // Tạo token với JWT
@@ -112,11 +113,15 @@ export const checkLogin = async (req, res) => {
         // Tìm user trong database
         const user = await db.User.findOne({
             where: { id: decoded.id },
-            attributes: ['id', 'lastName', 'firstName', 'email', 'userType'], // Lấy các thông tin cần thiết
+            attributes: ['id', 'lastName', 'firstName', 'email', 'userType', 'currentToken'], // Lấy các thông tin cần thiết
         });
 
         if (!user) {
             return res.status(404).json({ message: 'Người dùng không tồn tại' });
+        }
+
+        if (user.currentToken !== token) {
+            return res.status(403).json({ message: 'Phiên đăng nhập không hợp lệ' });
         }
 
         return res.status(200).json({
@@ -291,6 +296,7 @@ export const getUserById = async (req, res) => {
 }
 
 export const getAllUsers = async (req, res) => {
+    const sortOrder = req.query.sortOrder || 'DESC'
     const search = req.query.search || ''
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
@@ -303,8 +309,9 @@ export const getAllUsers = async (req, res) => {
                 { lastName: { [Op.like]: `%${search}%` } },
                 { firstName: { [Op.like]: `%${search}%` } },
                 { userType: { [Op.like]: `%${search}%` } },
-                { birthDate: { [Op.like]: `%${search}%` } },
                 { highSchool: { [Op.like]: `%${search}%` } },
+                { phone: { [Op.like]: `%${search}%` } },
+                { email: { [Op.like]: `%${search}%` } },
                 { class: { [Op.like]: `%${search}%` } },
                 { status: { [Op.like]: `%${search}%` } },
                 { graduationYear: { [Op.like]: `%${search}%` } },
@@ -317,21 +324,20 @@ export const getAllUsers = async (req, res) => {
         db.User.findAll({
             where: whereClause,
             offset,
-            limit
+            limit,
+            order: [['createdAt', sortOrder]],
         }),
         db.User.count({
             where: whereClause
         })
     ])
 
-    console.log(userList)
-
     const formattedUsers = userList.map(user => new UserResponse(user))
 
     return res.status(200).json({
         message: 'Danh sách người dùng',
-        // data: formattedUsers,
-        data: userList,
+        data: formattedUsers,
+        // data: userList,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total

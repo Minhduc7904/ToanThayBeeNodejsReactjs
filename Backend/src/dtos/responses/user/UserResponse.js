@@ -15,6 +15,7 @@ class responseUser {
         this.highSchoolScore = user.highSchoolScore
         this.university = user.university
         this.studentClassStatus = status
+        this.createdAt = user.createdAt
     }
 }
 

@@ -22,7 +22,7 @@ function App() {
                 </Route>
 
                 {/* Trang Admin chỉ dành cho người có quyền */}
-                <Route element={<ProtectedRoute allowedRoles={["AD"]} />}>
+                <Route element={<ProtectedRoute allowedRoles={["AD", "AS"]} />}>
                     <Route path="/admin/question-management" element={<QuestionManagement />} />
                     <Route path="/admin/class-management" element={<ClassManagement />} />
                     <Route path="/admin/exam-management" element={<ExamManagement />} />
