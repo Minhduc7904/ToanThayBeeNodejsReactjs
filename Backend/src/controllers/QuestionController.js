@@ -4,7 +4,7 @@ import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
 import UserType from "../constants/UserType.js"
 
 export const getQuestion = async (req, res, next) => {
-    const sortOrder = req.query.sortOrder || 'DESC'
+    const sortOrder = req.query.sortOrder || 'ASC'
     const search = req.query.search || ''
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
@@ -19,6 +19,8 @@ export const getQuestion = async (req, res, next) => {
                 { chapter: { [Op.like]: `%${search}%` } },
                 { difficulty: { [Op.like]: `%${search}%` } },
                 { class: { [Op.like]: `%${search}%` } },
+                { id: { [Op.like]: `%${search}%` } },
+                { description: { [Op.like]: `%${search}%` } },
             ],
         }
     }
@@ -32,7 +34,7 @@ export const getQuestion = async (req, res, next) => {
                 {
                     model: db.Statement,
                     as: 'statements',
-                    attributes: ['content', 'order', 'isCorrect'],
+                    attributes: ['content', 'order', 'isCorrect', 'imageUrl'],
                 },
             ],
             order: [['createdAt', sortOrder]],
@@ -41,7 +43,7 @@ export const getQuestion = async (req, res, next) => {
     ])
 
     return res.status(200).json({
-        message: '✅ Danh sách câu hỏi kèm đáp án',
+        message: 'Lấy danh sách câu hỏi thành công',
         data: questionList,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
@@ -67,11 +69,9 @@ export const getQuestionById = async (req, res) => {
     }
 
     return res.status(200).json({
-        message: '✅ Chi tiết câu hỏi kèm đáp án',
+        message: 'Chi tiết câu hỏi kèm đáp án',
         data: questionDetail,
     })
-
-
 }
 
 export const getQuestionByExamId = async (req, res) => {
@@ -115,6 +115,7 @@ export const postQuestion = async (req, res) => {
     try {
         const { questionData, statementOptions } = JSON.parse(req.body.data)
         const questionImage = req.files?.questionImage?.[0]
+        const solutionImage = req.files?.solutionImage?.[0]
         const statementImages = req.files?.statementImages || []
 
         if (!questionData) {
@@ -124,8 +125,15 @@ export const postQuestion = async (req, res) => {
         const questionImageUrl = await uploadImage(questionImage)
         if (questionImageUrl) uploadedFiles.push(questionImageUrl)
 
+        const solutionImageUrl = await uploadImage(solutionImage)
+        if (solutionImageUrl) uploadedFiles.push(solutionImageUrl)
+
         const newQuestion = await db.Question.create(
-            { ...questionData, imageUrl: questionImageUrl },
+            {
+                ...questionData,
+                imageUrl: questionImageUrl,
+                solutionImageUrl: solutionImageUrl
+            },
             { transaction }
         )
 
@@ -144,8 +152,9 @@ export const postQuestion = async (req, res) => {
                     }
 
                     return db.Statement.create(
-                        { ...statement, 
-                            questionId: newQuestion.id, 
+                        {
+                            ...statement,
+                            questionId: newQuestion.id,
                             imageUrl: statementImageUrl,
                             order: index + 1
                         },
@@ -158,33 +167,105 @@ export const postQuestion = async (req, res) => {
         await transaction.commit()
 
         return res.status(201).json({
-            message: "✅ Thêm câu hỏi thành công!",
+            message: "Thêm câu hỏi thành công!",
             question: newQuestion,
             statements,
         })
 
     } catch (error) {
         await transaction.rollback()
-        await cleanupUploadedFiles(uploadedFiles) 
+        await cleanupUploadedFiles(uploadedFiles)
 
-        console.error("❌ Lỗi khi thêm câu hỏi:", error)
+        console.error("Lỗi khi thêm câu hỏi:", error)
         return res.status(500).json({ message: "Lỗi server", error: error.message })
     }
 }
 
 export const putQuestion = async (req, res) => {
-    const { id } = req.params
-    const [updated] = await db.Question.update(req.body, {
-        where: { id }
-    })
+    const transaction = await db.sequelize.transaction();
+    try {
+        const { id } = req.params;
+        const { questionData, statements } = req.body;
 
-    if (!updated) {
-        return res.status(404).json({ message: 'Câu hỏi không tồn tại' })
+        // Kiểm tra xem câu hỏi có tồn tại không
+        const existingQuestion = await db.Question.findByPk(id, { transaction });
+
+        if (!existingQuestion) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "❌ Câu hỏi không tồn tại!" });
+        }
+
+        // Lọc bỏ các trường không được cập nhật
+        const allowedFields = [
+            "content",
+            "difficulty",
+            "chapter",
+            "class",
+            "description",
+            "correctAnswer",
+            "solution",
+            "solutionUrl",
+        ];
+
+        const updateData = {};
+        allowedFields.forEach((field) => {
+            if (questionData[field] !== undefined) {
+                updateData[field] = questionData[field];
+            }
+        });
+
+        // Cập nhật câu hỏi (Không cập nhật imageUrl, solutionUrl)
+        const [updated] = await db.Question.update(updateData, {
+            where: { id },
+            transaction,
+        });
+
+        if (!updated) {
+            await transaction.rollback();
+            return res.status(500).json({ message: "❌ Lỗi khi cập nhật câu hỏi!" });
+        }
+
+        // Cập nhật danh sách mệnh đề (Không cập nhật imageUrl của statement)
+        if (Array.isArray(statements) && statements.length > 0) {
+            await Promise.all(
+                statements.map(async (statement) => {
+                    const { id: statementId, content, isCorrect, difficulty } = statement;
+
+                    if (!statementId) return;
+
+                    // Chỉ cập nhật các trường được phép
+                    const statementUpdateData = {};
+                    if (content !== undefined) statementUpdateData.content = content;
+                    if (isCorrect !== undefined) statementUpdateData.isCorrect = isCorrect;
+                    if (difficulty !== undefined) statementUpdateData.difficulty = difficulty;
+
+                    await db.Statement.update(statementUpdateData, {
+                        where: { id: statementId, questionId: id },
+                        transaction,
+                    });
+                })
+            );
+        }
+
+        // Commit transaction nếu mọi thứ thành công
+        await transaction.commit();
+
+        // Trả về dữ liệu cập nhật mới
+        const updatedQuestion = await db.Question.findByPk(id, {
+            include: [{ model: db.Statement, as: "statements" }],
+        });
+
+        return res.status(200).json({
+            message: "✅ Cập nhật câu hỏi và mệnh đề thành công!",
+            data: updatedQuestion,
+        });
+    } catch (error) {
+        await transaction.rollback();
+        console.error("❌ Lỗi khi cập nhật câu hỏi:", error);
+        return res.status(500).json({ message: "Lỗi server!", error: error.message });
     }
+};
 
-    const updatedQuestion = await db.Question.findByPk(id)
-    return res.status(200).json({ message: 'Cập nhật câu hỏi thành công', data: updatedQuestion })
-}
 
 export const putQuestionImage = async (req, res) => {
     const transaction = await db.sequelize.transaction()
@@ -200,17 +281,9 @@ export const putQuestionImage = async (req, res) => {
 
         const oldImageUrl = question.imageUrl
         const newImageFile = req.file
-
-        if (!newImageFile) {
-            await transaction.rollback()
-            return res.status(400).json({ message: '❌ Vui lòng chọn ảnh để tải lên.' })
-        }
-
-        const newImageUrl = await uploadImage(newImageFile)
-
-        if (!newImageUrl) {
-            await transaction.rollback()
-            return res.status(500).json({ message: '❌ Lỗi khi tải ảnh mới lên.' })
+        let newImageUrl = null
+        if (newImageFile) {
+            newImageUrl = await uploadImage(newImageFile)
         }
 
         const [updated] = await db.Question.update(
@@ -250,6 +323,64 @@ export const putQuestionImage = async (req, res) => {
         return res.status(500).json({ message: 'Lỗi server.', error: error.message })
     }
 }
+
+export const putQuestionSolutionImage = async (req, res) => {
+    const transaction = await db.sequelize.transaction()
+    const { id } = req.params
+
+    try {
+        const question = await db.Question.findByPk(id, { transaction })
+
+        if (!question) {
+            await transaction.rollback()
+            return res.status(404).json({ message: '❌ Câu hỏi không tồn tại.' })
+        }
+
+        const oldImageUrl = question.solutionImageUrl
+        const newImageFile = req.file
+        let newImageUrl = null
+        if (newImageFile) {
+            newImageUrl = await uploadImage(newImageFile)
+        }
+
+        const [updated] = await db.Question.update(
+            { solutionImageUrl: newImageUrl },
+            { where: { id }, transaction }
+        )
+
+        if (!updated) {
+            await cleanupUploadedFiles([newImageUrl])
+            await transaction.rollback()
+            return res.status(500).json({ message: '❌ Lỗi khi cập nhật ảnh câu hỏi.' })
+        }
+
+        if (oldImageUrl) {
+            try {
+                await cleanupUploadedFiles([oldImageUrl])
+                console.log(`✅ Đã xóa ảnh cũ: ${oldImageUrl}`)
+            } catch (err) {
+                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
+                await cleanupUploadedFiles([newImageUrl])
+                await transaction.rollback()
+                return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message })
+            }
+        }
+
+        await transaction.commit()
+
+        return res.status(200).json({
+            message: '✅ Cập nhật ảnh câu hỏi lời giải thành công.',
+            oldImageUrl,
+            newImageUrl,
+        })
+
+    } catch (error) {
+        console.error('❌ Lỗi khi cập nhật ảnh câu hỏi:', error)
+        await transaction.rollback()
+        return res.status(500).json({ message: 'Lỗi server.', error: error.message })
+    }
+}
+
 
 export const deleteQuestion = async (req, res) => {
     const { id } = req.params

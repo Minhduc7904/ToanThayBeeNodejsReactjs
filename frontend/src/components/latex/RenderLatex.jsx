@@ -2,8 +2,9 @@ import React from "react";
 import "katex/dist/katex.min.css";
 import { BlockMath, InlineMath } from "react-katex";
 
-const LatexRenderer = ({ text }) => {
+const LatexRenderer = ({ text, className = '' }) => {
     // Chuyển đổi `\( ... \)` thành `$ ... $` và `\[ ... \]` thành `$$ ... $$`
+    if (text === null) return null;
     const formattedText = text
         .replace(/\\\(/g, "$") // Thay \( thành $
         .replace(/\\\)/g, "$") // Thay \) thành $
@@ -21,7 +22,7 @@ const LatexRenderer = ({ text }) => {
         }
     });
 
-    return <div className="latex-content">{elements}</div>;
+    return <div className={`${className}`}>{elements}</div>;
 };
 
 export default LatexRenderer;

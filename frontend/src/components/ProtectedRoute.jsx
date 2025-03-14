@@ -11,7 +11,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
 
     useEffect(() => {
         if (!user) {
-            dispatch(checkLogin()); // Chỉ gọi checkLogin khi user chưa tồn tại
+            dispatch(checkLogin());
         }
     }, [dispatch]);
 

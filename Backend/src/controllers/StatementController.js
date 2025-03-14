@@ -1,5 +1,7 @@
-import { Sequelize } from "../models"
-import db from "../models"
+import { Op } from "sequelize"
+import db from "../models/index.js"
+import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
+import UserType from "../constants/UserType.js"
 
 export const getStatementByQuestionId = async (req, res, next) => {
     const { questionId } = req.params
@@ -59,4 +61,61 @@ export const deleteStatement = async (req, res) => {
     }
 
     return res.status(200).json({ message: 'Xóa mệnh đề thành công' })
+}
+
+export const putStatementImage = async (req, res) => {
+    const transaction = await db.sequelize.transaction()
+    const { id } = req.params
+
+    try {
+        const statement = await db.Statement.findByPk(id, { transaction })
+
+        if (!statement) {
+            await transaction.rollback()
+            return res.status(404).json({ message: '❌ Mệnh đề không tồn tại.' })
+        }
+
+        const oldImageUrl = statement.imageUrl
+        const newImageFile = req.file
+        let newImageUrl = null
+        if (newImageFile) {
+            newImageUrl = await uploadImage(newImageFile)
+        }
+
+        const [updated] = await db.Statement.update(
+            { imageUrl: newImageUrl },
+            { where: { id }, transaction }
+        )
+
+        if (!updated) {
+            await cleanupUploadedFiles([newImageUrl])
+            await transaction.rollback()
+            return res.status(500).json({ message: '❌ Lỗi khi cập nhật ảnh mệnh đề.' })
+        }
+
+        if (oldImageUrl) {
+            try {
+                await cleanupUploadedFiles([oldImageUrl])
+                console.log(`✅ Đã xóa ảnh cũ: ${oldImageUrl}`)
+            } catch (err) {
+                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
+                await cleanupUploadedFiles([newImageUrl])
+                await transaction.rollback()
+                return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message })
+            }
+        }
+
+        await transaction.commit()
+
+        return res.status(200).json({
+            message: '✅ Cập nhật ảnh mệnh đề thành công.',
+            oldImageUrl,
+            newImageUrl,
+        })
+
+    } catch (error) {
+        console.error('❌ Lỗi khi cập nhật ảnh mệnh đề:', error)
+        await transaction.rollback()
+        return res.status(500).json({ message: 'Lỗi server.', error: error.message })
+    }
 }

@@ -1,25 +1,17 @@
 import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { resetDetailView, fetchUserById } from "../../features/user/userSlice";
-import { setLoading } from "../../features/user/userSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 
 const UserDetail = () => {
     const dispatch = useDispatch();
-    const { user, loading, selectedUserId } = useSelector((state) => state.users);
+    const { user, selectedUserId } = useSelector((state) => state.users);
     const attributes = ['id', 'lastName', 'firstName', 'userType', 'email', 'phone', 'class', 'highSchool', 'status', 'createdAt'];
     const attributesName = ['ID', 'Họ', 'Tên', 'Loại Người Dùng', 'Email', 'Số Điện Thoại', 'Lớp', 'Trường Học', 'Trạng Thái', 'Ngày tham gia'];
+    const { loading } = useSelector((state) => state.states);
 
     useEffect(() => {
-        dispatch(setLoading(true)); // Bật trạng thái loading trước khi gọi API
-
-        const timer = setTimeout(() => {
-            dispatch(fetchUserById(selectedUserId))
-                .unwrap()
-                .finally(() => dispatch(setLoading(false)));
-        }, 500);
-
-        return () => clearTimeout(timer);
+        dispatch(fetchUserById(selectedUserId))
     }, [dispatch]);
 
     if (loading) {
@@ -53,7 +45,7 @@ const UserDetail = () => {
                         <path d="M12.6667 8.66675L5.50292 15.8289C5.38989 15.94 5.33337 16.0856 5.33337 16.2312M12.6667 23.3334L5.50292 16.6335C5.38989 16.5224 5.33337 16.3768 5.33337 16.2312M5.33337 16.2312H26.6667" stroke="#131214" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </button>
-                <div className="relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose">Chi tiết câu hỏi - 00001</div>
+                <div className="relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose">Chi tiết học sinh - {user.id}</div>
             </div>
             <div className="flex-grow overflow-y-auto">
                 <table className="w-full border-collapse border border-[#E7E7ED]">

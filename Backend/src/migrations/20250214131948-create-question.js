@@ -11,7 +11,12 @@ module.exports = {
       },
       class: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        references: {
+          model: 'allCode',
+          key: 'code'
+        },
+        onUpdate: 'CASCADE'
       },
       content: {
         allowNull: false,
@@ -57,6 +62,9 @@ module.exports = {
         type: Sequelize.TEXT
       },
       imageUrl: {
+        type: Sequelize.TEXT
+      },
+      solutionImageUrl: {
         type: Sequelize.TEXT
       },
       createdAt: {

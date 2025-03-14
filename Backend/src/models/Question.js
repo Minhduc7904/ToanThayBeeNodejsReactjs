@@ -29,7 +29,8 @@ module.exports = (sequelize, DataTypes) => {
     solutionUrl: DataTypes.TEXT,
     imageUrl: DataTypes.TEXT,
     createdAt: DataTypes.DATE,
-    updatedAt: DataTypes.DATE
+    updatedAt: DataTypes.DATE,
+    solutionImageUrl: DataTypes.TEXT,
   }, {
     sequelize,
     modelName: 'Question',

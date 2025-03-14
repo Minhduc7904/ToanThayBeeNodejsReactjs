@@ -1,24 +1,17 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, setLoading, setDetailView } from "../../features/user/userSlice";
+import { fetchUsers, setDetailView } from "../../features/user/userSlice";
 import { setSortOrder } from "../../features/filter/filterSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 
 const UserList = () => {
     const dispatch = useDispatch();
-    const { users, loading, error } = useSelector((state) => state.users);
+    const { users } = useSelector((state) => state.users);
     const { search, currentPage, limit, totalItems, sortOrder } = useSelector(state => state.filter);
+    const { loading } = useSelector(state => state.states);
 
     useEffect(() => {
-        dispatch(setLoading(true)); // Bật trạng thái loading trước khi gọi API
-
-        const timer = setTimeout(() => {
-            dispatch(fetchUsers({ search, currentPage, limit, sortOrder }))
-                .unwrap()
-                .finally(() => dispatch(setLoading(false)));
-        }, 500);
-
-        return () => clearTimeout(timer);
+        dispatch(fetchUsers({ search, currentPage, limit, sortOrder }))
     }, [dispatch, search, currentPage, limit, sortOrder]);
 
     if (loading) return (
@@ -26,11 +19,6 @@ const UserList = () => {
             <LoadingSpinner color="border-black" size="5rem" />
         </div>
     )
-
-    if (error) {
-        const errorMessage = typeof error === "string" ? error : error.message || "Đã xảy ra lỗi";
-        return <p className="text-center text-red-500">Error: {errorMessage}</p>;
-    }
 
     return (
         <div className="flex flex-col gap-4 min-h-0">
@@ -53,9 +41,9 @@ const UserList = () => {
                             >
                                 <path
                                     d="M4 17V7M4 17L1 14M4 17L7 14M12 1V11M12 1L15 4M12 1L9 4"
-                                    stroke-width="2"
-                                    stroke-linecap="round"
-                                    stroke-linejoin="round"
+                                    strokeWidth="2"
+                                    strokeLinecap="round"
+                                    strokeLinejoin="round"
                                 />
                             </svg>
                         </button>

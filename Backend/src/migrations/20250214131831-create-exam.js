@@ -15,7 +15,12 @@ module.exports = {
       },
       class: {
         allowNull: false,
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
+        references: {
+          model: 'allCode',
+          key: 'code'
+        },
+        onUpdate: 'CASCADE'
       },
       typeOfExam: {
         allowNull: false,

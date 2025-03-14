@@ -18,7 +18,6 @@ router.get('/v1/user/exam',
     asyncHandler(ExamController.getExamPublic)
 )
 
-
 router.get('/v1/exam/:id', 
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT, UserType.STUDENT]),
     asyncHandler(ExamController.getExamById)

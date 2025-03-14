@@ -1,66 +1,114 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllQuestionAPI } from "../../services/questionApi";
+import * as questionApi from "../../services/questionApi";
 import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
+import { apiHandler } from "../../utils/apiHandler";
 
 export const fetchQuestions = createAsyncThunk(
     "questions/fetchQuestions",
-    async ({ search, currentPage, limit, sortOrder }, { dispatch, rejectWithValue }) => {
-        try {
-            const response = await getAllQuestionAPI({ search, currentPage, limit, sortOrder });
-            dispatch(setCurrentPage(response.data.currentPage));
-            dispatch(setTotalPages(response.data.totalPages));
-            dispatch(setTotalItems(response.data.totalItems));
-
-            return response.data;
-        } catch (error) {
-            return rejectWithValue(error.response ? error.response.data : error.message);
-        }
+    async ({ search, currentPage, limit, sortOrder }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.getAllQuestionAPI, { search, currentPage, limit, sortOrder }, (data) => {
+            dispatch(setCurrentPage(data.currentPage));
+            dispatch(setTotalPages(data.totalPages));
+            dispatch(setTotalItems(data.totalItems));
+        }, true);
     }
 );
+
+export const fetchQuestionById = createAsyncThunk(
+    "questions/fetchQuestionById",
+    async (id, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id);
+    }
+);
+
+export const postQuestion = createAsyncThunk(
+    "questions/postQuestion",
+    async ({ questionData, statementOptions, questionImage, solutionImage, statementImages }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.postQuestionAPI, { questionData, statementOptions, questionImage, solutionImage, statementImages }, (data) => {
+        }, true, false);
+    }
+);
+
+export const putQuestion = createAsyncThunk(
+    "questions/putQuestion",
+    async ({ questionId, questionData, statements }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.putQuestionAPI, { questionId, questionData, statements }, (data) => {
+        }, true, false);
+    }
+);
+
+export const putImageQuestion = createAsyncThunk(
+    "questions/putImageQuestion",
+    async ({ questionId, questionImage }, { dispatch }) => {
+        const response = await apiHandler(dispatch, questionApi.putImageQuestionAPI, { questionId, questionImage }, (data) => {
+        }, true, false);
+
+        return response;
+    }
+);
+
+export const putImageSolution = createAsyncThunk(
+    "questions/putImageSolution",
+    async ({ questionId, solutionImage }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.putImageSolutionAPI, { questionId, solutionImage }, (data) => {
+        }, true, false);
+    }
+);
+
+export const putStatementImage = createAsyncThunk(
+    "questions/putStatementImage",
+    async ({ statementId, statementImage }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.putStatementImageAPI, { statementId, statementImage }, (data) => {
+        }, true, false);
+    }
+);
+
+export const deleteQuestion = createAsyncThunk(
+    "questions/deleteQuestion",
+    async (questionId, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.deleteQuestionAPI, questionId,()=>{}, true, false);
+    }
+);
+
 
 const questionSlice = createSlice({
     name: "questions",
     initialState: {
         questions: [],
-        loading: false,
-        error: null,
-        isDetailView: localStorage.getItem("isDetailView") === "true",
-        selectedQuestionId: localStorage.getItem("selectedQuestionId") || null,
+        isDetailView: false,
+        selectedQuestionId: null,
+        question: null,
     },
     reducers: {
-        setLoading: (state, action) => {
-            state.loading = action.payload;
-        },
-
         resetDetailView: (state) => {
             state.isDetailView = false;
+            state.question = null;
             state.selectedQuestionId = null;
-            localStorage.removeItem("selectedQuestionId");
-            localStorage.removeItem("isDetailView");
-        },
 
+        },
         setDetailView: (state, action) => {
             state.isDetailView = true;
             state.selectedQuestionId = action.payload;
-            localStorage.setItem("selectedQuestionId", action.payload);
-            localStorage.setItem("isDetailView", true);
         },
+        setQuestion: (state, action) => {
+            state.question = action.payload;
+        }
     },
     extraReducers: (builder) => {
         builder
-            .addCase(fetchQuestions.pending, (state) => {
-                state.loading = true;
-            })
             .addCase(fetchQuestions.fulfilled, (state, action) => {
-                state.loading = false;
-                state.questions = action.payload.data;
+                if (action.payload) {
+                    state.questions = action.payload.data;
+                }
             })
-            .addCase(fetchQuestions.rejected, (state, action) => {
-                state.loading = false;
-                state.error = action.payload;
-            });
-    }
+            .addCase(fetchQuestionById.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.question = action.payload.data;
+                    state.isDetailView = true;
+                }
+            })
+    },
 });
 
-export const { setLoading, resetDetailView, setDetailView } = questionSlice.actions;
+export const { resetDetailView, setDetailView,setQuestion } = questionSlice.actions;
 export default questionSlice.reducer;

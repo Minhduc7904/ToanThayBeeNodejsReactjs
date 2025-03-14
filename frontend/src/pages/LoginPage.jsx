@@ -8,14 +8,12 @@ import Input from '../components/input/InputForAuthPage';
 import Button from '../components/button/ButtonForAuthPage';
 import GoogleLoginButton from '../components/button/GoogleLoginButton';
 import LoadingSpinner from '../components/loading/LoadingSpinner';
-import { clearError } from '../features/auth/authSlice';
-import { ErrorRequest } from '../components/error/errorRequest';
 import { AuthCheckbox } from '../components/checkBox/AuthCheckbox';
 
 export default function LoginPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, errorLogin, errorCheckLogin } = useSelector((state) => state.auth);
+    const { loading } = useSelector((state) => state.auth);
     const [formData, setFormData] = useState({
         username: localStorage.getItem("savedUsername") || "",
         password: "",
@@ -45,7 +43,7 @@ export default function LoginPage() {
         <AuthLayout className={'gap-8'}>
             <form
                 onSubmit={handleSubmit}
-                className="flex flex-col gap-8 w-[30rem] "
+                className="flex flex-col gap-8 w-[30rem]"
             >
                 {/* Tiêu đề */}
                 <div className="w-full font-bevietnam font-medium text-[#333] text-[2rem]">
@@ -125,18 +123,7 @@ export default function LoginPage() {
                 {/* Nút Google */}
                 <GoogleLoginButton onClick={handleGoogleLogin} />
             </form>
-            {errorCheckLogin && (
-                <ErrorRequest
-                    formErrors={[errorCheckLogin?.message || "Có lỗi xảy ra"]}
-                    clearErrors={() => dispatch(clearError())}
-                />
-            )}
-            {errorLogin && (
-                <ErrorRequest
-                    formErrors={[errorLogin?.message || "Có lỗi xảy ra"]}
-                    clearErrors={() => dispatch(clearError())}
-                />
-            )}
+            
         </AuthLayout >
     );
 }

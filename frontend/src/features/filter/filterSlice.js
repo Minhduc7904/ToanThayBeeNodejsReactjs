@@ -6,7 +6,7 @@ const initialState = {
     totalItems: 0,   // Tổng số mục
     limit: 10,       // Giới hạn số mục trên mỗi trang
     search: "",      // Chuỗi tìm kiếm
-    sortOrder: "asc", // Sắp xếp tăng dần hoặc giảm dần
+    sortOrder: "desc", // Sắp xếp tăng dần hoặc giảm dần
     isAddView: false,
     isFilterView: false,
 };

@@ -25,7 +25,7 @@ const QuestionTableRow = ({ question }) => {
     }, []);
 
     return (
-        <td ref={tdRef} className="p-3 relative group">
+        <td ref={tdRef} className="py-3 relative group">
             <div className="relative inline-block">
                 {/* Nội dung rút gọn */}
                 <span className="cursor-pointer">
@@ -33,13 +33,16 @@ const QuestionTableRow = ({ question }) => {
                 </span>
 
                 {/* Tooltip tự động đổi vị trí */}
-                {isLongText && (
+                {(isLongText || question.imageUrl) && (
                     <div
                         className={`absolute left-1/2 -translate-x-1/2 ${tooltipPosition} mt-2 w-full px-4 py-2 bg-black text-white text-sm rounded-md shadow-xl
                             opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 z-50 border border-gray-300`}
                     >
-                        
+
                         <LatexRenderer text={question.content} />
+                        {question.imageUrl && (
+                            <img src={question.imageUrl} alt="image" />
+                        )}
                     </div>
                 )}
             </div>

@@ -21,8 +21,8 @@ const StatementTableRow = ({ statements, prefixStatements }) => {
     }, []);
 
     return (
-        <td ref={tdRef} className="p-3 relative group">
-            <div className="relative inline-block">
+        <td ref={tdRef} className="py-3 relative group w-40">
+            <div className="relative inline-block w-full">
                 {/* Nội dung rút gọn hiển thị */}
                 {statements.map((statement, index) => {
                     const maxLength = 50; // Giới hạn ký tự hiển thị
@@ -30,7 +30,7 @@ const StatementTableRow = ({ statements, prefixStatements }) => {
                     const shortText = isLongText ? statement.content.slice(0, maxLength) + "..." : statement.content;
 
                     return (
-                        <div key={index} className="flex items-center">
+                        <div key={index} className="flex items-center w-full">
                             <p className="font-bold">{prefixStatements[index]}&nbsp;</p>
                             <span className="cursor-pointer">
                                 <LatexRenderer text={shortText} />
@@ -39,15 +39,22 @@ const StatementTableRow = ({ statements, prefixStatements }) => {
                     );
                 })}
 
-                {statements.some(statement => statement.content.length > 50) && (
+                {statements.some(statement => (statement.content.length > 50 || statement.imageUrl)) && (
                     <div
                         className={`absolute left-1/2 -translate-x-1/2 ${tooltipPosition} mt-2 w-full px-4 py-2 bg-black text-white text-sm rounded-md shadow-xl
                             opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 z-50 border border-gray-300`}
                     >
                         {statements.map((statement, index) => (
-                            <div key={index} className="flex items-center">
-                                <p className="font-bold">{prefixStatements[index]}.&nbsp;</p>
-                                <LatexRenderer text={statement.content} />
+                            <div key={index} className="flex flex-col">
+                                <div className="flex items-center">
+                                    <p className="font-bold">{prefixStatements[index]}&nbsp;</p>
+                                    <LatexRenderer text={statement.content} />
+
+                                </div>
+
+                                {statement.imageUrl && (
+                                    <img src={statement.imageUrl} alt="image" />
+                                )}
                             </div>
                         ))}
                     </div>

@@ -1,6 +1,6 @@
 import { Sequelize } from "../models"
 import db from "../models"
-const Op = Sequelize.Op
+import { Op } from "sequelize";
 
 export const getAllCode = async (req, res, next) => {
     const search = req.query.search || ''
@@ -32,6 +32,31 @@ export const getAllCode = async (req, res, next) => {
         totalItems: total
     })
 }
+
+export const getCodeByType = async (req, res) => {
+    const types = req.query.types; // Nhận danh sách types từ query params
+
+    if (!types || !Array.isArray(types) || types.length === 0) {
+        return res.status(400).json({
+            message: "Danh sách types không hợp lệ"
+        });
+    }
+
+    const codes = await db.AllCode.findAll({
+        where: { type: { [Op.in]: types } }
+    });
+
+    if (!codes || codes.length === 0) {
+        return res.status(404).json({
+            message: "Không tìm thấy mã code cho các type này"
+        });
+    }
+
+    res.status(200).json({
+        message: "Danh sách mã code theo type",
+        data: codes
+    });
+};
 
 export const getCodeByCode = async (req, res) => {
     const code = req.params.code

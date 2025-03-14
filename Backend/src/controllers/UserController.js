@@ -302,9 +302,11 @@ export const getAllUsers = async (req, res) => {
     const limit = parseInt(req.query.limit, 10) || 10
     const offset = (page - 1) * limit
 
-    let whereClause = {}
+    let whereClause = { userType: UserType.STUDENT };
+
     if (search.trim() !== '') {
         whereClause = {
+            ...whereClause,
             [Op.or]: [
                 { lastName: { [Op.like]: `%${search}%` } },
                 { firstName: { [Op.like]: `%${search}%` } },
@@ -316,13 +318,15 @@ export const getAllUsers = async (req, res) => {
                 { status: { [Op.like]: `%${search}%` } },
                 { graduationYear: { [Op.like]: `%${search}%` } },
                 { university: { [Op.like]: `%${search}%` } }
-            ]
+            ],
+            userType: UserType.STUDENT,
         }
     }
 
     const [userList, total] = await Promise.all([
         db.User.findAll({
             where: whereClause,
+
             offset,
             limit,
             order: [['createdAt', sortOrder]],
@@ -335,7 +339,7 @@ export const getAllUsers = async (req, res) => {
     const formattedUsers = userList.map(user => new UserResponse(user))
 
     return res.status(200).json({
-        message: 'Danh sách người dùng',
+        message: 'Lấy danh sách người dùng thành công',
         data: formattedUsers,
         // data: userList,
         currentPage: page,
@@ -375,9 +379,9 @@ export const getUsersByClass = async (req, res) => {
         offset,
     })
     const formattedUsers = users.map(userRecord => {
-        const user = userRecord.student 
-        const status = userRecord.status 
-        return new UserResponse(user, status) 
+        const user = userRecord.student
+        const status = userRecord.status
+        return new UserResponse(user, status)
     })
     const total = formattedUsers.length
 

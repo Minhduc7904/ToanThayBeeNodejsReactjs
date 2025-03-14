@@ -45,7 +45,7 @@ const FunctionBarAdmin = () => {
     const iconAdd = (
         <div data-svg-wrapper className="relative">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M12 4L12 20M20 12L4 12" stroke="#202325" stroke-width="1.5" stroke-linecap="round" />
+                <path d="M12 4L12 20M20 12L4 12" stroke="#202325" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
         </div>
     )
@@ -53,7 +53,7 @@ const FunctionBarAdmin = () => {
     const iconFilter = (
         <div data-svg-wrapper className="relative">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M4.5 7H19.5M7 12H17M10 17H14" stroke="#202325" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M4.5 7H19.5M7 12H17M10 17H14" stroke="#202325" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         </div>
     )
@@ -61,7 +61,7 @@ const FunctionBarAdmin = () => {
     const iconExport = (
         <div data-svg-wrapper className="relative">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                <path d="M20 14.6667V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4.00001 18.6569 4.00001 17L4 14.6667M7.55556 10.2222L12 14.6667M12 14.6667L16.4444 10.2222M12 14.6667V4" stroke="#202325" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" />
+                <path d="M20 14.6667V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4.00001 18.6569 4.00001 17L4 14.6667M7.55556 10.2222L12 14.6667M12 14.6667L16.4444 10.2222M12 14.6667V4" stroke="#202325" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         </div>
     )
@@ -82,8 +82,8 @@ const FunctionBarAdmin = () => {
                             <path
                                 d="M13.3333 13.3333L10.7555 10.7556M12.1481 7.40741C12.1481 10.0256 10.0256 12.1481 7.40736 12.1481C4.78913 12.1481 2.66663 10.0256 2.66663 7.40741C2.66663 4.78917 4.78913 2.66667 7.40736 2.66667C10.0256 2.66667 12.1481 4.78917 12.1481 7.40741Z"
                                 stroke="#131214"
-                                stroke-linecap="round"
-                                stroke-linejoin="round"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
                             />
                         </svg>
                         <input
@@ -100,7 +100,7 @@ const FunctionBarAdmin = () => {
                 </div>
                 <div data-svg-wrapper className="relative">
                     <svg xmlns="http://www.w3.org/2000/svg" width="2" height="38" viewBox="0 0 2 38" fill="none">
-                        <path d="M1 1L1 37" stroke="#CDCFD0" stroke-linecap="round" />
+                        <path d="M1 1L1 37" stroke="#CDCFD0" strokeLinecap="round" />
                     </svg>
                 </div>
                 <ButtonFunctionBarAdmin icon={iconExport} text={'Xuất file'} />

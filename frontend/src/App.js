@@ -7,10 +7,16 @@ import ClassManagement from "./pages/admin/ClassManagement";
 import ExamManagement from "./pages/admin/ExamManagement";
 import StudentManagement from "./pages/admin/StudentManagement";
 import ProtectedRoute from "./components/ProtectedRoute";
+import ErrorsDisplay from "./components/error/ErrorsDisplay"; // Đảm bảo file này export ErrorsDisplay
+import SuccessDisplay from "./components/error/SuccessDisplay"; // Đảm bảo file này export SuccessDisplay
 
 function App() {
     return (
         <BrowserRouter>
+            {/* Hiển thị lỗi toàn cục */}
+            <ErrorsDisplay />
+            <SuccessDisplay />
+
             <Routes>
                 {/* Trang công khai */}
                 <Route path="/login" element={<LoginPage />} />

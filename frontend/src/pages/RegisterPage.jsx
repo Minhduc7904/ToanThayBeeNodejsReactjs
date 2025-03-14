@@ -10,12 +10,12 @@ import GoogleLoginButton from '../components/button/GoogleLoginButton';
 import AuthDropMenu from '../components/dropMenu/AuthDropMenu';
 import { validateRegister } from '../utils/validation';
 import { processRegisterForm } from '../utils/sanitizeInput';
-import { ErrorRequest } from '../components/error/errorRequest';
+import { setErrors } from '../features/state/stateApiSlice';
 
 export default function RegisterPage() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { loading, errorRegister } = useSelector(state => state.auth);
+    const { loading } = useSelector(state => state.auth);
     const [formData, setFormData] = useState({
         lastName: '',
         firstName: '', username: '', password: '',
@@ -24,7 +24,6 @@ export default function RegisterPage() {
     });
     const [nextStep, setNextStep] = useState(false);
     const [password2, setPassword2] = useState('');
-    const [formErrors, setFormErrors] = useState([]);
 
     const handleChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -37,11 +36,11 @@ export default function RegisterPage() {
 
         const errors = validateRegister(processedData, password2);
         if (errors.length > 0) {
-            setFormErrors(errors);
+            setErrors(errors);
             return;
         }
 
-        setFormErrors([]);
+        setErrors([]);
         const resultAction = await dispatch(register(processedData));
         if (register.fulfilled.match(resultAction)) {
             navigate('/login');
@@ -153,11 +152,7 @@ export default function RegisterPage() {
                                 Tiếp theo
                             </p>
                         </Button>
-                        {errorRegister && (
-                            <p className="text-red-500 text-center text-base font-bevietnam">
-                                {errorRegister.message || errorRegister}
-                            </p>
-                        )}
+
                     </div>
                 )}
                 {nextStep && (
@@ -199,11 +194,7 @@ export default function RegisterPage() {
                                 Mật khẩu không khớp
                             </p>
                         )}
-                        {errorRegister && (
-                            <p className="text-red-500 text-center text-base font-bevietnam">
-                                {errorRegister.message || errorRegister}
-                            </p>
-                        )}
+
 
                         <Button type="submit" disabled={loading} variant="secondary" className="w-full">
                             <p className="text-center text-white text-lg font-normal font-bevietnam">
@@ -240,9 +231,7 @@ export default function RegisterPage() {
                     Quên tài khoản hoặc mật khẩu
                 </Link>
             </div>
-            {formErrors.length > 0 && (
-                <ErrorRequest formErrors={formErrors} clearErrors={() => setFormErrors([])} />
-            )}
+
         </AuthLayout>
     );
 }

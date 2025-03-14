@@ -88,3 +88,51 @@ Câu 3. Hệ thống định vị toàn cầu GPS là một hệ thống cho ph�
 Câu 4. Kiến trúc sư thiết kế một khu sinh hoạt cộng đồng có dạng hình chữ nhật với chiều rộng và chiều dài lần lượt là 60 m và 80 m . Trong đó, phần được tô mảu đậm lả sân chơi, phần còn lại để trồng hoa. Mỗi phần trồng hoa có đường biên cong là một phần của parabol với đỉnh thuộc một trục đối xứng của hình chữ nhật và khoảng cách từ đỉnh đó đến trung điểm cạnh tương ứng của hình chữ nhật bằng 20 m (xem hình minh họa). Diện tích của phần sân chơi là bao nhiêu mét vuông?
 Câu 5. Một doanh nghiệp dự định sản xuất không quá 500 sản phẩm. Nếu doanh nghiệp sản xuất \\( x \\) sản phẩm \\( (1 \\leq x \\leq 500) \\) thì doanh thu nhận được khi bán hết số sản phẩm đó là \\( F(x)=x^{3}-1999 x^{2}+1001000 x+250000 \\) (đồng), trong khi chi phí sản xuất bình quân cho một sản phẩm lả \\( G(x)=x+1000+\\frac{250000}{x} \\) (âò̀ng). Doanh nghiệp cần sản xuất bao nhiêu sản phẩm để lợi nhuận thu được là lớn nhất?
 Câu 6. Có hai chiếc hộp, hộp I có 6 quả bóng màu đỏ và 4 quả bóng màu vàng, hộp II có 7 quả bóng màu đỏ và 3 quả bóng màu vàng, các quả bóng có cùng kích thước và khối lượng. Lấy ngẫu nhiên một quả bóng từ hộp I bỏ vào hộp II. Sau đó, lấy ra ngẫu nhiên một quả bóng từ hộp II. Tính xác suất để quả bóng được lấy ra từ hộp II là quả bóng được chuyển từ hộp I sang, biết rằng quả bóng đó có mảu đỏ (làm tròn kết quả đến hàng phần trăm).
+
+Câu 1. Trong không gian \( O x y z \), cho mặt phẳng \( (P): x-2 y+3 z+1=0 \). Hỏi véc-tơ nào dưới đây là một véc-tơ pháp tuyến của mặt phẳng \( (P) \) ?
+A. \( (1 ;-2 ; 3) \).
+B. \( (1 ; 2 ; 3) \).
+C. \( (-2 ; 3 ; 1) \).
+D. \( (2 ;-2 ; 4) \).
+
+Câu 1. Trong không gian \( O x y z \), cho mặt phẳng \( (P): x-2 y+3 z+1=0 \). Hỏi véc-tơ nào dưới đây là một véc-tơ pháp tuyến của mặt phẳng \( (P) \) ?
+a) \( (1 ;-2 ; 3) \).
+b) \( (1 ; 2 ; 3) \).
+c) \( (-2 ; 3 ; 1) \).
+d) \( (2 ;-2 ; 4) \).
+
+Câu 2. Trong không gian \( O x y z \), cho hai mặt phẳng \( (P): x-y-2 z+1=0 \) và \( (Q): m x+ \) \( (3-2 m) y+n z+1=0 \). Khi hai mặt phẳng \( (P) \) và \( (Q) \) song song với nhau thì giá trị của biểu thức \( T=m+n \) bằng
+A. 1 .
+B. 0 .
+C. -3 .
+D. 5 .
+
+Câu 3. Trong không gian với hệ trục tọa độ \( O x y z \), cho mặt phẳng \( (P): 2 x-y-2 z-1=0 \). Mặt phẳng \( (Q) \) đi qua gốc tọa độ \( O \) và song song với \( (P) \) là
+A. \( 2 x+y-2 z=0 \).
+B. \( 2 x-y-2 z=0 \).
+C. \( 2 x-y-2 z+1=0 \).
+D. \( 2 x+2 y-z=0 \).
+
+Câu 4. Trong không gian \( O x y z \), mặt phẳng \( (\alpha) \) đi qua điểm \( A(1 ; 2 ;-3) \) và nhận véc-tơ \( \vec{n}=(2 ;-1 ; 3) \) làm véc-tơ pháp tuyến có phương trình là
+A. \( x+2 y-3 z+9=0 \).
+B. \( x+2 y-3 z-9=0 \).
+C. \( 2 x-y+3 z+9=0 \).
+D. \( 2 x-y+3 z-9=0 \).
+
+Câu 5. Trong không gian \( O x y z \), điểm \( M(1 ;-3 ; 2) \) thuộc mặt phẳng có phương trình nào sau đây?
+A. \( 2 x+y-z+3=0 \).
+B. \( 3 x-y+z-2=0 \).
+C. \( 2 x+y-z+4=0 \).
+D. \( x-2 y-z+1=0 \).
+
+Câu 6. Trong không gian \( O x y z \), cho hai điểm \( A(-1 ; 2 ; 0), B(1 ; 1 ; 3) \) và mặt phẳng \( (P): x-2 y+3 z-5=0 \). Phương trình của mặt phẳng đi qua hai điểm \( A, B \) đồng thời vuông góc với \( (P) \) là
+A. \( x+2 y+z-3=0 \).
+B. \( 2 x+y-z=0 \).
+C. \( x-y-z+3=0 \).
+D. \( x+y-z-1=0 \).
+
+Câu 7. Trong không gian \( O x y z \), mặt phẳng \( (P): x+2 y-2 z+1=0 \) đi qua điểm nào dưới đây?
+A. \( M(1 ; 2 ; 3) \).
+B. \( N(1 ; 2 ;-2) \).
+C. \( P(-1 ; 2 ;-3) \).
+D. \( Q(2 ;-2 ; 1) \).
