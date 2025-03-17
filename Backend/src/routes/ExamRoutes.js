@@ -18,11 +18,22 @@ router.get('/v1/user/exam',
     asyncHandler(ExamController.getExamPublic)
 )
 
-router.get('/v1/exam/:id', 
+router.get('/v1/admin/exam/:id', 
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT, UserType.STUDENT]),
     asyncHandler(ExamController.getExamById)
 )
-router.post('/v1/exam', 
+
+router.get('/v1/admin/exam/:examId/questions',
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    asyncHandler(ExamController.getQuestionByExamId)
+)
+
+router.get('/v1/user/exam/:id',
+    requireRoles([]),
+    asyncHandler(ExamController.getExamPublicById)
+)
+
+router.post('/v1/admin/exam', 
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     uploadGoogleImageMiddleware.fields([
         { name: 'examImage', maxCount: 1 },
@@ -31,11 +42,21 @@ router.post('/v1/exam',
     ]),
     asyncHandler(ExamController.postExam)
 )
-router.put('/v1/exam/:id', 
+
+
+router.put('/v1/admin/exam/:id', 
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(ExamController.putExam)
 )
-router.delete('/v1/exam/:id', 
+router.put('/v1/admin/exam/:id/image', 
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    uploadGoogleImageMiddleware.single('examImage'),
+    asyncHandler(ExamController.putImageExam)
+)
+router.delete('/v1/admin/exam/:id', 
     asyncHandler(ExamController.deleteExam)
 )
+
+
 
 export default router

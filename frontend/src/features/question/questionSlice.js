@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as questionApi from "../../services/questionApi";
 import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
 import { apiHandler } from "../../utils/apiHandler";
+import { setExam } from "../exam/examSlice";
 
 export const fetchQuestions = createAsyncThunk(
     "questions/fetchQuestions",
@@ -10,23 +11,36 @@ export const fetchQuestions = createAsyncThunk(
             dispatch(setCurrentPage(data.currentPage));
             dispatch(setTotalPages(data.totalPages));
             dispatch(setTotalItems(data.totalItems));
-        }, true);
+        }, true, false);
+    }
+);
+
+export const fetchExamQuestions = createAsyncThunk(
+    "questions/fetchExamQuestions",
+    async ({id, search, currentPage, limit, sortOrder }, {dispatch}) => {
+        return await apiHandler(dispatch, questionApi.getExamQuestionsAPI, {id, search, currentPage, limit, sortOrder }, (data) => {
+            dispatch(setCurrentPage(data.currentPage));
+            dispatch(setTotalPages(data.totalPages));
+            dispatch(setTotalItems(data.totalItems));
+            dispatch(setExam(data.exam));
+        }, true, false);
     }
 );
 
 export const fetchQuestionById = createAsyncThunk(
     "questions/fetchQuestionById",
     async (id, { dispatch }) => {
-        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id);
+        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id,  ()=>{}, true, false);
     }
 );
 
 export const postQuestion = createAsyncThunk(
     "questions/postQuestion",
-    async ({ questionData, statementOptions, questionImage, solutionImage, statementImages }, { dispatch }) => {
-        return await apiHandler(dispatch, questionApi.postQuestionAPI, { questionData, statementOptions, questionImage, solutionImage, statementImages }, (data) => {
+    async ({ questionData, statementOptions, questionImage, solutionImage, statementImages, examId }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.postQuestionAPI, { questionData, statementOptions, questionImage, solutionImage, statementImages, examId }, (data) => {
         }, true, false);
     }
+    
 );
 
 export const putQuestion = createAsyncThunk(
@@ -75,20 +89,14 @@ const questionSlice = createSlice({
     name: "questions",
     initialState: {
         questions: [],
-        isDetailView: false,
-        selectedQuestionId: null,
         question: null,
     },
     reducers: {
         resetDetailView: (state) => {
-            state.isDetailView = false;
             state.question = null;
-            state.selectedQuestionId = null;
-
         },
         setDetailView: (state, action) => {
             state.isDetailView = true;
-            state.selectedQuestionId = action.payload;
         },
         setQuestion: (state, action) => {
             state.question = action.payload;
@@ -96,7 +104,15 @@ const questionSlice = createSlice({
     },
     extraReducers: (builder) => {
         builder
+            .addCase(fetchQuestions.pending, (state) => {
+                state.questions = [];
+            })
             .addCase(fetchQuestions.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.questions = action.payload.data;
+                }
+            })
+            .addCase(fetchExamQuestions.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.questions = action.payload.data;
                 }
@@ -104,11 +120,10 @@ const questionSlice = createSlice({
             .addCase(fetchQuestionById.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.question = action.payload.data;
-                    state.isDetailView = true;
                 }
             })
     },
 });
 
-export const { resetDetailView, setDetailView,setQuestion } = questionSlice.actions;
+export const { setQuestion } = questionSlice.actions;
 export default questionSlice.reducer;

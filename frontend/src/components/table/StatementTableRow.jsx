@@ -30,7 +30,7 @@ const StatementTableRow = ({ statements, prefixStatements }) => {
                     const shortText = isLongText ? statement.content.slice(0, maxLength) + "..." : statement.content;
 
                     return (
-                        <div key={index} className="flex items-center w-full">
+                        <div key={index} className="flex w-full">
                             <p className="font-bold">{prefixStatements[index]}&nbsp;</p>
                             <span className="cursor-pointer">
                                 <LatexRenderer text={shortText} />

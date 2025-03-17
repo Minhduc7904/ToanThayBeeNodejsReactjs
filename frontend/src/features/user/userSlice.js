@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllUsersAPI, getUserByIdAPI } from "../../services/userApi";
+import { getAllUsersAPI, getUserByIdAPI, putUserAPI } from "../../services/userApi";
 import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
 import { apiHandler } from "../../utils/apiHandler";
 
@@ -17,7 +17,14 @@ export const fetchUsers = createAsyncThunk(
 export const fetchUserById = createAsyncThunk(
     "users/fetchUserById",
     async (id, { dispatch }) => {
-        return await apiHandler(dispatch, getUserByIdAPI, id);
+        return await apiHandler(dispatch, getUserByIdAPI, id,  ()=>{}, true, false);
+    }
+);
+
+export const putUser = createAsyncThunk(
+    "users/putUser",
+    async ({id, user}, { dispatch }) => {
+        return await apiHandler(dispatch, putUserAPI, {id, user}, ()=>{}, true);
     }
 );
 
@@ -26,23 +33,19 @@ const userSlice = createSlice({
     name: "users",
     initialState: {
         users: [],
-        user: null,
-        isDetailView: false,
-        selectedUserId: null,
+        student: null,
     },
     reducers: {
-        resetDetailView: (state) => {
-            state.isDetailView = false;
-            state.user = null;
-            state.selectedUserId = null;
-        },
-        setDetailView: (state, action) => {
-            state.isDetailView = true;
-            state.selectedUserId = action.payload;
+        setUser: (state, action) => {
+            state.student = action.payload;
         },
     },
     extraReducers: (builder) => {
         builder
+            .addCase(fetchUsers.pending, (state) => {
+                state.users = [];
+            })
+            
             .addCase(fetchUsers.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.users = action.payload.data;
@@ -53,8 +56,7 @@ const userSlice = createSlice({
             })
             .addCase(fetchUserById.fulfilled, (state, action) => {
                 if (action.payload) {
-                    state.user = action.payload.user;
-                    state.isDetailView = true;
+                    state.student = action.payload.user;
                 }
             })
             .addCase(fetchUserById.rejected, () => {
@@ -63,5 +65,5 @@ const userSlice = createSlice({
     },
 });
 
-export const { resetDetailView, setDetailView } = userSlice.actions;
+export const { setUser } = userSlice.actions;
 export default userSlice.reducer;

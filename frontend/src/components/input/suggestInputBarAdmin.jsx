@@ -53,7 +53,7 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
         <div ref={wrapperRef} className="relative w-full flex-1">
             <input
                 type="text"
-                className="w-full bg-white border border-gray-300 rounded-[0.5rem] py-[0.75rem] px-[1rem] focus:outline-none focus:ring-2 focus:ring-blue-500 text-black"
+                className="w-full bg-white border border-gray-300 rounded-[0.5rem] py-[0.75rem] px-[1rem] focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
                 placeholder={placeholder}
                 value={inputValue}
                 onChange={handleInputChange}

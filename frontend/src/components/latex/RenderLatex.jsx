@@ -4,7 +4,7 @@ import { BlockMath, InlineMath } from "react-katex";
 
 const LatexRenderer = ({ text, className = '' }) => {
     // Chuyển đổi `\( ... \)` thành `$ ... $` và `\[ ... \]` thành `$$ ... $$`
-    if (text === null) return null;
+    if (text === null || text === undefined) return null;
     const formattedText = text
         .replace(/\\\(/g, "$") // Thay \( thành $
         .replace(/\\\)/g, "$") // Thay \) thành $

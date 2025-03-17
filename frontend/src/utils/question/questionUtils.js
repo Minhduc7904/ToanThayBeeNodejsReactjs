@@ -188,3 +188,244 @@ export const processInputForUpdate = (question) => {
 
     return newQuestion;
 };
+
+
+export const splitContentTN = (content, correctAnswersText, dispatch) => {
+    if (content.trim() === "" || correctAnswersText.trim() === "") return { questionsTN: [], countTN: 0 };
+    const lines = content
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
+
+    let questionsTN = [];
+    let questionContent = "";
+    let statementLines = [];
+    let foundQuestion = false;
+    let foundStatement = false;
+    let index = 0;
+    let countTN = 0;
+    const correctAnswers = correctAnswersText.trim().split(" ");
+
+    for (let line of lines) {
+        if (/^Câu\s*\d+\./.test(line)) {
+            if (foundQuestion) {
+                // Lưu câu hỏi trước đó
+                questionsTN.push({
+                    questionData: {
+                        typeOfQuestion: "TN",
+                        content: questionContent.trim(),
+                    },
+                    statements: statementLines,
+                });
+                index++;
+            }
+
+            foundQuestion = true;
+            questionContent = line.replace(/^Câu\s*\d+\.\s*/, ""); // Xóa "Câu X."
+            statementLines = [];
+            foundStatement = false;
+        } else if (/^[A-D]\./.test(line)) {
+            foundStatement = true;
+            statementLines.push({
+                index: countTN,
+                content: line.slice(2).trim(),
+                isCorrect: correctAnswers[index] && correctAnswers[index] === line[0],
+            });
+            countTN++;
+        } else if (foundStatement) {
+            // Nếu là nội dung bổ sung cho đáp án
+            statementLines[statementLines.length - 1].content += " " + line;
+        } else {
+            // Nếu là nội dung bổ sung cho câu hỏi
+            questionContent += " " + line;
+        }
+    }
+
+    // Đẩy câu hỏi cuối cùng vào danh sách
+    if (foundQuestion) {
+        questionsTN.push({
+            questionData: {
+                typeOfQuestion: "TN",
+                content: questionContent.trim(),
+            },
+            statements: statementLines,
+        });
+    }
+
+    // Kiểm tra số lượng câu hỏi khớp với số lượng đáp án
+    if (questionsTN.length !== correctAnswers.length) {
+        dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+        return false;
+    }
+
+    return { questionsTN, countTN };
+};
+
+export const splitContentDS = (content, correctAnswersText, count, dispatch) => {
+    if (content.trim() === "" || correctAnswersText.trim() === "") return { questionsDS: [], count };
+
+    const lines = content
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
+
+    let questionsDS = [];
+    let questionContent = "";
+    let statementLines = [];
+    let foundQuestion = false;
+    let foundStatement = false;
+    let index = 0;
+    const correctAnswers = correctAnswersText.trim().split(" ").map(group => group.split("-"));
+
+    for (let line of lines) {
+        if (/^Câu\s*\d+\./.test(line)) {
+            if (foundQuestion) {
+                // Kiểm tra nếu số lượng mệnh đề không khớp với đáp án đúng/sai
+                if (correctAnswers[index] === undefined) {
+                    dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+                    return false;
+                }
+                if (statementLines.length !== correctAnswers[index].length) {
+                    dispatch(addError(`Số lượng đáp án không khớp với số lượng mệnh đề ở Câu ${index + 1}!`));
+                    return false;
+                }
+
+                // Lưu câu hỏi trước đó
+                questionsDS.push({
+                    questionData: {
+                        typeOfQuestion: "DS",
+                        content: questionContent.trim(),
+                    },
+                    statements: statementLines,
+                });
+                index++;
+            }
+
+            foundQuestion = true;
+            questionContent = line.replace(/^Câu\s*\d+\.\s*/, ""); // Xóa "Câu X."
+            statementLines = [];
+            foundStatement = false;
+        } else if (/^[a-d]\)/.test(line)) {
+            foundStatement = true;
+            statementLines.push({
+                index: count,
+                content: line.slice(2).trim(),
+                isCorrect: correctAnswers[index] && correctAnswers[index][statementLines.length] === "Đ", // "Đ" là đúng, "S" là sai
+            });
+            count++;
+        } else if (foundStatement) {
+            // Nếu là nội dung bổ sung cho mệnh đề trước
+            statementLines[statementLines.length - 1].content += " " + line;
+        } else {
+            // Nếu là nội dung bổ sung cho câu hỏi
+            questionContent += " " + line;
+        }
+    }
+
+    // Đẩy câu hỏi cuối cùng vào danh sách
+    if (foundQuestion) {
+        if (correctAnswers[index] === undefined) {
+            dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+            return false;
+        }
+        if (statementLines.length !== correctAnswers[index].length) {
+            dispatch(addError(`Số lượng đáp án không khớp với số lượng mệnh đề ở Câu ${index + 1}!`));
+            return false;
+        }
+
+        questionsDS.push({
+            questionData: {
+                typeOfQuestion: "DS",
+                content: questionContent.trim(),
+            },
+            statements: statementLines,
+        });
+    }
+
+    return { questionsDS, count };
+};
+
+export const splitContentTLN = (content, correctAnswersText, dispatch) => {
+    if (content.trim() === "" || correctAnswersText.trim() === "") return []
+    const lines = content
+        .split("\n")
+        .map((line) => line.trim())
+        .filter((line) => line !== "");
+
+    let questionsTLN = [];
+    let questionContent = "";
+    let foundQuestion = false;
+    let index = 0;
+    const correctAnswers = correctAnswersText.trim().split(" ");
+
+    for (let line of lines) {
+        if (/^Câu\s*\d+\./.test(line)) {
+            if (foundQuestion) {
+                if (index >= correctAnswers.length) {
+                    dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+                    return false;
+                }
+                // Lưu câu hỏi trước đó
+                questionsTLN.push({
+                    questionData: {
+                        typeOfQuestion: "TLN",
+                        content: questionContent.trim(),
+                        correctAnswer: correctAnswers[index],
+                    }
+                });
+                index++;
+            }
+            foundQuestion = true;
+            questionContent = line.replace(/^Câu\s*\d+\.\s*/, ""); // Xóa "Câu X."
+        } else {
+            // Nếu là nội dung bổ sung cho câu hỏi
+            questionContent += " " + line;
+        }
+    }
+
+    // Đẩy câu hỏi cuối cùng vào danh sách
+    if (foundQuestion) {
+        if (index >= correctAnswers.length) {
+            dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+            return false;
+        }
+        questionsTLN.push({
+            questionData: {
+                typeOfQuestion: "TLN",
+                content: questionContent.trim(),
+                correctAnswer: correctAnswers[index],
+            }
+        });
+    }
+
+    return questionsTLN;
+};
+
+
+export const validateExamData = (examData, dispatch) => {
+    let check = true;
+    if (examData.name.trim() === "") {
+        dispatch(addError("Tên đề thi không được để trống!"));
+        check = false;
+    }
+    if (examData.class === null) {
+        dispatch(addError("Lớp không được để trống!"));
+        check = false;
+    }
+    if (examData.typeOfExam === null) {
+        dispatch(addError("Kiểu đề thi không được để trống!"));
+        check = false;
+    }
+
+    if (examData.year === null) {
+        dispatch(addError("Năm không được để trống!"));
+        check = false;
+    }
+
+    if (examData.passRate < 0 || examData.passRate > 100) {
+        dispatch(addError("Tỷ lệ đạt không hợp lệ!"));
+        check = false;
+    }
+
+    return check;
+}

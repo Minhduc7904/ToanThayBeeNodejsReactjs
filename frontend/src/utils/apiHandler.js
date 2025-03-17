@@ -22,7 +22,6 @@ export const apiHandler = async (dispatch, apiFunc, params, successCallback, use
         if (successCallback) {
             successCallback(response.data);
         }
-        console.log(response.data)
         return response.data ? response.data : response;
     } catch (error) {
         const errorMsg = error.response ? error.response.data.message : error.message;

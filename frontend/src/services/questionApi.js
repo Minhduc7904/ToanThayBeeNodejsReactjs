@@ -15,19 +15,30 @@ export const deleteQuestionAPI = (questionId) => {
     return api.delete(`/v1/admin/question/${questionId}`);
 }
 
+export const getExamQuestionsAPI = ({id, search = "", currentPage = 1, limit = 10, sortOrder = 'asc' }) => {
+    return api.get(`/v1/admin/exam/${id}/questions`, {
+        params: {
+            search,
+            page: currentPage,
+            limit,
+            sortOrder,
+        }
+    });
+}
+
 export const getQuestionByIdAPI = (id) => {
     return api.get(`/v1/admin/question/${id}`);
 };
 
 
-export const postQuestionAPI = async ({ questionData, statementOptions, questionImage, solutionImage, statementImages }) => {
+export const postQuestionAPI = async ({ questionData, statementOptions, questionImage, solutionImage, statementImages, examId = null }) => {
     // Tạo đối tượng FormData để gửi dữ liệu dạng multipart/form-data
     const formData = new FormData();
 
     if (statementOptions.length === 0) {
-        formData.append("data", JSON.stringify({ questionData }));
+        formData.append("data", JSON.stringify({ questionData, examId }));
     } else {
-        formData.append("data", JSON.stringify({ questionData, statementOptions }));
+        formData.append("data", JSON.stringify({ questionData, statementOptions, examId }));
     }
 
     // Nếu có file ảnh cho câu hỏi, thêm vào formData
@@ -90,16 +101,13 @@ export const putStatementImageAPI = async ({ statementId, statementImage }) => {
 }
 
 export const putQuestionAPI = async ({ questionId, questionData, statements }) => {
-    try {
-        const response = await api.put(`/v1/admin/question/${questionId}`, {
-            questionData,
-            statements,
-        });
+    const response = await api.put(`/v1/admin/question/${questionId}`, {
+        questionData,
+        statements,
+    });
 
-        return response.data;
-    } catch (error) {
-        console.error("❌ Lỗi khi cập nhật câu hỏi:", error);
-        throw error;
-    }
+    return response.data;
 };
+
+
 

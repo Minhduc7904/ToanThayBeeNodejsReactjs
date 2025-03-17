@@ -13,7 +13,7 @@ export const login = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data.message || "Đăng nhập thất bại";
             dispatch(addError(errorMsg));
-            return rejectWithValue(errorMsg);
+            return 
         }
     }
 );
@@ -28,7 +28,7 @@ export const checkLogin = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data.message || "Không thể xác thực";
             dispatch(addError(errorMsg));
-            return rejectWithValue(errorMsg);
+            return 
         }
     }
 );
@@ -44,7 +44,7 @@ export const register = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data.message || "Đăng ký thất bại";
             dispatch(addError(errorMsg));
-            return rejectWithValue(errorMsg);
+            return 
         }
     }
 );
@@ -59,7 +59,7 @@ export const logout = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data || "Đăng xuất thất bại";
             dispatch(addError(errorMsg));
-            return rejectWithValue(errorMsg);
+            return 
         }
     }
 );

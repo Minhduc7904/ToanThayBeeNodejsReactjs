@@ -1,3 +1,6 @@
+import { addError } from "../features/state/stateApiSlice";
+
+
 export const validateRegister = (data, password2) => {
     const errors = [];
 
@@ -21,3 +24,21 @@ export const validateRegister = (data, password2) => {
     }
     return errors;
 };
+
+export const validationUser = (user, dispatch) => {
+    if (!user.lastName) {
+        dispatch(addError("Họ và tên đệm không được để trống."));
+        return false;
+    }
+    if (!user.firstName) {
+        dispatch(addError("Tên không được để trống."));
+        return false;
+    }
+
+    if (!user.phone) {
+        dispatch(addError("Số điện thoại không được để trống."));
+        return false;
+    }
+    return true;
+}
+

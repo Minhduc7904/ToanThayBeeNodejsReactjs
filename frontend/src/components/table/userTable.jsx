@@ -1,14 +1,16 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchUsers, setDetailView } from "../../features/user/userSlice";
+import { fetchUsers } from "../../features/user/userSlice";
 import { setSortOrder } from "../../features/filter/filterSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
+import { useNavigate } from "react-router-dom";
 
 const UserList = () => {
     const dispatch = useDispatch();
     const { users } = useSelector((state) => state.users);
     const { search, currentPage, limit, totalItems, sortOrder } = useSelector(state => state.filter);
     const { loading } = useSelector(state => state.states);
+    const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(fetchUsers({ search, currentPage, limit, sortOrder }))
@@ -75,7 +77,7 @@ const UserList = () => {
                     <tbody>
                         {users.map((user, index) => (
                             <tr
-                                onClick={() => dispatch(setDetailView(user.id))}
+                                onClick={() => navigate(`/admin/student-management/${user.id}`)}
                                 key={user.id} className="border border-[#E7E7ED] hover:bg-gray-50 cursor-pointer">
                                 <td className="p-3 text-center">{user.id}</td>
                                 <td className="p-3 text-center">{user.lastName} {user.firstName}</td>

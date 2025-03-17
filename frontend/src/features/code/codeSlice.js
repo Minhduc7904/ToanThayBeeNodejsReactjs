@@ -1,7 +1,8 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getCodeByTypeAPI } from "../../services/codeApi";
+import { getCodeByTypeAPI, getAllCodesAPI, createCodeAPI, putCodeAPI } from "../../services/codeApi";
 import { addError } from "../state/stateApiSlice"; // Import từ stateApiSlice
 import { apiHandler } from "../../utils/apiHandler";
+import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
 
 // 🎯 Action bất đồng bộ để lấy danh sách mã code theo type
 export const fetchCodesByType = createAsyncThunk(
@@ -12,7 +13,34 @@ export const fetchCodesByType = createAsyncThunk(
                 dispatch(addError("Dữ liệu nhận được không hợp lệ"));
                 return;
             }
-        }, false);
+        }, false, false);
+    }
+);
+
+export const fetchAllCodes = createAsyncThunk(
+    "codes/fetchAllCodes",
+    async ({ search, currentPage, limit, sortOrder }, { dispatch }) => {
+        return await apiHandler(dispatch, getAllCodesAPI, { search, currentPage, limit, sortOrder }, (data) => {
+            dispatch(setCurrentPage(data.currentPage));
+            dispatch(setTotalPages(data.totalPages));
+            dispatch(setTotalItems(data.totalItems));
+        }, true, false);
+    }
+);
+
+export const createCode = createAsyncThunk(
+    "codes/createCode",
+    async (code, { dispatch }) => {
+        return await apiHandler(dispatch, createCodeAPI, code, (data) => {
+        }, true, false);
+    }
+);
+
+export const putCode = createAsyncThunk(
+    "codes/putCode",
+    async (code, { dispatch }) => {
+        return await apiHandler(dispatch, putCodeAPI, code, (data) => {
+        }, true, false);
     }
 );
 
@@ -22,7 +50,8 @@ export const fetchCodesByType = createAsyncThunk(
 const codeSlice = createSlice({
     name: "codes",
     initialState: {
-        codes: {}, // Lưu dữ liệu theo từng type
+        codes: {},
+        allCodes: []
     },
     reducers: {
         // 🧹 Xóa dữ liệu mã code
@@ -46,7 +75,12 @@ const codeSlice = createSlice({
                     state.codes = formattedCodes
                 }
             })
-            .addCase(fetchCodesByType.rejected, () => { }); // Lỗi đã được xử lý ở stateApiSlice
+            .addCase(fetchAllCodes.pending, (state) => {
+                state.allCodes = [];
+            })
+            .addCase(fetchAllCodes.fulfilled, (state, action) => {
+                state.allCodes = action.payload.data;
+            });
     }
 });
 

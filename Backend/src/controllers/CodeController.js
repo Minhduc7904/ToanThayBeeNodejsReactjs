@@ -1,12 +1,13 @@
 import { Sequelize } from "../models"
 import db from "../models"
-import { Op } from "sequelize";
+import { Op, or } from "sequelize";
 
 export const getAllCode = async (req, res, next) => {
     const search = req.query.search || ''
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
     const offset = (page - 1) * limit
+    const sortOrder = req.query.sortOrder || 'ASC'
 
     let whereClause = {}
     if (search.trim() !== '') {
@@ -20,7 +21,7 @@ export const getAllCode = async (req, res, next) => {
     }
 
     const [allCode, total] = await Promise.all([
-        db.AllCode.findAll({ where: whereClause, offset, limit }),
+        db.AllCode.findAll({ where: whereClause, offset, limit, order: [ ['createdAt', sortOrder], ['type', 'ASC']] }),
         db.AllCode.count({ where: whereClause })
     ])
 

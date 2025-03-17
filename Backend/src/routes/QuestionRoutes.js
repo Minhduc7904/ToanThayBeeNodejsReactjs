@@ -14,8 +14,8 @@ router.get('/v1/admin/question',
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(QuestionController.getQuestion)
 )
-router.get('/v1/admin/question/exam/:examId',
-    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+router.get('/v1/user/question/exam/:examId',
+    requireRoles([]),
     asyncHandler(QuestionController.getQuestionByExamId)
 )
 router.get('/v1/admin/question/:id',

@@ -107,6 +107,7 @@ const AdminSidebar = () => {
                             <Choice route={'/admin/class-management'} text={'Lớp học'} />
                             <Choice route={'/admin/question-management'} text={'Câu hỏi'} />
                             <Choice route={'/admin/exam-management'} text={'Đề thi'} />
+                            <Choice route={'/admin/code-management'} text={'Code'} />
                             {/* <Choice route={'/admin/theory-management'} text={'Lý thuyết'} /> */}
 
                         </div>

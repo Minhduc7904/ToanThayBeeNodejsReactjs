@@ -4,12 +4,11 @@ import DropMenuBarAdmin from "../dropMenu/OptionBarAdmin";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import ImageUpload from "../image/UploadImage";
-import { addError } from "../../features/state/stateApiSlice";
 import { validateCorrectAnswer, processInput, processInputForUpdate } from "../../utils/question/questionUtils";
 import SuggestInputBarAdmin from "../input/suggestInputBarAdmin";
-import { postQuestion, fetchQuestions } from "../../features/question/questionSlice";
+import { postQuestion } from "../../features/question/questionSlice";
 
-const AddQuestionModal = ({ onClose }) => {
+const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
     const dispatch = useDispatch();
     const { codes } = useSelector((state) => state.codes);
     const [content, setContent] = useState("");
@@ -97,12 +96,13 @@ const AddQuestionModal = ({ onClose }) => {
             statementOptions,
             questionImage,
             statementImages,
-            solutionImage
+            solutionImage,
+            examId: examId
         }))
             .unwrap()
             .then(() => {
                 onClose();
-                dispatch(fetchQuestions({ search, currentPage, limit, sortOrder }))
+                dispatch(fetchQuestions({ search, currentPage, limit, sortOrder, id: examId }))
             });
 
     };
@@ -131,6 +131,25 @@ const AddQuestionModal = ({ onClose }) => {
         <form
             onSubmit={handleSummit}
             className="flex flex-col gap-[1.25rem] w-full h-full">
+            <div className=" flex flex-row justify-between items-center border-b border-[#e3e4e5]">
+                <div className="flex flex-row gap-2 items-center">
+                    <div
+                        onClick={() => setIsNext(false)}
+                        className={`${!isNext ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        Bước 1
+                    </div>
+                    -
+                    <div
+                        onClick={handleNextPage}
+                        className={`${isNext ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        Bước 2
+                    </div>
+                </div>
+                <div className="flex flex-row items-center text-[#253f61] font-bold font-['Be Vietnam Pro'] leading-9">
+                    {!isNext ? "Thông tin câu hỏi" : "Xác nhận"}
+
+                </div>
+            </div>
             {!isNext ? (
                 <>
                     <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
@@ -436,7 +455,7 @@ const AddQuestionModal = ({ onClose }) => {
                             </div>
                             <ImageUpload
                                 image={solutionImage}
-                                setImage={solutionImage}
+                                setImage={setSolutionImage}
                                 inputId="solutionImage-upload"
                             />
                         </div>

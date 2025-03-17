@@ -1,6 +1,5 @@
-import { use, useEffect, useState } from "react";
+import { useMemo, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchQuestions, setDetailView, deleteQuestion } from "../../features/question/questionSlice";
 import { setSortOrder } from "../../features/filter/filterSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import QuestionTableRow from "./QuestionTableRow";
@@ -8,11 +7,14 @@ import StatementTableRow from "./StatementTableRow";
 import { fetchCodesByType } from "../../features/code/codeSlice";
 import TooltipTd from "./TooltipTd";
 import ConfirmDeleteModal from "../modal/ConfirmDeleteModal";
+import { useNavigate } from "react-router-dom";
+import { deleteQuestion } from "../../features/question/questionSlice";
 
-const QuestionTable = () => {
+const QuestionTable = ({ fetchQuestions, examId = null }) => {
     const dispatch = useDispatch();
-    const { questions } = useSelector((state) => state.questions);
+    const navigate = useNavigate();
     const { search, currentPage, limit, totalItems, sortOrder } = useSelector(state => state.filter);
+    const { questions } = useSelector(state => state.questions);
     const prefixStatementTN = ["A.", "B.", "C.", "D.", "E.", "F.", "G.", "H.", "I.", "J."];
     const prefixStatementDS = ["a)", "b)", "c)", "d)", "e)", "f)", "g)", "h)", "i)", "j)"];
     const { codes } = useSelector((state) => state.codes);
@@ -21,12 +23,21 @@ const QuestionTable = () => {
     const [id, setId] = useState(null);
     const { loading } = useSelector(state => state.states);
 
+    const params = useMemo(() => ({
+        search,
+        currentPage,
+        limit,
+        sortOrder,
+        id: examId
+    }), [search, currentPage, limit, sortOrder, examId]);
+
     useEffect(() => {
         dispatch(fetchCodesByType(["chapter", "difficulty", "question type", "grade"]))
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(fetchQuestions({ search, currentPage, limit, sortOrder }))
+        dispatch(fetchQuestions(params))
+            .unwrap()
     }, [dispatch, search, currentPage, limit, sortOrder]);
 
     const handleClickedRow = (id) => {
@@ -34,7 +45,7 @@ const QuestionTable = () => {
             setIsOpenConfirmDeleteModal(true);
             setId(id);
         } else {
-            dispatch(setDetailView(id));
+            navigate(`/admin/question-management/${id}`);
         }
     };
 
@@ -43,7 +54,7 @@ const QuestionTable = () => {
         dispatch(deleteQuestion(id))
             .unwrap()
             .then(() => {
-                dispatch(fetchQuestions({ search, currentPage, limit, sortOrder }))
+                dispatch(fetchQuestions((params))).unwrap()
                 setIsOpenConfirmDeleteModal(false);
             });
     };
@@ -129,7 +140,7 @@ const QuestionTable = () => {
                                 key={question.id} className={`border border-[#E7E7ED] cursor-pointer ${deleteMode ? 'hover:bg-red-50' : 'hover:bg-gray-50'}`}>
                                 <td className="py-3 text-center">{question.id}</td>
                                 <QuestionTableRow question={question} />
-                                <TooltipTd
+                                <TooltipTd 
                                     value={question.typeOfQuestion}
                                     tooltipText={
                                         codes['question type']?.find((code) => code.code === question.typeOfQuestion)?.description || ""
@@ -165,20 +176,20 @@ const QuestionTable = () => {
                                         </td>
                                     </>
                                 )}
-                                <TooltipTd
+                                <TooltipTd 
                                     value={question.difficulty}
                                     tooltipText={
                                         codes['difficulty']?.find((code) => code.code === question.difficulty)?.description || ""
                                     }
                                 />
                                 <td className="py-3 text-center">{question.class}</td>
-                                <TooltipTd
+                                <TooltipTd 
                                     value={question.chapter}
                                     tooltipText={
                                         codes['chapter']?.find((code) => code.code === question.chapter)?.description || ""
                                     }
                                 />
-                                <TooltipTd
+                                <TooltipTd 
                                     value={question.solution ? "Rồi" : 'Chưa'}
                                     className={`${question.solution ? 'text-green-500 font-semibold' : 'text-yellow-500 font-semibold'}`}
                                     tooltipText={

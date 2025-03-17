@@ -105,7 +105,7 @@ export const getQuestionByExamId = async (req, res) => {
 
     return res.status(200).json({
         message: "✅ Lấy danh sách câu hỏi thành công!",
-        questions: exam.questions,
+        data: exam.questions,
     })
 }
 
@@ -113,7 +113,7 @@ export const postQuestion = async (req, res) => {
     const transaction = await db.sequelize.transaction()
     const uploadedFiles = []
     try {
-        const { questionData, statementOptions } = JSON.parse(req.body.data)
+        const { questionData, statementOptions, examId } = JSON.parse(req.body.data)
         const questionImage = req.files?.questionImage?.[0]
         const solutionImage = req.files?.solutionImage?.[0]
         const statementImages = req.files?.statementImages || []
@@ -162,6 +162,26 @@ export const postQuestion = async (req, res) => {
                     )
                 })
             )
+        }
+
+        if (examId) {
+            const exam = await db.Exam.findByPk(examId, { transaction })
+            if (!exam) {
+                await transaction.rollback()
+                await cleanupUploadedFiles(uploadedFiles)
+                return res.status(404).json({ message: "❌ Đề thi không tồn tại!" })
+            }
+
+            const added = await db.ExamQuestions.create(
+                { examId, questionId: newQuestion.id },
+                { transaction }
+            )
+
+            if (!added) {
+                await transaction.rollback()
+                await cleanupUploadedFiles(uploadedFiles)
+                return res.status(500).json({ message: "❌ Lỗi khi thêm câu hỏi vào đề thi!" })
+            }
         }
 
         await transaction.commit()
@@ -318,7 +338,7 @@ export const putQuestionImage = async (req, res) => {
         })
 
     } catch (error) {
-        console.error('❌ Lỗi khi cập nhật ảnh câu hỏi:', error)
+        console.error('Lỗi khi cập nhật ảnh câu hỏi:', error)
         await transaction.rollback()
         return res.status(500).json({ message: 'Lỗi server.', error: error.message })
     }

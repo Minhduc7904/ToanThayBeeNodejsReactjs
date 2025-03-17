@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { resetDetailView, fetchQuestionById, putImageQuestion, setQuestion, putImageSolution, putStatementImage, putQuestion } from "../../features/question/questionSlice";
+import { fetchQuestionById, putImageQuestion, setQuestion, putImageSolution, putStatementImage, putQuestion } from "../../features/question/questionSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import PutImage from "../image/PutImgae";
 import LatexRenderer from "../latex/RenderLatex";
 import DropMenuBarAdmin from "../dropMenu/OptionBarAdmin";
 import SuggestInputBarAdmin from "../input/suggestInputBarAdmin";
 import { validateInput, processInputForUpdate } from "../../utils/question/questionUtils";
+import { fetchCodesByType } from "../../features/code/codeSlice";
+import { useNavigate } from "react-router-dom";
 
-const UserDetail = ({ question, selectedQuestionId}) => {
+const QuestionDetail = ({ selectedQuestionId }) => {
     const dispatch = useDispatch();
-    // const { question, selectedQuestionId } = useSelector((state) => state.questions);
+    const navigate = useNavigate();
+    const { question } = useSelector((state) => state.questions);
     const { codes } = useSelector((state) => state.codes);
     const { loading } = useSelector((state) => state.states);
     const [editDescription, setEditDescription] = useState(false);
@@ -24,8 +27,11 @@ const UserDetail = ({ question, selectedQuestionId}) => {
     useEffect(() => {
         dispatch(fetchQuestionById(selectedQuestionId))
             .unwrap()
-        console.log("fetch question")
     }, [dispatch, selectedQuestionId]);
+
+    useEffect(() => {
+        dispatch(fetchCodesByType(["chapter", "difficulty", "question type", "grade"]))
+    }, [dispatch]);
 
     useEffect(() => {
         if (!question) return; // ✅ Kiểm tra tránh lỗi truy cập thuộc tính của null
@@ -78,7 +84,6 @@ const UserDetail = ({ question, selectedQuestionId}) => {
             solutionUrl: processQuestion.solutionUrl,
         };
 
-        // Chuẩn bị danh sách statements để cập nhật (KHÔNG CÓ imageUrl)
         const statements = processQuestion.statements.map((statement) => ({
             id: statement.id,
             content: statement.content,
@@ -106,7 +111,7 @@ const UserDetail = ({ question, selectedQuestionId}) => {
             <>
                 <p className="text-center text-gray-500">Không tìm thấy câu hỏi.</p>
                 <button
-                    onClick={() => dispatch(resetDetailView())}
+                    onClick={() => navigate(-1)}
                     className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700"
                 >
                     ← Quay lại danh sách
@@ -119,7 +124,7 @@ const UserDetail = ({ question, selectedQuestionId}) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">
-                <button onClick={() => dispatch(resetDetailView())} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
+                <button onClick={() => navigate(-1)} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                         <path d="M12.6667 8.66675L5.50292 15.8289C5.38989 15.94 5.33337 16.0856 5.33337 16.2312M12.6667 23.3334L5.50292 16.6335C5.38989 16.5224 5.33337 16.3768 5.33337 16.2312M5.33337 16.2312H26.6667" stroke="#131214" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
@@ -405,7 +410,6 @@ const UserDetail = ({ question, selectedQuestionId}) => {
                                         className="w-full h-full resize-none border border-[#707070] rounded-[0.5rem] p-[0.5rem]"
                                     />
                                 )}
-
                             </td>
                         </tr>
                         <tr
@@ -438,14 +442,14 @@ const UserDetail = ({ question, selectedQuestionId}) => {
                             className="border border-[#E7E7ED] ">
                             <td className="p-3  text-[#202325] text-lg font-bold">Thời gian tạo</td>
                             <td className="p-3 text-[#72777a] text-lg">
-                                {question.createdAt}
+                                {new Date(question?.createdAt).toLocaleDateString()}
                             </td>
                         </tr>
                         <tr
                             className="border border-[#E7E7ED] ">
                             <td className="p-3  text-[#202325] text-lg font-bold">Thời gian cập nhật</td>
                             <td className="p-3 text-[#72777a] text-lg">
-                                {question.updatedAt}
+                                {new Date(question?.updatedAt).toLocaleDateString()}
                             </td>
                         </tr>
                     </tbody>
@@ -463,7 +467,6 @@ const UserDetail = ({ question, selectedQuestionId}) => {
                         Lưu
                     </div>
                 </button>
-
             </div>
 
 
@@ -472,4 +475,4 @@ const UserDetail = ({ question, selectedQuestionId}) => {
     );
 };
 
-export default UserDetail;
+export default QuestionDetail;

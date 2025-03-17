@@ -5,10 +5,11 @@ import { setLimit, setSearch, setCurrentPage, setIsAddView, setIsFilterView } fr
 
 const FunctionBarAdmin = () => {
     const dispatch = useDispatch();
-    const { limit, currentPage, totalPages, search = "", isAddView, isFilterView } = useSelector((state) => state.filter);
+    const { limit, currentPage, totalPages, isAddView, isFilterView } = useSelector((state) => state.filter);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isDropdownOpenPage, setIsDropdownOpenPage] = useState(false);
     const dropdownRef = useRef(null);
+    const [inputValue, setInputValue] = useState("");
 
     useEffect(() => {
         const handleClickOutside = (event) => {
@@ -40,7 +41,13 @@ const FunctionBarAdmin = () => {
         setIsDropdownOpenPage(false); // Đóng dropdown sau khi chọn
     };
 
+    useEffect(() => {
+        const delayDebounceFn = setTimeout(() => {
+            dispatch(setSearch(inputValue)); 
+        }, 1000);
 
+        return () => clearTimeout(delayDebounceFn); // Cleanup timeout nếu user tiếp tục nhập
+    }, [inputValue, dispatch]);
 
     const iconAdd = (
         <div data-svg-wrapper className="relative">
@@ -67,7 +74,7 @@ const FunctionBarAdmin = () => {
     )
 
     return (
-        <div className="flex justify-between items-center">
+        <div className="flex justify-between items-center border-b border-[#E7E7ED] pb-4">
             <div className="flex gap-[0.875rem] items-center">
                 <div className="flex items-center h-[3rem] gap-[0.5rem]">
                     <div className="w-[17.5rem] h-full relative">
@@ -89,8 +96,8 @@ const FunctionBarAdmin = () => {
                         <input
                             type="text"
                             placeholder="Search"
-                            value={search || ""}
-                            onChange={(e) => dispatch(setSearch(e.target.value))}
+                            value={inputValue}
+                            onChange={(e) => setInputValue(e.target.value)}
                             className="w-full h-full pl-[2.5rem] pr-[1rem] border border-[#CDCFD0] rounded-[3.25rem] text-[#090a0a] text-[0.875rem] font-['Be Vietnam Pro']"
                         />
                     </div>
