@@ -29,14 +29,14 @@ const DropMenuBarAdmin = ({ options, placeholder = "Chọn một mục", selecte
     }, []);
 
     return (
-        <div ref={dropdownRef} className={`relative flex-1 ${className ? className : 'w-full'}`}>
+        <div ref={dropdownRef} className={`relative flex-1 ${className ? className : 'w-full'} text-md`}>
             {/* Nút chọn */}
             <button
                 type="button"
-                className="w-full bg-white border flex items-center justify-between border-gray-300 rounded-[0.5rem] py-[0.75rem] px-[1rem] focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full bg-white border flex items-center justify-between border-gray-300 rounded-[0.5rem] py-[0.5rem] px-[0.5rem] focus:outline-none focus:ring-2 focus:ring-blue-500"
                 onClick={() => setIsOpen(!isOpen)}
             >
-                <span className={`text-[#303437] text-lg font-medium font-['Inter'] ${selectedOption === true ? "text-green-500" : selectedOption === false ? "text-red-500" : ""}`}>
+                <span className={`text-[#303437] font-medium font-['Inter'] ${selectedOption === true ? "text-green-500" : selectedOption === false ? "text-red-500" : ""}`}>
                     {(selectedOption || selectedOption === false) ? p : placeholder}
                 </span>
                 <div className={`w-6 h-6 transition-transform duration-300 ${isOpen ? "rotate-0" : "rotate-180"}`}>

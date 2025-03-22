@@ -18,3 +18,11 @@ export const getUserByIdAPI = (id) => {
 export const putUserAPI = ({id , user}) => {
     return api.put(`/v1/admin/user/${id}`, user);
 }
+
+export const putUserTypeAPI = ({id , type}) => {
+    return api.put(`/v1/admin/user/${id}/user-type`, {userType: type});
+}
+
+export const putUserStatusAPI = ({id , status}) => {
+    return api.put(`/v1/admin/user/${id}/status`, {status});
+}

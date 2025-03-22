@@ -41,7 +41,7 @@ const StatementTableRow = ({ statements, prefixStatements }) => {
 
                 {statements.some(statement => (statement.content.length > 50 || statement.imageUrl)) && (
                     <div
-                        className={`absolute left-1/2 -translate-x-1/2 ${tooltipPosition} mt-2 w-full px-4 py-2 bg-black text-white text-sm rounded-md shadow-xl
+                        className={`absolute left-1/2 -translate-x-1/2 ${tooltipPosition} mt-2 w-max max-w-[20rem] px-4 py-2 bg-black text-white text-sm rounded-md shadow-xl
                             opacity-0 group-hover:opacity-100 pointer-events-none transition-opacity duration-300 z-50 border border-gray-300`}
                     >
                         {statements.map((statement, index) => (
@@ -53,7 +53,7 @@ const StatementTableRow = ({ statements, prefixStatements }) => {
                                 </div>
 
                                 {statement.imageUrl && (
-                                    <img src={statement.imageUrl} alt="image" />
+                                    <img src={statement.imageUrl} alt="image" className="max-w-[5rem] " />
                                 )}
                             </div>
                         ))}

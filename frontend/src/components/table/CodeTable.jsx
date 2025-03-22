@@ -27,6 +27,7 @@ const CodeTable = ({ codes }) => {
 
     const handleClickedRow = (code) => {
         if (typeExists(code.type)) {
+            
             setCode(code);
             setIsEdit(true);
         }
@@ -39,7 +40,7 @@ const CodeTable = ({ codes }) => {
     )
 
     return (
-        <div className="flex flex-col gap-4 h-full min-h-0">
+        <div className="flex flex-col gap-4 h-full min-h-0 text-sm">
             {(isEdit && code) && <ChangeDescriptionCode code={code} onClose={() => setIsEdit(false)} />}
             <div className="flex justify-start items-center">
                 {totalItems > 0 ? (
@@ -88,7 +89,8 @@ const CodeTable = ({ codes }) => {
                     </thead>
                     <tbody>
                         {codes.map((code, index) => (
-                            <tr key={code.id} className={`border border-[#E7E7ED] cursor-pointer hover:bg-gray-50`} onClick={handleClickedRow}>
+                            <tr key={code.id} className={`border border-[#E7E7ED] cursor-pointer hover:bg-gray-50`} 
+                            onClick={() => handleClickedRow(code)}>
                                 <td className="py-3 text-center">{index + 1}</td>
                                 <td className="py-3 text-center">{code.code}</td>
                                 <td className="py-3 text-center">{code.type}</td>

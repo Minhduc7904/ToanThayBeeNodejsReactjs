@@ -1,4 +1,4 @@
-import { addError, setLoading, setSuccessMessage } from '../features/state/stateApiSlice'
+import { setErrorMessage, setLoading, setSuccessMessage } from '../features/state/stateApiSlice'
 
 export const apiHandler = async (dispatch, apiFunc, params, successCallback, useSuccessMessage = true, setDelay = true) => {
     try {
@@ -25,7 +25,7 @@ export const apiHandler = async (dispatch, apiFunc, params, successCallback, use
         return response.data ? response.data : response;
     } catch (error) {
         const errorMsg = error.response ? error.response.data.message : error.message;
-        dispatch(addError(errorMsg)); // Lưu lỗi vào stateApiSlice
+        dispatch(setErrorMessage(errorMsg)); // Lưu lỗi vào stateApiSlice
     } finally {
         dispatch(setLoading(false)); // Tắt trạng thái loading
     }

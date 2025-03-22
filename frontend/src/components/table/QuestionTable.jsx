@@ -66,7 +66,7 @@ const QuestionTable = ({ fetchQuestions, examId = null }) => {
     )
 
     return (
-        <div className="flex flex-col gap-4 h-full min-h-0">
+        <div className="flex flex-col gap-4 h-full min-h-0 text-sm">
             <ConfirmDeleteModal
                 isOpen={isOpenConfirmDeleteModal}
                 onClose={() => setIsOpenConfirmDeleteModal(false)}

@@ -8,6 +8,8 @@ import questionReducer from '../features/question/questionSlice';
 import codeReducer from '../features/code/codeSlice';
 import stateReducer from '../features/state/stateApiSlice';
 import examReducer from '../features/exam/examSlice';
+import classReducer from '../features/class/classSlice';
+import answerReducer from '../features/answer/answerSlice';
 
 export const store = configureStore({
     reducer: {
@@ -19,5 +21,7 @@ export const store = configureStore({
         codes: codeReducer,
         states: stateReducer,
         exams: examReducer,
+        classes: classReducer,
+        answers: answerReducer,
     },
 });

@@ -31,6 +31,7 @@ module.exports = (sequelize, DataTypes) => {
     dayOfWeek: DataTypes.STRING,
     studyTime: DataTypes.STRING,
     public: DataTypes.BOOLEAN,
+    studentCount: DataTypes.INTEGER,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

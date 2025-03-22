@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-    errors: [],
+    errorsMessage: "",
     loading: false,
     successMessage: "" // Lưu thông báo thành công
 };
@@ -10,17 +10,13 @@ const stateSlice = createSlice({
     name: 'states',
     initialState,
     reducers: {
-        // Đặt danh sách lỗi
-        setErrors: (state, action) => {
-            state.errors = action.payload;
-        },
         // Thêm một lỗi mới vào danh sách
-        addError: (state, action) => {
-            state.errors.push(action.payload);
+        setErrorMessage: (state, action) => {
+            state.errorsMessage = action.payload;
         },
         // Xóa tất cả lỗi
-        clearErrors: (state) => {
-            state.errors = [];
+        clearErrorsMessage: (state) => {
+            state.errorsMessage = "";
         },
         // Bật/tắt trạng thái loading
         setLoading: (state, action) => {
@@ -38,10 +34,10 @@ const stateSlice = createSlice({
         resetState: (state) => {
             state.loading = false;
             state.successMessage = "";
-            state.errors = [];
+            state.errors = "";
         }
     }
 });
 
-export const { setErrors, addError, clearErrors, setLoading, setSuccessMessage, clearSuccessMessage, resetState } = stateSlice.actions;
+export const { setErrorMessage, clearErrorsMessage, setLoading, setSuccessMessage, clearSuccessMessage, resetState } = stateSlice.actions;
 export default stateSlice.reducer;

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useDispatch } from "react-redux";
-import { addError } from "../../features/state/stateApiSlice";
+import { setErrorMessage } from "../../features/state/stateApiSlice";
 
 const PutImage = ({ imageUrl, inputId, id, className = '', putImageFunction }) => {
     const dispatch = useDispatch();
@@ -13,11 +13,11 @@ const PutImage = ({ imageUrl, inputId, id, className = '', putImageFunction }) =
         const file = event.target.files[0];
         if (file) {
             if (!["image/jpeg", "image/png"].includes(file.type)) {
-                dispatch(addError(("Chỉ cho phép định dạng JPEG hoặc PNG!")));
+                dispatch(setErrorMessage(("Chỉ cho phép định dạng JPEG hoặc PNG!")));
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                dispatch(addError(("Kích thước ảnh vượt quá 5MB!")));
+                dispatch(setErrorMessage(("Kích thước ảnh vượt quá 5MB!")));
                 return;
             }
             setImage(file);
@@ -56,11 +56,11 @@ const PutImage = ({ imageUrl, inputId, id, className = '', putImageFunction }) =
         const file = event.dataTransfer.files[0];
         if (file) {
             if (!["image/jpeg", "image/png"].includes(file.type)) {
-                dispatch(addError(("Chỉ cho phép định dạng JPEG hoặc PNG!")));
+                dispatch(setErrorMessage(("Chỉ cho phép định dạng JPEG hoặc PNG!")));
                 return;
             }
             if (file.size > 5 * 1024 * 1024) {
-                dispatch(addError(("Kích thước ảnh vượt quá 5MB!")));
+                dispatch(setErrorMessage(("Kích thước ảnh vượt quá 5MB!")));
                 return;
             }
             setImage(file);

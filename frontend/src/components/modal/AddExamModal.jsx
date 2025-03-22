@@ -61,6 +61,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
         handleQuestionsChange({ target: { value: newImg !== null } }, index, "needImage");
     }
 
+    useEffect(() => {
+        console.log(questionImages);
+    }, [questionImages])
+
     const handleStatementChange = (e, index, idxStatement, name) => {
         const { value } = e.target;
         const list = [...questions];

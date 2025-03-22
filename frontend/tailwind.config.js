@@ -6,6 +6,7 @@ module.exports = {
       fontFamily: {
         bevietnam: ['"Be Vietnam Pro"', 'sans-serif'],
         inter: ['Inter', 'sans-serif'],
+        cubano: ['iCielBC_Cubano', "sans-serif"], // Định danh font
       },
     },
   },

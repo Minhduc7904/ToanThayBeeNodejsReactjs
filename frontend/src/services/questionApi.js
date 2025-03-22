@@ -26,6 +26,10 @@ export const getExamQuestionsAPI = ({id, search = "", currentPage = 1, limit = 1
     });
 }
 
+export const getPublicExamQuestionsAPI = ({id}) => {
+    return api.get(`/v1/user/exam/${id}/questions`);
+}
+
 export const getQuestionByIdAPI = (id) => {
     return api.get(`/v1/admin/question/${id}`);
 };

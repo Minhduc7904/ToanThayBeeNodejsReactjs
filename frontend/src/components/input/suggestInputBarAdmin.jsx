@@ -27,7 +27,8 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
         const filtered = options.filter((option) =>
             option.description.toLowerCase().includes(value.toLowerCase())
         );
-        onChange(options.find((option) => option.description === value)?.code);
+        const change = options?.find((option) => option.description.toLowerCase() === value.toLowerCase())?.code
+        if (change) onChange(change);
         setFilteredOptions(filtered);
         setShowSuggestions(true);
     };
@@ -53,7 +54,7 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
         <div ref={wrapperRef} className="relative w-full flex-1">
             <input
                 type="text"
-                className="w-full bg-white border border-gray-300 rounded-[0.5rem] py-[0.75rem] px-[1rem] focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
+                className="w-full bg-white border border-gray-300 rounded-[0.5rem] py-[0.5rem] px-[0.5rem] focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#303437] text-md font-medium font-['Inter'] leading-normal"
                 placeholder={placeholder}
                 value={inputValue}
                 onChange={handleInputChange}
@@ -65,7 +66,7 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
                         filteredOptions.map((option, index) => (
                             <li
                                 key={index}
-                                className="px-4 py-2 hover:bg-gray-200 cursor-pointer"
+                                className="px-4 py-2 hover:bg-gray-200 cursor-pointer text-md"
                                 onClick={() => handleOptionClick(option)}
                             >
                                 {option.description}

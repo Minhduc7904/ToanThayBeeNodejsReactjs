@@ -16,7 +16,7 @@ const MenuSidebar = ({ onClick, route, icon, text, icon2 }) => {
             {icon}
             {!closeSidebar && (
                 <div className="flex w-full items-center justify-between flex-row">
-                    <div className="text-base font-medium font-bevietnam leading-none">
+                    <div className=" text-sm font-medium font-bevietnam leading-none">
                         {text}
                     </div>
                     {icon2}

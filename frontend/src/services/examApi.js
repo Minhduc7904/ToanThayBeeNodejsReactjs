@@ -11,11 +11,26 @@ export const getAllExamAPI = ({ search = "", currentPage = 1, limit = 10, sortOr
     });
 };
 
+export const getAllPublicExamAPI = ({ search = "", currentPage = 1, limit = 10, sortOrder = 'asc' }) => {
+    return api.get("/v1/user/exam", {
+        params: {
+            search,
+            page: currentPage,
+            limit,
+            sortOrder,
+        }
+    });
+}
+
 export const getExamByIdAPI = (id) => {
     return api.get(`/v1/admin/exam/${id}`);
 }
 
-export const putExamAPI = async ({examId, examData}) => {
+export const getExamPublic = (id) => {
+    return api.get(`/v1/user/exam/${id}`);
+}
+
+export const putExamAPI = async ({ examId, examData }) => {
     const response = await api.put(`/v1/admin/exam/${examId}`, examData);
     return response.data;
 }
@@ -34,7 +49,6 @@ export const putImageExamAPI = async ({ examId, examImage }) => {
 export const postExamAPI = async ({ examData, examImage, questions, questionImages, statementImages }) => {
     const formData = new FormData();
 
-    
     if (questions.length === 0) {
         formData.append("data", JSON.stringify({ examData }));
     } else {
@@ -62,6 +76,11 @@ export const postExamAPI = async ({ examData, examImage, questions, questionImag
             "Content-Type": "multipart/form-data",
         },
     });
+    return response.data;
+}
+
+export const saveExamForUserAPI = async ({ examId }) => {
+    const response = await api.post('/v1/user/save-exam', { examId });
     return response.data;
 }
 

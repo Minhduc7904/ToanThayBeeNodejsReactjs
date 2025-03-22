@@ -48,7 +48,7 @@ const ExamTable = ({ exams, fetchExams }) => {
     )
 
     return (
-        <div className="flex flex-col gap-4 h-full min-h-0">
+        <div className="flex flex-col text-sm gap-4 h-full min-h-0">
             <ConfirmDeleteModal
                 isOpen={isOpenConfirmDeleteModal}
                 onClose={() => setIsOpenConfirmDeleteModal(false)}
@@ -63,7 +63,7 @@ const ExamTable = ({ exams, fetchExams }) => {
                             </p>
                             <button
                                 onClick={() => dispatch(setSortOrder())}
-                                className="w-4 h-4 relative">
+                                className="w-[0.75rem] h-[0.75rem] relative">
                                 <svg
                                     xmlns="http://www.w3.org/2000/svg"
                                     width="16"
@@ -84,10 +84,13 @@ const ExamTable = ({ exams, fetchExams }) => {
                         <button
                             onClick={() => setDeleteMode(!deleteMode)}
                             className="relative">
-                            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
-                                <path fillRule="evenodd" clipRule="evenodd" d="M11 0V1.02924H14V3.00351H2V1.02924H5V0H11ZM2 13.7731C2 15.002 3 16 4.23145 16H11.7656C12.9971 16 13.9971 15.002 13.9971 13.7731V4.02339H2V13.7731ZM4 6.01949H12V13.2616C12 13.6702 11.666 14.0039 11.2559 14.0039H4.74414C4.33398 14.0039 4 13.6702 4 13.2616V6.01949ZM9 6.98636H11V12.9747H9V6.98636ZM7 6.98636H5V12.9747H7V6.98636Z"
-                                    fill={`${deleteMode ? '#DC3545' : '#28A745'}`} />
-                            </svg>
+                            <div className="w-[0.75rem] h-[0.75rem]">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 16 16" fill="none">
+                                    <path fillRule="evenodd" clipRule="evenodd" d="M11 0V1.02924H14V3.00351H2V1.02924H5V0H11ZM2 13.7731C2 15.002 3 16 4.23145 16H11.7656C12.9971 16 13.9971 15.002 13.9971 13.7731V4.02339H2V13.7731ZM4 6.01949H12V13.2616C12 13.6702 11.666 14.0039 11.2559 14.0039H4.74414C4.33398 14.0039 4 13.6702 4 13.2616V6.01949ZM9 6.98636H11V12.9747H9V6.98636ZM7 6.98636H5V12.9747H7V6.98636Z"
+                                        fill={`${deleteMode ? '#DC3545' : '#28A745'}`} />
+                                </svg>
+                            </div>
+
                         </button>
                     </div>
 
@@ -106,9 +109,6 @@ const ExamTable = ({ exams, fetchExams }) => {
                             <th className="py-3 w-16">Lớp</th>
                             <th className="py-3 w-30">Chương</th>
                             <th className="py-3 w-20">Năm</th>
-                            <th className="py-3 w-40">Mô tả</th>
-                            <th className="py-3 w-20">Thời gian</th>
-                            <th className="py-3 w-20">Tỷ lệ đạt</th>
                             <th className="py-3 w-16">Lời giải</th>
                             <th className="py-3 w-20">Công khai</th>
                             <th className="py-3 w-30">Ngày đăng</th>
@@ -119,7 +119,7 @@ const ExamTable = ({ exams, fetchExams }) => {
                         {exams.map((exam, index) => (
                             <tr
                                 onClick={() => handleClickedRow(exam.id)}
-                                key={exam.id} className={`border border-[#E7E7ED] cursor-pointer ${deleteMode ? 'hover:bg-red-50' : 'hover:bg-gray-50'}`}>                                
+                                key={exam.id} className={`border border-[#E7E7ED] cursor-pointer ${deleteMode ? 'hover:bg-red-50' : 'hover:bg-gray-50'}`}>
                                 <td className="py-3 text-center">{exam.id}</td>
                                 <TooltipTd
                                     value={exam.name}
@@ -141,22 +141,13 @@ const ExamTable = ({ exams, fetchExams }) => {
                                 />
                                 <td className="py-3 text-center">{exam.year}</td>
                                 <TooltipTd
-                                    value={exam.description ? exam.description : "Không có"}
-                                    className={`${exam.description ? '' : 'text-yellow-500 font-semibold'}`}
-                                    tooltipText={
-                                        exam.description
-                                    }
-                                />
-                                <td className="py-3 text-center">{exam.testDuration ? exam.testDuration : 'Vô thời hạn'}</td>
-                                <td className="py-3 text-center">{exam.passRate ? exam.passRate + '%' : '0%'}</td>
-                                <TooltipTd
                                     value={exam.solutionUrl ? "Rồi" : 'Chưa'}
                                     className={`${exam.solutionUrl ? 'text-green-500 font-semibold' : 'text-yellow-500 font-semibold'}`}
                                     tooltipText={
                                         exam.solutionUrl
                                     }
                                 />
-                                <td className={`py-3 text-center ${exam.isPublic ? 'text-green-500 font-semibold' : 'text-red-500 font-semibold'}`}>{exam.isPublic ? 'Có' : 'Không'}</td>
+                                <td className={`py-3 text-center ${exam.public ? 'text-green-500 font-semibold' : 'text-red-500 font-semibold'}`}>{exam.public ? 'Có' : 'Không'}</td>
                                 <td className="py-3 text-center">{new Date(exam.createdAt).toLocaleDateString()}</td>
                                 <td className="py-3 text-center">{new Date(exam.updatedAt).toLocaleDateString()}</td>
                             </tr>
@@ -164,7 +155,6 @@ const ExamTable = ({ exams, fetchExams }) => {
                     </tbody>
                 </table>
             </div>
-
         </div>
     )
 

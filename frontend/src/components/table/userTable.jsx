@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchUsers } from "../../features/user/userSlice";
 import { setSortOrder } from "../../features/filter/filterSlice";
@@ -23,7 +23,7 @@ const UserList = () => {
     )
 
     return (
-        <div className="flex flex-col gap-4 min-h-0">
+        <div className="flex flex-col gap-4 min-h-0 text-sm">
             <div className="flex justify-start items-center">
                 {totalItems > 0 ? (
                     <div className="flex justify-center items-center gap-2">

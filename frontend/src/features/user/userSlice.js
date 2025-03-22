@@ -1,5 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { getAllUsersAPI, getUserByIdAPI, putUserAPI } from "../../services/userApi";
+import { getAllUsersAPI, getUserByIdAPI, putUserAPI, putUserTypeAPI, putUserStatusAPI } from "../../services/userApi";
 import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
 import { apiHandler } from "../../utils/apiHandler";
 
@@ -10,7 +10,7 @@ export const fetchUsers = createAsyncThunk(
             dispatch(setCurrentPage(data.currentPage));
             dispatch(setTotalPages(data.totalPages));
             dispatch(setTotalItems(data.totalItems));
-        }, false);
+        }, true, false);
     }
 );
 
@@ -25,6 +25,20 @@ export const putUser = createAsyncThunk(
     "users/putUser",
     async ({id, user}, { dispatch }) => {
         return await apiHandler(dispatch, putUserAPI, {id, user}, ()=>{}, true);
+    }
+);
+
+export const putUserType = createAsyncThunk(
+    "users/putUserType",
+    async ({id, type}, { dispatch }) => {
+        return await apiHandler(dispatch, putUserTypeAPI, {id, type}, ()=>{}, true);
+    }
+);
+
+export const putUserStatus = createAsyncThunk(
+    "users/putUserStatus",
+    async ({id, status}, { dispatch }) => {
+        return await apiHandler(dispatch, putUserStatusAPI, {id, status}, ()=>{}, true);
     }
 );
 
@@ -53,6 +67,9 @@ const userSlice = createSlice({
             })
             .addCase(fetchUsers.rejected, () => {
                 // Không cần xử lý gì vì lỗi đã được add vào stateApiSlice
+            })
+            .addCase(fetchUserById.pending, (state) => {
+                state.student = null;
             })
             .addCase(fetchUserById.fulfilled, (state, action) => {
                 if (action.payload) {

@@ -21,6 +21,8 @@ const AddCodeModal = ({ onClose }) => {
         { code: "difficulty", description: "Độ khó" },
         { code: "question type", description: "Loại câu hỏi" },
         { code: "highSchool", description: "Trường" },
+        { code: "waitStatus", description: "Trạng thái chờ" },
+        { code: "logType" , description: "Loại log" },
     ]
 
     const { loading } = useSelector(state => state.states);

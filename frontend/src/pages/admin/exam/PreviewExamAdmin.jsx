@@ -18,14 +18,9 @@ const PreviewExamAdmin = () => {
     const handleClickedQuestions = () => {
         navigate(`/admin/exam-management/${examId}/questions`);
     }
-    const dispatch = useDispatch();
-    const { isAddView } = useSelector(state => state.filter);
     return (
         <AdminLayout>
-            <AdminModal isOpen={isAddView} headerText={'Tạo câu hỏi mới'} onClose={() => dispatch(setIsAddView(false))} >
-                <AddQuestionModal onClose={() => dispatch(setIsAddView(false))} examId={examId} fetchQuestions={fetchExamQuestions} />
-            </AdminModal>
-            <div className="flex flex-col gap-4 h-full w-full">
+            <div className="flex flex-col gap-4 h-full w-full overflow-hidden">
                 <div className="flex gap-2 items-center border-b border-[#E7E7ED]">
                     <button onClick={() => navigate('/admin/exam-management')} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                         <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">

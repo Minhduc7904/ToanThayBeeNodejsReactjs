@@ -14,8 +14,6 @@ class PutUserRequest {
         this.highSchoolScore = data.highSchoolScore
         this.university = data.university
         this.avatarUrl = data.avatarUrl
-        this.status = data.status
-        this.userType = data.userType
     }
 
     static validate(data) {
@@ -32,8 +30,6 @@ class PutUserRequest {
             highSchoolScore: Joi.number().min(0).max(10).optional(),
             university: Joi.string().max(100).optional().allow(''),
             avatarUrl: Joi.string().uri().optional(),
-            status: Joi.string().required(),
-            userType: Joi.string().required()
         })
 
         return schema.validate(data)

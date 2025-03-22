@@ -3,6 +3,8 @@ import db from "../models"
 import ResponseClass from "../dtos/responses/class/ClassResponse"
 const { Class } = db
 import StudentClassStatus from "../constants/StudentClassStatus"
+import { Op } from "sequelize"
+
 
 export const getPublicClass = async (req, res) => {
     const search = req.query.search || ''
@@ -11,7 +13,7 @@ export const getPublicClass = async (req, res) => {
     const offset = (page - 1) * limit
 
     const whereClause = {
-        public: true, 
+        public: true,
         ...(search.trim() && {
             [Op.or]: [
                 { name: { [Op.like]: `%${search}%` } },
@@ -42,6 +44,7 @@ export const getAllClass = async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
     const offset = (page - 1) * limit
+    const sortOrder = req.query.sortOrder || 'DESC'
 
     const whereClause = {
         ...(search.trim() && {
@@ -57,7 +60,7 @@ export const getAllClass = async (req, res) => {
         where: whereClause,
         limit,
         offset,
-        order: [['createdAt', 'DESC']],
+        order: [['createdAt', sortOrder]],
     })
 
     return res.status(200).json({
@@ -106,8 +109,6 @@ export const getDetailClassByUser = async (req, res) => {
         status = StudentClassStatus.NOT_JOINED
     }
 
-
-
     return res.status(200).json({
         message: '✅ Lấy thông tin lớp thành công!',
         data: classItem,
@@ -146,7 +147,7 @@ export const getClassByUser = async (req, res) => {
 
     const formattedClasses = classes.map(classRecord => {
         const lop = classRecord.class
-        const status = classRecord.status 
+        const status = classRecord.status
         return new ResponseClass(lop, status)
     })
     const total = formattedClasses.length
@@ -208,26 +209,50 @@ export const deleteClass = async (req, res) => {
 }
 
 export const joinClass = async (req, res) => {
-    const userId = req.user.id
+    const userId = req.user.id;
+    const { classId } = req.params;
 
-    const { classId } = req.params
+    // Mở transaction
+    const transaction = await db.sequelize.transaction();
 
-    const { public: isPublic } = await db.Class.findOne({ where: { id: classId } })
-    if (!isPublic) {
-        return res.status(400).json({ message: 'Không thể tham gia lớp học này!' })
+    try {
+        // ✅ 1. Kiểm tra lớp có công khai không
+        const classInfo = await db.Class.findOne({ where: { id: classId }, transaction });
+        if (!classInfo || !classInfo.public) {
+            await transaction.rollback(); // 🔥 Rollback nếu lớp không công khai
+            return res.status(400).json({ message: "Không thể tham gia lớp học này!" });
+        }
+
+        // ✅ 2. Thêm học sinh vào bảng `StudentClassStatus`
+        const insert = await db.StudentClassStatus.create({
+            studentId: userId,
+            classId,
+            status: StudentClassStatus.WAITED
+        }, { transaction });
+
+        if (!insert) {
+            await transaction.rollback(); // 🔥 Rollback nếu không thêm được học sinh
+            return res.status(500).json({ message: "Tham gia lớp học không thành công!" });
+        }
+
+        // ✅ 3. Cập nhật `studentCount` +1 trong bảng `Class`
+        await db.Class.update(
+            { studentCount: db.sequelize.literal('studentCount + 1') }, // 🔥 Cộng dồn
+            { where: { id: classId }, transaction }
+        );
+
+        // ✅ 4. Commit transaction nếu mọi thứ thành công
+        await transaction.commit();
+
+        return res.status(200).json({ message: "Tham gia lớp học thành công!" });
+
+    } catch (error) {
+        // ❌ Nếu có lỗi, rollback transaction
+        await transaction.rollback();
+        console.error("❌ Lỗi khi tham gia lớp học:", error);
+        return res.status(500).json({ message: "Lỗi server khi tham gia lớp học!" });
     }
-
-    const insert = await db.StudentClassStatus.create({
-        studentId: userId,
-        classId,
-        status: StudentClassStatus.WAITED
-    })
-
-    if (insert) {
-        return res.status(200).json({ message: 'Tham gia lớp học thành công!' })
-    }
-    return res.status(500).json({ message: 'Tham gia lớp học không thành công!' })
-}
+};
 
 export const acceptStudentJoinClass = async (req, res) => {
     const { studentId, classId } = req.params;

@@ -17,8 +17,8 @@ export const fetchQuestions = createAsyncThunk(
 
 export const fetchExamQuestions = createAsyncThunk(
     "questions/fetchExamQuestions",
-    async ({id, search, currentPage, limit, sortOrder }, {dispatch}) => {
-        return await apiHandler(dispatch, questionApi.getExamQuestionsAPI, {id, search, currentPage, limit, sortOrder }, (data) => {
+    async ({ id, search, currentPage, limit, sortOrder }, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.getExamQuestionsAPI, { id, search, currentPage, limit, sortOrder }, (data) => {
             dispatch(setCurrentPage(data.currentPage));
             dispatch(setTotalPages(data.totalPages));
             dispatch(setTotalItems(data.totalItems));
@@ -27,10 +27,19 @@ export const fetchExamQuestions = createAsyncThunk(
     }
 );
 
+export const fetchPublicQuestionsByExamId = createAsyncThunk(
+    "exams/fetchPublicQuestionsByExamId",
+    async (id, { dispatch }) => {
+        return await apiHandler(dispatch, questionApi.getPublicExamQuestionsAPI, { id }, (data) => {
+            dispatch(setExam(data.exam));
+        }, true, false);
+    }
+);
+
 export const fetchQuestionById = createAsyncThunk(
     "questions/fetchQuestionById",
     async (id, { dispatch }) => {
-        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id,  ()=>{}, true, false);
+        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id, () => { }, true, false);
     }
 );
 
@@ -40,7 +49,7 @@ export const postQuestion = createAsyncThunk(
         return await apiHandler(dispatch, questionApi.postQuestionAPI, { questionData, statementOptions, questionImage, solutionImage, statementImages, examId }, (data) => {
         }, true, false);
     }
-    
+
 );
 
 export const putQuestion = createAsyncThunk(
@@ -80,7 +89,7 @@ export const putStatementImage = createAsyncThunk(
 export const deleteQuestion = createAsyncThunk(
     "questions/deleteQuestion",
     async (questionId, { dispatch }) => {
-        return await apiHandler(dispatch, questionApi.deleteQuestionAPI, questionId,()=>{}, true, false);
+        return await apiHandler(dispatch, questionApi.deleteQuestionAPI, questionId, () => { }, true, false);
     }
 );
 
@@ -117,9 +126,20 @@ const questionSlice = createSlice({
                     state.questions = action.payload.data;
                 }
             })
+            .addCase(fetchQuestionById.pending, (state) => {
+                state.question = null;
+            })
             .addCase(fetchQuestionById.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.question = action.payload.data;
+                }
+            })
+            .addCase(fetchPublicQuestionsByExamId.pending, (state, action) => {
+                state.questions = [];
+            })
+            .addCase(fetchPublicQuestionsByExamId.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.questions = action.payload.questions;
                 }
             })
     },

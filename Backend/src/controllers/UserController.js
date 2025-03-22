@@ -66,6 +66,7 @@ export const login = async (req, res) => {
     const user = await db.User.findOne({
         where: username ? { username } : { email },
     });
+
     if (!user) {
         return res.status(403).json({ message: 'Tài khoản hoặc mật khẩu không đúng' });
     }
@@ -93,9 +94,17 @@ export const login = async (req, res) => {
         maxAge: 2592000000, // 30 ngày (30 * 24 * 60 * 60 * 1000 ms)
     });
 
+    // res.cookie('token', token, {
+    //     httpOnly: true,
+    //     secure: true,              // BẮT BUỘC nếu frontend chạy qua ngrok (HTTPS)
+    //     sameSite: 'None',          // Cho phép cross-origin
+    //     maxAge: 2592000000,
+    // });
+
     return res.status(200).json({
         message: 'Đăng nhập thành công',
         user: new UserResponse(user),
+        token,
     });
 };
 
@@ -103,6 +112,7 @@ export const checkLogin = async (req, res) => {
     try {
         // Lấy token từ cookie
         const token = req.cookies.token;
+        console.log(token)
         if (!token) {
             return res.status(401).json({ message: 'Chưa đăng nhập' });
         }

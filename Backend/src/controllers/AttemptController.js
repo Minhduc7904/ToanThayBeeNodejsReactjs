@@ -61,6 +61,45 @@ export const getAttemptByExamId = async (req, res) => {
 
 }
 
+const startExam = async (req, res) => {
+    try {
+        const { studentId, examId, questionIds } = req.body;
+
+        // 1. Tạo bản ghi StudentExamAttempt mới
+        const newAttempt = await db.StudentExamAttempt.create({
+            studentId,
+            examId,
+            startTime: new Date(),
+            endTime: null,
+            score: null,
+        });
+
+        // 2. Lấy attemptId
+        const attemptId = newAttempt.id;
+
+        // 3. Tạo danh sách các Answer với answerContent = "", result = null
+        const answerRecords = questionIds.map((questionId) => ({
+            attemptId,
+            questionId,
+            answerContent: "",
+            result: null,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+        }));
+
+        // 4. Bulk insert vào bảng answer
+        await db.Answer.bulkCreate(answerRecords);
+
+        return res.status(201).json({
+            message: "Bắt đầu làm bài thành công",
+            attemptId,
+        });
+    } catch (error) {
+        console.error("Lỗi khi bắt đầu làm bài:", error);
+        return res.status(500).json({ error: "Server error" });
+    }
+};
+
 export const postAttempt = async (req, res) => {
     const studentId = req.user.id
     const { examId } = req.body

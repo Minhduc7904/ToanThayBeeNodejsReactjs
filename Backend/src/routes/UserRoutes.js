@@ -73,7 +73,6 @@ router.put('/v1/user/password',
 
 // Route cập nhật trạng thái người dùng
 router.put('/v1/admin/user/:id/status',
-    validate(PutUserRequest),
     requireRoles([UserType.ADMIN, UserType.TEACHER]),
     asyncHandler(UserController.changeUserStatus)
 )

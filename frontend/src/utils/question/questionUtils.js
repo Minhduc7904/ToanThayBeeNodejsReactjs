@@ -1,59 +1,58 @@
 // questionUtils.js
-import { addError } from "../../features/state/stateApiSlice";
+import { setErrorMessage } from "../../features/state/stateApiSlice";
 
 // Hàm validateCorrectAnswer nhận vào:
 // - question: đối tượng câu hỏi (chứa typeOfQuestion)
 // - correctAnswer: giá trị của correctAnswer
 // - dispatch: hàm dispatch từ Redux
-// - addError: action creator để thêm lỗi vào errorSlice
+// - setErrorMessage: action creator để thêm lỗi vào errorSlice
 export const validateCorrectAnswer = (question, correctAnswer, dispatch, content) => {
-    let check = true;
     if (content.trim() === "") {
-        dispatch(addError("Nội dung câu hỏi không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Nội dung câu hỏi không được để trống!"));
+        return false;
     }
     if (question.typeOfQuestion === null) {
-        dispatch(addError("Loại câu hỏi không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Loại câu hỏi không được để trống!"));
+        return false;
     }
     if (correctAnswer.trim() === "") {
-        dispatch(addError("Đáp án không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Đáp án không được để trống!"));
+        return false;
         
     } else {
         if (question.typeOfQuestion === 'TLN' && !/^[-+]?\d+(\.\d+)?$/.test(correctAnswer.replace(",", "."))) {
-            dispatch(addError("Đáp án phải là một số!"));
-            check = false;
+            dispatch(setErrorMessage("Đáp án phải là một số!"));
+            return false;
         }
     }
 
     if (question.class === null) {
-        dispatch(addError("Lớp không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Lớp không được để trống!"));
+        return false;
     }
 
     if (question.class !== null && question.chapter !== null) {
         if (!question.chapter.startsWith(question.class)) {
-            dispatch(addError("Chương này không phải là chương của lớp!"));
-            check = false;
+            dispatch(setErrorMessage("Chương này không phải là chương của lớp!"));
+            return false;
         }
     }
 
     if (question.typeOfQuestion === "TN") {
         if (!/^[A-D]$/.test(correctAnswer.trim())) {
-            dispatch(addError("Đáp án cho câu hỏi TN phải có dạng một ký tự A, B, C hoặc D!"));
-            check = false;
+            dispatch(setErrorMessage("Đáp án cho câu hỏi TN phải có dạng một ký tự A, B, C hoặc D!"));
+            return false;
         }
     } else if (question.typeOfQuestion === "DS") {
         const tokens = correctAnswer.trim().split(/\s+/);
         if (tokens.length === 0 || !tokens.every((token) => token === "Đ" || token === "S")) {
-            dispatch(addError("Đáp án cho câu hỏi DS phải có dạng các ký tự 'Đ' hoặc 'S', ví dụ: 'Đ Đ S S'!"));
-            check = false;
+            dispatch(setErrorMessage("Đáp án cho câu hỏi DS phải có dạng các ký tự 'Đ' hoặc 'S', ví dụ: 'Đ Đ S S'!"));
+            return false;
         }
     }
 
 
-    return check;
+    return true;
 };
 
 // Hàm processInput nhận vào:
@@ -109,7 +108,7 @@ export const processInput = (question, correctAnswer, content, dispatch) => {
 
     if (question.typeOfQuestion === "DS" || question.typeOfQuestion === "TN") {
         if (statementLines.length < 2 || statementLines === null || statementLines === undefined) {
-            dispatch(addError("Mệnh đề không hợp lệ"));
+            dispatch(setErrorMessage("Mệnh đề không hợp lệ"));
             return false;
         }
     }
@@ -141,33 +140,32 @@ export const processInput = (question, correctAnswer, content, dispatch) => {
 
 
 export const validateInput = (question, dispatch) => {
-    let check = true;
     if (question.class === null) {
-        dispatch(addError("Lớp không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Lớp không được để trống!"));
+        return false;
     }
     if (question.correctAnswer) {
         if (!/^[-+]?\d+(\.\d+)?$/.test(question.correctAnswer)) {
-            dispatch(addError("Đáp án phải là một số!"));
-            check = false;
+            dispatch(setErrorMessage("Đáp án phải là một số!"));
+            return false;
         }
     }
 
     if (question.class !== null && question.chapter !== null) {
         if (!question.chapter.startsWith(question.class)) {
-            dispatch(addError("Chương này không phải là chương của lớp!"));
-            check = false;
+            dispatch(setErrorMessage("Chương này không phải là chương của lớp!"));
+            return false;
         }
     }
 
     if (question.typeOfQuestion === 'TN') {
         if (question.statements.filter(statement => statement.isCorrect === true).length !== 1) {
-            dispatch(addError("Câu hỏi TN có một đáp án đúng!"));
-            check = false;
+            dispatch(setErrorMessage("Câu hỏi TN có một đáp án đúng!"));
+            return false;
         }
     }
 
-    return check;
+    return true;
 }
 
 export const processInputForUpdate = (question) => {
@@ -254,7 +252,7 @@ export const splitContentTN = (content, correctAnswersText, dispatch) => {
 
     // Kiểm tra số lượng câu hỏi khớp với số lượng đáp án
     if (questionsTN.length !== correctAnswers.length) {
-        dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+        dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
         return false;
     }
 
@@ -282,11 +280,11 @@ export const splitContentDS = (content, correctAnswersText, count, dispatch) => 
             if (foundQuestion) {
                 // Kiểm tra nếu số lượng mệnh đề không khớp với đáp án đúng/sai
                 if (correctAnswers[index] === undefined) {
-                    dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+                    dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
                     return false;
                 }
                 if (statementLines.length !== correctAnswers[index].length) {
-                    dispatch(addError(`Số lượng đáp án không khớp với số lượng mệnh đề ở Câu ${index + 1}!`));
+                    dispatch(setErrorMessage(`Số lượng đáp án không khớp với số lượng mệnh đề ở Câu ${index + 1}!`));
                     return false;
                 }
 
@@ -325,11 +323,11 @@ export const splitContentDS = (content, correctAnswersText, count, dispatch) => 
     // Đẩy câu hỏi cuối cùng vào danh sách
     if (foundQuestion) {
         if (correctAnswers[index] === undefined) {
-            dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+            dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
             return false;
         }
         if (statementLines.length !== correctAnswers[index].length) {
-            dispatch(addError(`Số lượng đáp án không khớp với số lượng mệnh đề ở Câu ${index + 1}!`));
+            dispatch(setErrorMessage(`Số lượng đáp án không khớp với số lượng mệnh đề ở Câu ${index + 1}!`));
             return false;
         }
 
@@ -362,7 +360,7 @@ export const splitContentTLN = (content, correctAnswersText, dispatch) => {
         if (/^Câu\s*\d+\./.test(line)) {
             if (foundQuestion) {
                 if (index >= correctAnswers.length) {
-                    dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+                    dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
                     return false;
                 }
                 // Lưu câu hỏi trước đó
@@ -386,7 +384,7 @@ export const splitContentTLN = (content, correctAnswersText, dispatch) => {
     // Đẩy câu hỏi cuối cùng vào danh sách
     if (foundQuestion) {
         if (index >= correctAnswers.length) {
-            dispatch(addError("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+            dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
             return false;
         }
         questionsTLN.push({
@@ -403,29 +401,28 @@ export const splitContentTLN = (content, correctAnswersText, dispatch) => {
 
 
 export const validateExamData = (examData, dispatch) => {
-    let check = true;
     if (examData.name.trim() === "") {
-        dispatch(addError("Tên đề thi không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Tên đề thi không được để trống!"));
+        return false;
     }
     if (examData.class === null) {
-        dispatch(addError("Lớp không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Lớp không được để trống!"));
+        return false;
     }
     if (examData.typeOfExam === null) {
-        dispatch(addError("Kiểu đề thi không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Kiểu đề thi không được để trống!"));
+        return false;
     }
 
     if (examData.year === null) {
-        dispatch(addError("Năm không được để trống!"));
-        check = false;
+        dispatch(setErrorMessage("Năm không được để trống!"));
+        return false;
     }
 
     if (examData.passRate < 0 || examData.passRate > 100) {
-        dispatch(addError("Tỷ lệ đạt không hợp lệ!"));
-        check = false;
+        dispatch(setErrorMessage("Tỷ lệ đạt không hợp lệ!"));
+        return false;
     }
 
-    return check;
+    return true;
 }

@@ -12,8 +12,9 @@ const router = express.Router()
 router.get('/v1/answer/:id', 
     asyncHandler(AnswerController.getCauTraLoiById)
 )
-router.get('/v1/answer/attempt/:attemptId', 
-    asyncHandler(AnswerController.getCauTraLoiByLuotLamBai)
+router.get('/v1/user/answer/attempt/:attemptId', 
+    requireRoles([]),
+    asyncHandler(AnswerController.getAnswerByAttempt)
 )
 router.post('/v1/answer', 
     asyncHandler(AnswerController.postCauTraLoi)

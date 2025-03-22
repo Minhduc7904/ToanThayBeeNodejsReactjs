@@ -14,9 +14,13 @@
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "react-katex": "^3.0.1",
+    "react-qr-code": "^2.0.15",
     "react-redux": "^9.2.0",
     "react-router-dom": "^7.2.0",
     "react-scripts": "5.0.1",
+    "react-to-pdf": "^1.0.1",
+    "react-to-print": "^3.0.5",
+    "socket.io-client": "^4.8.1",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

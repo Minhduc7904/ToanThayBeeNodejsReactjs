@@ -28,6 +28,11 @@ router.get('/v1/admin/exam/:examId/questions',
     asyncHandler(ExamController.getQuestionByExamId)
 )
 
+router.get('/v1/user/exam/:examId/questions',
+    requireRoles([]),
+    asyncHandler(ExamController.getPublicQuestionByExamId)
+)
+
 router.get('/v1/user/exam/:id',
     requireRoles([]),
     asyncHandler(ExamController.getExamPublicById)
@@ -41,6 +46,11 @@ router.post('/v1/admin/exam',
         { name: 'statementImages', maxCount: 20 }
     ]),
     asyncHandler(ExamController.postExam)
+)
+
+router.post('/v1/user/save-exam',
+    requireRoles([]),
+    asyncHandler(ExamController.saveExamForUser)
 )
 
 

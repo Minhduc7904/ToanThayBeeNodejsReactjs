@@ -8,6 +8,7 @@ import SuggestInputBarAdmin from "../input/suggestInputBarAdmin";
 import { fetchExamById, putExam, putImageExam, setExam } from "../../features/exam/examSlice";
 import { useNavigate } from "react-router-dom";
 import { fetchCodesByType } from "../../features/code/codeSlice";
+import DetailTr from "./DetailTr";
 
 const ExamDetail = ({ selectedExamId }) => {
     const dispatch = useDispatch();
@@ -16,15 +17,6 @@ const ExamDetail = ({ selectedExamId }) => {
     const { codes } = useSelector((state) => state.codes);
     const { loading } = useSelector(state => state.states);
     const [optionChapter, setOptionChapter] = useState([]);
-    const [editName, setEditName] = useState(false);
-    const [editClass, setEditClass] = useState(false);
-    const [editChapter, setEditChapter] = useState(false);
-    const [editYear, setEditYear] = useState(false);
-    const [editDuration, setEditDuration] = useState(false);
-    const [editDescription, setEditDescription] = useState(false);
-    const [editPassRate, setEditPassRate] = useState(false);
-    const [editSolutionUrl, setEditSolutionUrl] = useState(false);
-    const [editPublic, setEditPublic] = useState(false);
 
     useEffect(() => {
         dispatch(fetchExamById(selectedExamId))
@@ -87,7 +79,7 @@ const ExamDetail = ({ selectedExamId }) => {
     }
 
     return (
-        <div className="flex flex-col gap-4">
+        <div className="flex flex-col h-full gap-4">
             <div className="flex gap-2 items-center border-b border-[#E7E7ED]">
                 <button onClick={() => navigate('/admin/exam-management')} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
@@ -126,278 +118,131 @@ const ExamDetail = ({ selectedExamId }) => {
                 </div>
             ) : (
                 <>
-                    <div className="flex-grow">
+                    <div className="flex h-full overflow-y-auto">
                         <table className="w-full border-collapse border border-[#E7E7ED]">
                             <thead className="bg-[#F6FAFD]">
                                 <tr className="border border-[#E7E7ED]">
-                                    <th className="p-3 text-[#202325] text-lg font-bold font-['Be_Vietnam_Pro'] leading-[18px] w-64">Thuộc tính</th>
-                                    <th className="p-3 text-[#202325] text-lg font-bold font-['Be_Vietnam_Pro'] leading-[18px]">Chi tiết</th>
+                                    <th className="p-3 text-[#202325] text-md font-bold font-['Be_Vietnam_Pro'] leading-[18px] w-64">Thuộc tính</th>
+                                    <th className="p-3 text-[#202325] text-md font-bold font-['Be_Vietnam_Pro'] leading-[18px]">Chi tiết</th>
                                 </tr>
                             </thead>
                             <tbody>
-                                <tr
-                                    className="border border-[#E7E7ED] ">
-                                    <td className="p-3  text-[#202325] text-lg font-bold">ID</td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {exam?.id}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED] ">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Tên <span className="text-red-500"> *</span>
-                                        </label>
-
-                                        <button onClick={() => setEditName(!editName)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.2479 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editName ? (
-                                            <>{exam?.name}</>
-                                        ) : (
-                                            <input
-                                                placeholder="Nhập tên đề thi"
-                                                value={exam?.name}
-                                                onChange={(e) => dispatch(setExam({ ...exam, name: e.target.value }))}
-                                                className="w-full h-full resize-none border border-[#707070] rounded-[0.5rem] p-[0.5rem]"
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED] ">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Kiểu đề <span className="text-red-500"> *</span>
-                                        </label>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {exam?.typeOfExam}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED] ">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Lớp <span className="text-red-500"> *</span>
-                                        </label>
-                                        <button onClick={() => setEditClass(!editClass)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.247 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editClass ? (
-                                            <>{exam?.class}</>
-                                        ) : (
-                                            <DropMenuBarAdmin
-                                                selectedOption={exam?.class}
-                                                onChange={(option) => dispatch(setExam({ ...exam, class: option }))}
-                                                options={Array.isArray(codes["grade"]) ? codes["grade"] : []}
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED] ">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Chương
-                                        </label>
-                                        <button onClick={() => setEditChapter(!editChapter)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.2479 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editChapter ? (
-                                            <>{exam?.chapter ? codes['chapter']?.find((code) => code.code === exam?.chapter).description : "Chưa phân loại"}</>
-                                        ) : (
-                                            <SuggestInputBarAdmin
-                                                selectedOption={exam?.chapter}
-                                                onChange={(option) => dispatch(setExam({ ...exam, chapter: option }))}
-                                                options={optionChapter}
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
+                                <DetailTr
+                                    title="ID"
+                                    value={exam?.id}
+                                    type={0}
+                                    required={true}
+                                />
+                                <DetailTr
+                                    title="Tên đề"
+                                    value={exam?.name}
+                                    type={1}
+                                    required={true}
+                                    placeholder={"Nhập tên đề"}
+                                    onChange={(e) => dispatch(setExam({ ...exam, name: e.target.value }))}
+                                />
+                                <DetailTr
+                                    title="Loại đề"
+                                    value={exam?.typeOfExam}
+                                    type={0}
+                                    required={true}
+                                />
+                                <DetailTr
+                                    title={"Lớp"}
+                                    value={exam?.class}
+                                    type={3}
+                                    required={true}
+                                    options={Array.isArray(codes["grade"]) ? codes["grade"] : []}
+                                    onChange={(option) => dispatch(setExam({ ...exam, class: option }))}
+                                />
+                                <DetailTr
+                                    title={"Chương"}
+                                    value={exam?.chapter}
+                                    valueText={exam?.chapter ? codes['chapter']?.find((code) => code.code === exam?.chapter).description : "Chưa phân loại"}
+                                    type={3}
+                                    options={optionChapter}
+                                    onChange={(option) => dispatch(setExam({ ...exam, chapter: option }))}
+                                />
+                                <DetailTr
+                                    title="Năm"
+                                    value={exam?.year}
+                                    type={3}
+                                    required={true}
+                                    options={Array.isArray(codes["year"]) ? codes["year"] : []}
+                                    onChange={(option) => dispatch(setExam({ ...exam, year: option }))}
+                                />
+                                <DetailTr
+                                    title={"Mô tả"}
+                                    value={exam?.description ? exam?.description : "Chưa có mô tả"}
+                                    type={2}
+                                    placeholder={"Nhập mô tả"}
+                                    onChange={(e) => dispatch(setExam({ ...exam, description: e.target.value }))}
+                                />
+                                <DetailTr
+                                    title="Thời gian"
+                                    value={exam?.testDuration}
+                                    valueText={exam?.testDuration ? exam?.testDuration : "Vô thời hạn"}
+                                    type={3}
+                                    options={[
+                                        { code: "30", description: "30 phút" },
+                                        { code: "45", description: "45 phút" },
+                                        { code: "60", description: "60 phút" },
+                                        { code: "90", description: "90 phút" },
+                                        { code: "120", description: "120 phút" },
+                                        { code: null, description: "Vô thời hạn" },
+                                    ]}
+                                    onChange={(option) => dispatch(setExam({ ...exam, testDuration: option }))}
+                                />
+                                <DetailTr
+                                    title={"Tỷ lệ đạt"}
+                                    value={exam?.passRate}
+                                    type={4}
+                                    placeholder={"Nhập tỷ lệ đạt"}
+                                    valueText={exam?.passRate ? exam?.passRate + "%" : "0%"}
+                                    onChange={(e) => dispatch(setExam({ ...exam, passRate: e.target.value }))}
+                                />
+                                <DetailTr
+                                    title="Link lời giải"
+                                    value={exam?.solutionUrl}
+                                    type={1}
+                                    valueText={exam?.solutionUrl ? exam?.solutionUrl : "Chưa có lời giải"}
+                                    placeholder={"Nhập URL lời giải"}
+                                    onChange={(e) => dispatch(setExam({ ...exam, solutionUrl: e.target.value }))}
+                                />
+                                
                                 <tr className="border border-[#E7E7ED]">
                                     <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Năm <span className="text-red-500"> *</span>
-                                        </label>
-                                        <button onClick={() => setEditYear(!editYear)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.247 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editYear ? (
-                                            <>{exam?.year}</>
-                                        ) : (
-                                            <DropMenuBarAdmin
-                                                selectedOption={exam?.year}
-                                                onChange={(option) => dispatch(setExam({ ...exam, year: option }))}
-                                                options={Array.isArray(codes["year"]) ? codes["year"] : []}
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Mô tả
-                                        </label>
-                                        <button onClick={() => setEditDescription(!editDescription)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.2479 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg break-words max-w-10">
-                                        {!editDescription ? (
-                                            <>{exam?.description ? exam?.description : "Không có mô tả"}</>
-                                        ) : (
-                                            <textarea
-                                                placeholder="Nhập mô tả"
-                                                value={exam?.description}
-                                                onChange={(e) => dispatch(setExam({ ...exam, description: e.target.value }))}
-                                                className="w-full h-[100px] resize-none border border-[#707070] rounded-[0.5rem] p-[0.5rem]"
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Thời gian <span className="text-red-500"> *</span>
-                                        </label>
-                                        <button onClick={() => setEditDuration(!editDuration)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.247 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editDuration ? (
-                                            <>{exam?.testDuration ? exam?.testDuration : "Vô thời hạn"}</>
-                                        ) : (
-                                            <DropMenuBarAdmin
-                                                selectedOption={exam?.testDuration}
-                                                onChange={(option) => dispatch(setExam({ ...exam, testDuration: option }))}
-                                                options={[
-                                                    { code: "30", description: "30 phút" },
-                                                    { code: "45", description: "45 phút" },
-                                                    { code: "60", description: "60 phút" },
-                                                    { code: "90", description: "90 phút" },
-                                                    { code: "120", description: "120 phút" },
-                                                    { code: null, description: "Vô thời hạn" },
-                                                ]}
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Tỷ lệ đạt <span className="text-red-500"> *</span>
-                                        </label>
-                                        <button onClick={() => setEditPassRate(!editPassRate)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.247 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editPassRate ? (
-                                            <>{exam?.passRate ? exam?.passRate + '%' : "0%"}</>
-                                        ) : (
-                                            <input
-                                                type="number"
-                                                placeholder="Nhập tỷ lệ đạt"
-                                                value={exam?.passRate}
-                                                onChange={(e) => dispatch(setExam({ ...exam, passRate: e.target.value }))}
-                                                className="w-full h-full resize-none border border-[#707070] rounded-[0.5rem] p-[0.5rem]"
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Link lời giải
-                                        </label>
-                                        <button onClick={() => setEditSolutionUrl(!editSolutionUrl)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16. 983 2.99963C17.247 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editSolutionUrl ? (
-                                            <>{exam?.solutionUrl ? exam?.solutionUrl : "Chưa có lời giải"}</>
-                                        ) : (
-                                            <input
-                                                placeholder="Nhập URL lời giải"
-                                                value={exam?.solutionUrl}
-                                                onChange={(e) => dispatch(setExam({ ...exam, solutionUrl: e.target.value }))}
-                                                className="w-full h-full resize-none border border-[#707070] rounded-[0.5rem] p-[0.5rem]"
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
+                                        <label className="text-[#202325] text-md font-bold">
                                             Ảnh
                                         </label>
                                     </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
+                                    <td className="p-3 text-[#72777a] text-md">
                                         <PutImage imageUrl={exam?.imageUrl} inputId={exam?.id} id={exam?.id} className="w-full"
                                             putImageFunction={handlePutImage} />
                                     </td>
                                 </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 flex justify-between items-center">
-                                        <label className="text-[#202325] text-lg font-bold">
-                                            Công khai
-                                        </label>
-                                        <button onClick={() => setEditPublic(!editPublic)}>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
-                                                <path d="M14.304 4.84399L17.156 7.69599M7 6.99999H4C3.73478 6.99999 3.48043 7.10535 3.29289 7.29289C3.10536 7.48042 3 7.73478 3 7.99999V18C3 18.2652 3.10536 18.5196 3.29289 18.7071C3.48043 18.8946 3.73478 19 4 19H15C15.2652 19 15.5196 18.8946 15.7071 18.7071C15.8946 18.5196 16 18.2652 16 18V13.5M18.409 3.58999C18.5964 3.7773 18.745 3.99969 18.8464 4.24445C18.9478 4.48921 19 4.75156 19 5.01649C19 5.28143 18.9478 5.54378 18.8464 5.78854C18.745 6.0333 18.5964 6.25569 18.409 6.44299L11.565 13.287L8 14L8.713 10.435L15.557 3.59099C15.7442 3.40353 15.9664 3.25481 16.2111 3.15334C16.4558 3.05186 16.7181 2.99963 16.983 2.99963C17.247 2.99963 17.5102 3.05186 17.7549 3.15334C17.9996 3.25481 18.2218 3.40353 18.409 3.59099V3.58999Z" stroke="#2563EB" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                                            </svg>
-                                        </button>
-                                    </td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {!editPublic ? (
-                                            <>{exam?.public ? "Công khai" : "Không công khai"}</>
-                                        ) : (
-                                            <DropMenuBarAdmin
-                                                selectedOption={exam?.public}
-                                                onChange={(option) => dispatch(setExam({ ...exam, public: option }))}
-                                                options={[
-                                                    { code: true, description: "Công khai" },
-                                                    { code: false, description: "Không công khai" },
-                                                ]}
-                                            />
-                                        )}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 text-[#202325] text-lg font-bold">Ngày tạo</td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {new Date(exam?.createdAt).toLocaleDateString()}
-                                    </td>
-                                </tr>
-                                <tr className="border border-[#E7E7ED]">
-                                    <td className="p-3 text-[#202325] text-lg font-bold">Người tạo</td>
-                                    <td className="p-3 text-[#72777a] text-lg">
-                                        {new Date(exam?.updatedAt).toLocaleDateString()}
-                                    </td>
-                                </tr>
+                                <DetailTr 
+                                    title="Công khai"
+                                    value={exam?.public}
+                                    type={3}
+                                    required={true}
+                                    options={[
+                                        { code: true, description: "Công khai" },
+                                        { code: false, description: "Không công khai" },
+                                    ]}
+                                    onChange={(option) => dispatch(setExam({ ...exam, public: option }))}
+                                    valueText={exam?.public ? "Công khai" : "Không công khai"}
+                                />
+                                <DetailTr
+                                    title="Ngày tạo"
+                                    value={new Date(exam?.createdAt).toLocaleDateString()}
+                                    type={0}
+                                />
+                                <DetailTr
+                                    title="Ngày cập nhật"
+                                    value={new Date(exam?.updatedAt).toLocaleDateString()}
+                                    type={0}
+                                />
                             </tbody>
                         </table>
                     </div>
@@ -408,7 +253,7 @@ const ExamDetail = ({ selectedExamId }) => {
                             data-icon Position="None" data-mode="Light" data-size="Large" data-state="Default" data-type="Primary"
                             className="h-12 px-8 py-4 bg-[#253f61] hover:bg-[#1b2e47] active:bg-[#16263a] transition-all duration-300 rounded-[48px] flex justify-center items-center gap-2.5"
                         >
-                            <div className="text-center justify-center text-white text-lg font-medium font-['Inter'] leading-normal">
+                            <div className="text-center justify-center text-white text-md font-medium font-['Inter'] leading-normal">
                                 Lưu
                             </div>
                         </button>

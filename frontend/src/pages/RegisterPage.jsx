@@ -10,7 +10,6 @@ import GoogleLoginButton from '../components/button/GoogleLoginButton';
 import AuthDropMenu from '../components/dropMenu/AuthDropMenu';
 import { validateRegister } from '../utils/validation';
 import { processRegisterForm } from '../utils/sanitizeInput';
-import { setErrors } from '../features/state/stateApiSlice';
 
 export default function RegisterPage() {
     const dispatch = useDispatch();
@@ -34,13 +33,11 @@ export default function RegisterPage() {
         // Dùng biến mới để tránh gán lại giá trị cho const formData
         const processedData = processRegisterForm({ ...formData });
 
-        const errors = validateRegister(processedData, password2);
-        if (errors.length > 0) {
-            setErrors(errors);
+        const check = validateRegister(processedData, password2);
+        if (!check) {
             return;
         }
 
-        setErrors([]);
         const resultAction = await dispatch(register(processedData));
         if (register.fulfilled.match(resultAction)) {
             navigate('/login');

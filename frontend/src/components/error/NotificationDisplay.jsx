@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { clearSuccessMessage } from "../../features/state/stateApiSlice";
+import { clearSuccessMessage, clearErrorsMessage } from "../../features/state/stateApiSlice";
 
-const SuccessDisplay = ({ customClassName = "" }) => {
+const NotificationDisplay = ({ customClassName = "" }) => {
     const successMessage = useSelector((state) => state.states.successMessage);
+    const errorsMessage = useSelector((state) => state.states.errorsMessage);
     const dispatch = useDispatch();
     const [visibleMessages, setVisibleMessages] = useState([]);
 
     useEffect(() => {
-        if (successMessage) {
+        const addMessage = (message, type) => {
             const newMessage = {
                 id: Date.now(),
-                message: successMessage,
+                message,
+                type,
                 fadeOut: false
             };
 
-            // Thêm message vào danh sách hiển thị
             setVisibleMessages((prev) => [...prev, newMessage]);
 
             // Tự động biến mất sau 2.5 giây
@@ -28,10 +29,16 @@ const SuccessDisplay = ({ customClassName = "" }) => {
             // Xóa message khỏi danh sách sau 3 giây
             setTimeout(() => {
                 setVisibleMessages((prev) => prev.filter((msg) => msg.id !== newMessage.id));
-                dispatch(clearSuccessMessage()); // Xóa thông báo sau khi tất cả đã biến mất
+
+                if (type === "success") dispatch(clearSuccessMessage());
+                if (type === "error") dispatch(clearErrorsMessage());
             }, 3000);
-        }
-    }, [successMessage, dispatch]);
+        };
+
+        if (successMessage) addMessage(successMessage, "success");
+        if (errorsMessage) addMessage(errorsMessage, "error");
+
+    }, [successMessage, errorsMessage, dispatch]);
 
     if (visibleMessages.length === 0) return null;
 
@@ -40,16 +47,15 @@ const SuccessDisplay = ({ customClassName = "" }) => {
             {visibleMessages.map((msg, index) => (
                 <div
                     key={msg.id}
-                    className={`bg-green-100 text-green-600 px-4 py-3 rounded-md shadow-md flex items-center justify-between transition-all duration-500 ease-in-out
+                    className={`px-4 py-3 rounded-md shadow-md flex items-center justify-between transition-all duration-500 ease-in-out
+                        ${msg.type === "success" ? "bg-green-100 text-green-600" : "bg-red-100 text-red-600"}
                         ${msg.fadeOut ? "opacity-0 translate-y-[-20px]" : "opacity-100 translate-y-0"}`}
-                    style={{ transitionDelay: `${index * 100}ms` }} // Hiệu ứng biến mất lần lượt
+                    style={{ transitionDelay: `${index * 100}ms` }}
                 >
                     <span>{msg.message}</span>
                     <button
-                        onClick={() =>
-                            setVisibleMessages((prev) => prev.filter((m) => m.id !== msg.id))
-                        }
-                        className="ml-4 text-green-800 font-bold hover:text-green-900 transition"
+                        onClick={() => setVisibleMessages((prev) => prev.filter((m) => m.id !== msg.id))}
+                        className="ml-4 font-bold hover:opacity-75 transition"
                     >
                         ✕
                     </button>
@@ -59,4 +65,4 @@ const SuccessDisplay = ({ customClassName = "" }) => {
     );
 };
 
-export default SuccessDisplay;
+export default NotificationDisplay;

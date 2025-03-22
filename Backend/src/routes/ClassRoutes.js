@@ -10,7 +10,7 @@ import * as ClassController from '../controllers/ClassController.js'
 const router = express.Router()
 
 router.get('/v1/user/class', 
-    requireRoles([]),
+    // requireRoles([]),
     asyncHandler(ClassController.getPublicClass)
 )
 

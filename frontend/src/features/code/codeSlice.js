@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { getCodeByTypeAPI, getAllCodesAPI, createCodeAPI, putCodeAPI } from "../../services/codeApi";
-import { addError } from "../state/stateApiSlice"; // Import từ stateApiSlice
+import { setErrorMessage } from "../state/stateApiSlice"; // Import từ stateApiSlice
 import { apiHandler } from "../../utils/apiHandler";
 import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
 
@@ -10,7 +10,7 @@ export const fetchCodesByType = createAsyncThunk(
     async (types, { dispatch }) => {
         return await apiHandler(dispatch, getCodeByTypeAPI, types, (data) => {
             if (!data || !Array.isArray(data.data)) {
-                dispatch(addError("Dữ liệu nhận được không hợp lệ"));
+                dispatch(setErrorMessage("Dữ liệu nhận được không hợp lệ"));
                 return;
             }
         }, false, false);

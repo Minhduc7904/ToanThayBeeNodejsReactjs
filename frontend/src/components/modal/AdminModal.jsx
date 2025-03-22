@@ -1,4 +1,3 @@
-import ErrorsDisplay from "../error/ErrorsDisplay";
 
 const AdminModal = ({ isOpen, onClose, children, headerText }) => {
     if (!isOpen) return null;
