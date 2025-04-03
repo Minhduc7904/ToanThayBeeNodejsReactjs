@@ -40,6 +40,26 @@
   font-weight: normal;
   font-style: normal;
 }
+@keyframes wave {
+  0% {
+    transform: scale(1);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 0.3;
+  }
+  100% {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+.animate-wave {
+  animation: wave 1.5s infinite ease-out;
+}
+
+
 
 .hide-scrollbar {
   scrollbar-width: none;        /* Firefox */
@@ -48,6 +68,18 @@
 .hide-scrollbar::-webkit-scrollbar {
   display: none;                /* Chrome, Safari */
 }
+
+input[type="password"]::-ms-reveal,
+input[type="password"]::-ms-clear {
+  display: none;
+}
+
+input[type="password"]::-webkit-credentials-auto-fill-button {
+  visibility: hidden;
+  display: none !important;
+  pointer-events: none;
+}
+
 
 input.slider {
   -webkit-appearance: none;
@@ -79,6 +111,19 @@ input.slider::-moz-range-thumb {
   background: #0ea5e9;
   border-radius: 50%;
   border: none;
+}
+
+
+
+/* Ẩn mũi tên tăng/giảm trong input number */
+input[type=number]::-webkit-inner-spin-button,
+input[type=number]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type=number] {
+  -moz-appearance: textfield; /* Firefox */
 }
 
 * {
@@ -194,5 +239,56 @@ button {
 @media (max-width: 768px) {
   .container {
     padding: 0.5rem;
+  }
+}
+
+
+/* src/components/Particles.css */
+.particle {
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: rgba(255, 255, 255, 0.4);
+  border-radius: 50%;
+  animation: floatUp 10s linear infinite;
+}
+
+.particle-0 {
+  left: 10%;
+  animation-duration: 12s;
+  animation-delay: 0s;
+}
+.particle-1 {
+  left: 25%;
+  animation-duration: 15s;
+  animation-delay: 3s;
+}
+.particle-2 {
+  left: 40%;
+  animation-duration: 10s;
+  animation-delay: 6s;
+}
+.particle-3 {
+  left: 60%;
+  animation-duration: 13s;
+  animation-delay: 1s;
+}
+.particle-4 {
+  left: 80%;
+  animation-duration: 11s;
+  animation-delay: 4s;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(100vh) scale(1);
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-10vh) scale(0.5);
+    opacity: 0;
   }
 }

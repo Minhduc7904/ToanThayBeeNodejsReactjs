@@ -23,6 +23,7 @@ const AddCodeModal = ({ onClose }) => {
         { code: "highSchool", description: "Trường" },
         { code: "waitStatus", description: "Trạng thái chờ" },
         { code: "logType" , description: "Loại log" },
+        { code: "classStatus", description: "Trạng thái lớp" },
     ]
 
     const { loading } = useSelector(state => state.states);

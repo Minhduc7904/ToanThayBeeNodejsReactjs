@@ -16,16 +16,14 @@ export const fetchExams = createAsyncThunk(
 
 export const fetchPublicExams = createAsyncThunk(
     "exams/fetchPublicExams",
-    async ({ search, currentPage, limit, sortOrder }, { dispatch }) => {
-        return await apiHandler(dispatch, examApi.getAllPublicExamAPI, { search, currentPage, limit, sortOrder }, (data) => {
+    async (data, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.getAllPublicExamAPI, data, (data) => {
             dispatch(setCurrentPage(data.currentPage));
             dispatch(setTotalPages(data.totalPages));
             dispatch(setTotalItems(data.totalItems));
         }, true, false);
     }
 );
-
-
 
 export const fetchExamById = createAsyncThunk(
     "exams/fetchExamById",

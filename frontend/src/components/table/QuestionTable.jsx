@@ -9,6 +9,7 @@ import TooltipTd from "./TooltipTd";
 import ConfirmDeleteModal from "../modal/ConfirmDeleteModal";
 import { useNavigate } from "react-router-dom";
 import { deleteQuestion } from "../../features/question/questionSlice";
+import { resetFilters } from "../../features/filter/filterSlice";
 
 const QuestionTable = ({ fetchQuestions, examId = null }) => {
     const dispatch = useDispatch();
@@ -23,6 +24,15 @@ const QuestionTable = ({ fetchQuestions, examId = null }) => {
     const [id, setId] = useState(null);
     const { loading } = useSelector(state => state.states);
 
+    const [didInit, setDidInit] = useState(false); // 👉 Thêm cờ kiểm soát mount đầu tiên
+
+    useEffect(() => {
+        if (!didInit) {
+            dispatch(resetFilters());
+            setDidInit(true);
+        }
+    }, [dispatch, didInit]);
+
     const params = useMemo(() => ({
         search,
         currentPage,
@@ -36,9 +46,11 @@ const QuestionTable = ({ fetchQuestions, examId = null }) => {
     }, [dispatch]);
 
     useEffect(() => {
+        if (didInit) {
         dispatch(fetchQuestions(params))
             .unwrap()
-    }, [dispatch, search, currentPage, limit, sortOrder]);
+        }
+    }, [dispatch, params, didInit]);
 
     const handleClickedRow = (id) => {
         if (deleteMode) {
@@ -115,7 +127,7 @@ const QuestionTable = ({ fetchQuestions, examId = null }) => {
 
             </div>
 
-            <div className="flex-grow overflow-y-auto">
+            <div className="flex-grow h-[70vh] overflow-y-auto hide-scrollbar">
                 <table className="w-full border-collapse border border-[#E7E7ED]">
                     <thead className="bg-[#F6FAFD] sticky top-0 z-10">
                         <tr className="border border-[#E7E7ED]">

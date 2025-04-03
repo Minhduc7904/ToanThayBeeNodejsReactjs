@@ -175,7 +175,7 @@ const FunctionBarAdmin = () => {
 
                         {isDropdownOpenPage && (
                             <div className="absolute top-full mt-[0.5rem] w-full bg-white border border-[#CDCFD0] rounded-[0.5rem] shadow-md z-20 
-                    max-h-[200px] overflow-y-auto" ref={dropdownRef}>
+                    max-h-[200px] overflow-y-auto hide-scrollbar" ref={dropdownRef}>
                                 {optionsPage.map((option) => (
                                     <p
                                         key={option}

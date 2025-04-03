@@ -1,8 +1,6 @@
 'use strict'
-const {
-  Model
-} = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize'
+export default (sequelize, DataTypes) => {
   class Exam extends Model {
     /**
      * Helper method for defining associations.
@@ -16,6 +14,13 @@ module.exports = (sequelize, DataTypes) => {
         otherKey: 'questionId',           
         as: 'questions',                  
       })
+      Exam.associate = (models) => {
+        Exam.hasMany(models.StudentExamAttempt, {
+          foreignKey: "examId",
+          as: "attempts"
+        });
+      };
+      
     }
   }
   Exam.init({
@@ -30,6 +35,8 @@ module.exports = (sequelize, DataTypes) => {
     solutionUrl: DataTypes.TEXT,
     imageUrl: DataTypes.TEXT,
     public: DataTypes.BOOLEAN,
+    attemptLimit: DataTypes.INTEGER,
+    isCheatingCheckEnabled: DataTypes.BOOLEAN,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

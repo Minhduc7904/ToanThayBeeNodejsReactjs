@@ -1,4 +1,3 @@
-// src/pages/LoginPage.jsx
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/auth/authSlice';
@@ -28,27 +27,29 @@ export default function LoginPage() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const resultAction = await dispatch(login(formData));
+        const resultAction = await dispatch(login(formData))
+
         if (login.fulfilled.match(resultAction)) {
             if (localStorage.getItem('rememberMe') === "true") {
                 localStorage.setItem("savedUsername", formData.username);
             } else {
                 localStorage.removeItem("savedUsername");
             }
-            navigate('/dashboard');
+            navigate('/');
         }
     };
 
     return (
-        <AuthLayout className={'gap-8'}>
+        <AuthLayout>
             <form
                 onSubmit={handleSubmit}
-                className="flex flex-col gap-8 w-[30rem]"
+                className="flex flex-col gap-4 w-full px-4 sm:px-6 py-8 max-w-sm mx-auto bg-white backdrop-blur-md shadow-xl rounded-xl"
             >
                 {/* Tiêu đề */}
-                <div className="w-full font-bevietnam font-medium text-[#333] text-[2rem]">
+                <div className="mb-2  text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-sky-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent tracking-wide drop-shadow-sm uppercase font-cubano">
                     Đăng nhập
                 </div>
+
 
                 {/* Input Username */}
                 <Input
@@ -58,72 +59,50 @@ export default function LoginPage() {
                     title="Tên đăng nhập"
                     value={formData.username}
                     onChange={handleChange}
-                    className="
-                        h-14 pl-6 
-                        w-full            /* Chiều rộng full trên màn hình nhỏ */
-
-                    "
+                    className="h-10 sm:h-12 px-4 rounded-md sm:rounded-lg text-sm"
                     required
                 />
 
                 {/* Input Password */}
-                <div className="flex flex-col gap-2">
-                    <Input
-                        type="password"
-                        name="password"
-                        placeholder="Mật khẩu"
-                        title={'Mật khẩu'}
-                        value={formData.password}
-                        onChange={handleChange}
-                        className="
-                        h-14 pl-6 
-                        w-full            /* Chiều rộng full trên màn hình nhỏ */
-                    "
-                        required
-                    />
-                    <div className='flex items-center justify-between'>
-                        <div className='flex items-center gap-2'>
-                            <AuthCheckbox />
-                            <div className='text-[#333333] ext-base font-normal font-bevietnam'>
-                                Ghi nhớ tôi
-                            </div>
-                        </div>
-                        <div className='text-[#333333] ext-base font-normal font-bevietnam cursor-pointer'>
-                            Cần giúp đỡ ?
-                        </div>
-                    </div>
-                </div>
-                {/* Nút Đăng nhập & liên kết */}
-                <div className="flex flex-col gap-4">
-                    <Button type="submit" disabled={loading} variant="secondary" className="w-full">
-                        {loading ? <LoadingSpinner size="1.5rem" color="border-white" /> : "Đăng nhập"}
-                    </Button>
+                <Input
+                    type="password"
+                    name="password"
+                    placeholder="Mật khẩu"
+                    title="Mật khẩu"
+                    value={formData.password}
+                    onChange={handleChange}
+                    className="h-10 sm:h-12 px-4 rounded-md sm:rounded-lg text-sm"
+                    required
+                />
 
-                    <div className="flex flex-row justify-between text-center">
-                        <div>
-                            <span className="text-[#666666] text-base font-normal font-bevietnam">
-                                Không có tài khoản? {" "}
-                            </span>
-                            <Link
-                                to="/register"
-                                className="text-black text-base font-normal font-bevietnam underline"
-                            >
-                                Đăng ký
-                            </Link>
-                        </div>
-                        <Link
-                            to="/login"
-                            className="text-[#666666] text-base font-normal font-bevietnam"
-                        >
-                            Quên mật khẩu
-                        </Link>
+                {/* Ghi nhớ & hỗ trợ */}
+                <div className="flex items-center justify-between text-sm text-gray-700">
+                    <div className="flex items-center gap-2">
+                        <AuthCheckbox />
+                        <span>Ghi nhớ tôi</span>
                     </div>
+                    <span className="cursor-pointer hover:underline">Cần giúp đỡ?</span>
                 </div>
 
-                {/* Nút Google */}
-                <GoogleLoginButton onClick={handleGoogleLogin} />
+                {/* Nút Đăng nhập */}
+                <Button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full py-3 text-white text-base font-semibold bg-red-600 hover:bg-red-700 rounded-md shadow-md hover:shadow-lg transition"
+                >
+
+                    {loading ? <LoadingSpinner size="1.5rem" color="border-white" /> : "Đăng nhập"}
+                </Button>
+
+                {/* Liên kết */}
+                {/* Liên kết */}
+                <div className="text-center text-sm text-gray-600 space-y-1">
+                    <p className=" font-medium">
+                        Nếu bạn chưa có tài khoản hoặc quên mật khẩu, vui lòng liên hệ với giáo viên! 
+                    </p>
+                </div>
             </form>
-            
-        </AuthLayout >
+        </AuthLayout>
+
     );
 }

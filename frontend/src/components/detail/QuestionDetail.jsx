@@ -125,7 +125,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">
-                <button onClick={() => navigate(-1)} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
+                <button onClick={() => navigate("/admin/question-management")} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                         <path d="M12.6667 8.66675L5.50292 15.8289C5.38989 15.94 5.33337 16.0856 5.33337 16.2312M12.6667 23.3334L5.50292 16.6335C5.38989 16.5224 5.33337 16.3768 5.33337 16.2312M5.33337 16.2312H26.6667" stroke="#131214" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
@@ -133,6 +133,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                 <div className="relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose">Chi tiết câu hỏi - {question.id}</div>
 
             </div>
+            
             <div className="flex w-full h-2 border-b border-[#E7E7ED]"></div>
             <div className="flex flex-col gap-[1.25rem] w-full">
                 <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
@@ -151,7 +152,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                         <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                             Xem trước Latex
                         </label>
-                        <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                        <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                             <LatexRenderer text={question.content} />
                         </div>
                     </div>
@@ -184,7 +185,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                                     Xem trước Latex
                                 </label>
                                 {question.statements.map((statement, index) => (
-                                    <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                    <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                         <LatexRenderer text={statement.content} />
                                     </div>
                                 ))}
@@ -249,7 +250,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                     <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                         Xem trước Latex
                     </label>
-                    <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                    <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                         <LatexRenderer text={question.solution} />
                     </div>
                 </div>
@@ -350,11 +351,9 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                     type="button"
                     onClick={handlePutQuestion}
                     data-icon Position="None" data-mode="Light" data-size="Large" data-state="Default" data-type="Primary"
-                    className="h-12 px-8 py-4 bg-[#253f61] hover:bg-[#1b2e47] active:bg-[#16263a] transition-all duration-300 rounded-[48px] flex justify-center items-center gap-2.5"
+                    className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-800"
                 >
-                    <div className="text-center justify-center text-white text-md font-medium font-['Inter'] leading-normal">
-                        Lưu
-                    </div>
+                    Lưu
                 </button>
             </div>
 

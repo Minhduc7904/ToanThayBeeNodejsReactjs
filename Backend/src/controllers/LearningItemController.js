@@ -1,5 +1,5 @@
-import { Sequelize } from "../models"
-import db from "../models"
+import db from "../models/index.js"
+import { uploadPdfToFirebase, deletePdfFromFirebase } from "../utils/pdfUpload.js"
 
 export const getLearningItemById = async (req, res) => {
     const { id } = req.params
@@ -13,7 +13,6 @@ export const getLearningItemById = async (req, res) => {
         message: '✅ Lấy thông tin mục học tập thành công!',
         data: learningItem
     })
-
 }
 
 export const getLearningItemByLesson = async (req, res) => {
@@ -51,7 +50,7 @@ export const postLearningItem = async (req, res) => {
         const lessonUpdated = await db.Lesson.increment(
             { learningItemCount: 1 },
             {
-                where: { id: req.body.lessonId },
+                where: { id: newLearningItem.lessonId },
                 transaction: t
             }
         )
@@ -74,6 +73,61 @@ export const postLearningItem = async (req, res) => {
         })
     }
 }
+
+export const uploadLearningItemPdf = async (req, res) => {
+    const { id } = req.params;
+
+    const learningItem = await db.LearningItem.findOne({ where: { id } });
+    if (!learningItem) {
+        return res.status(404).json({
+            message: `❌ Không tìm thấy mục học tập với ID: ${id}!`
+        });
+    }
+
+    // Khởi tạo transaction
+    const transaction = await db.sequelize.transaction();
+    let uploadedFile;
+    try {
+        // Nếu đã có URL PDF cũ thì xóa trước
+        if (learningItem.url) {
+            await deletePdfFromFirebase(learningItem.url);
+        }
+
+        if (req.file) {
+            // Upload PDF mới
+            uploadedFile = await uploadPdfToFirebase(req);
+
+            // Cập nhật URL trong database
+            await learningItem.update({ url: uploadedFile.file }, { transaction });
+        } else {
+            // Nếu không có file mới, xóa URL cũ
+            await learningItem.update({ url: null }, { transaction });
+        }
+
+        // Commit transaction
+        await transaction.commit();
+
+        return res.status(200).json({
+            message: uploadedFile ? "✅ Upload file PDF thành công!" : "Xóa file PDF thành công!",
+            data: learningItem
+        });
+    } catch (error) {
+        // Rollback transaction nếu có lỗi
+        await transaction.rollback();
+
+        // Nếu đã upload file, xóa lại file đã upload
+        if (uploadedFile) {
+            await deletePdfFromFirebase(uploadedFile.file);
+        }
+
+        return res.status(500).json({
+            message: "❌ Lỗi khi upload file PDF.",
+            error: error.message
+        });
+    }
+};
+
+
 
 export const putLearningItem = async (req, res) => {
     const { id } = req.params

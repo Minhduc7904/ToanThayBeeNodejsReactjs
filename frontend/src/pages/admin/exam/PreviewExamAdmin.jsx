@@ -1,6 +1,5 @@
 import AdminLayout from "../../../layouts/AdminLayout";
 import FunctionBarAdmin from "../../../components/bar/FunctionBarAdmin";
-import { useSelector, useDispatch } from "react-redux";
 import { useParams } from "react-router-dom";
 import { fetchExamQuestions } from "../../../features/question/questionSlice";
 import { useNavigate } from "react-router-dom";
@@ -8,15 +7,28 @@ import AdminModal from "../../../components/modal/AdminModal";
 import AddQuestionModal from "../../../components/modal/AddQuestionModal";
 import { setIsAddView } from "../../../features/filter/filterSlice";
 import PreviewExam from "../../../components/detail/PreviewExam";
+import { useDispatch, useSelector } from "react-redux";
+import { useEffect } from "react";
 
 const PreviewExamAdmin = () => {
     const { examId } = useParams();
     const navigate = useNavigate();
+    const dispatch = useDispatch();
+    const { questions } = useSelector((state) => state.questions);
+    const { exam } = useSelector((state) => state.exams);
+
+    useEffect(() => {
+        dispatch(fetchExamQuestions({ id: examId, limit: 1000, sortOrder: 'desc' }));
+    }, [dispatch, examId]);
+
     const handleClickedDetail = () => {
         navigate(`/admin/exam-management/${examId}`);
     }
     const handleClickedQuestions = () => {
         navigate(`/admin/exam-management/${examId}/questions`);
+    }
+    const handleClickedTracking = () => {
+        navigate(`/admin/exam-management/${examId}/tracking`);
     }
     return (
         <AdminLayout>
@@ -52,9 +64,17 @@ const PreviewExamAdmin = () => {
                         className={`relative justify-center text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-gray-500 underline`}>
                         Xem đề thi
                     </div>
-
+                    <div
+                        className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-[#090a0a]"}`}>
+                        -
+                    </div>
+                    <div
+                        onClick={handleClickedTracking}
+                        className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose cursor-pointer`}>
+                        Theo dõi
+                    </div>
                 </div>
-                <PreviewExam examId={examId}/>
+                <PreviewExam exam={exam} questions={questions} />
             </div>
         </AdminLayout>
     )

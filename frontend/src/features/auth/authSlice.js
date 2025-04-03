@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { loginAPI, registerAPI, logoutAPI, checkLoginAPI } from "../../services/authApi.js";
-import { setErrorMessage } from "../state/stateApiSlice.js"; // Import action setErrorMessage từ errorSlice
+import { setErrorMessage, setSuccessMessage } from "../state/stateApiSlice.js"; // Import action setErrorMessage từ errorSlice
 
 // Thunk đăng nhập
 export const login = createAsyncThunk(
@@ -13,7 +13,7 @@ export const login = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data.message || "Đăng nhập thất bại";
             dispatch(setErrorMessage(errorMsg));
-            return 
+            return rejectWithValue(errorMsg);
         }
     }
 );
@@ -27,7 +27,7 @@ export const checkLogin = createAsyncThunk(
             return response.data.user; // API trả về { user }
         } catch (error) {
             const errorMsg = error.response?.data.message || "Không thể xác thực";
-            dispatch(setErrorMessage(errorMsg));
+            // dispatch(setErrorMessage(errorMsg));
             return 
         }
     }
@@ -55,10 +55,11 @@ export const logout = createAsyncThunk(
     async (_, { dispatch, rejectWithValue }) => {
         try {
             await logoutAPI();
+            // dispatch(setSuccessMessage("Đăng xuất thành công"));
             return; // Chỉ cần xóa user khỏi state
         } catch (error) {
-            const errorMsg = error.response?.data || "Đăng xuất thất bại";
-            dispatch(setErrorMessage(errorMsg));
+            // const errorMsg = error.response?.data || "Đăng xuất thất bại";
+            // dispatch(setErrorMessage(errorMsg));
             return 
         }
     }

@@ -1,6 +1,7 @@
 import path from 'path'
 import multer from 'multer'
-import config from '../config/firebaseConfig'
+import config from '../config/firebaseConfig.js'
+
 
 const fileFilter = (req, file, callback) => {
     if (file.mimetype.startsWith('image')) {

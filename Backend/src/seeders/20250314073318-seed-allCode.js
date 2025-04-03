@@ -1,6 +1,6 @@
 "use strict";
 
-module.exports = {
+export default {
   up: async (queryInterface, Sequelize) => {
     return queryInterface.bulkInsert("allCode", [
       // 👤 User Type

@@ -75,7 +75,7 @@ const CodeTable = ({ codes }) => {
                     <p className="text-center text-gray-500">Không tìm thấy kết quả nào</p>
                 )}
             </div>
-            <div className="flex-grow overflow-y-auto">
+            <div className="flex-grow h-[70vh] overflow-y-auto hide-scrollbar">
                 <table className="w-full border-collapse border border-[#E7E7ED]">
                     <thead className="bg-[#F6FAFD] sticky top-0 z-10">
                         <tr className="border border-[#E7E7ED]">

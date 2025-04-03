@@ -1,8 +1,7 @@
-import { Sequelize } from "../models"
-import db from "../models"
+import db from "../models/index.js"
 import UserType from "../constants/UserType.js"
 import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
-import { Op } from "sequelize";
+import { Op, or } from "sequelize";
 
 export const getExam = async (req, res) => {
     const search = req.query.search || ''
@@ -47,30 +46,65 @@ export const getExam = async (req, res) => {
 }
 
 export const getExamPublic = async (req, res) => {
-    const userId = req.user.id; // ✅ lấy userId từ token hoặc middleware
-    const search = req.query.search || ''
-    const page = parseInt(req.query.page, 10) || 1
-    const limit = parseInt(req.query.limit, 10) || 10
-    const offset = (page - 1) * limit
-    const sortOrder = req.query.sortOrder || 'DESC'
+    const userId = req.user.id;
+    const search = req.query.search || '';
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const offset = (page - 1) * limit;
+    const sortOrder = req.query.sortOrder || 'DESC';
 
-    let whereClause = { public: true }
+    // ✅ Parse danh sách và class duy nhất
+    const typeOfExamList = req.query.typeOfExam ? req.query.typeOfExam : [];
+    const chapterList = req.query.chapter ? req.query.chapter : [];
+    const classValue = req.query.class || null; // Chỉ 1 giá trị
+
+    // ✅ Mảng các điều kiện OR
+    const orConditions = [];
 
     if (search.trim() !== '') {
-        whereClause = {
-            ...whereClause,
-            [Op.or]: [
-                { name: { [Op.like]: `%${search}%` } },
-                { description: { [Op.like]: `%${search}%` } },
-                { chapter: { [Op.like]: `%${search}%` } },
-                { year: { [Op.like]: `%${search}%` } },
-                { class: { [Op.like]: `%${search}%` } },
-                { typeOfExam: { [Op.like]: `%${search}%` } }
-            ]
-        }
+        orConditions.push(
+            { name: { [Op.like]: `%${search}%` } },
+            { description: { [Op.like]: `%${search}%` } },
+            { chapter: { [Op.like]: `%${search}%` } },
+            { year: { [Op.like]: `%${search}%` } },
+            { class: { [Op.like]: `%${search}%` } },
+            { typeOfExam: { [Op.like]: `%${search}%` } }
+        );
     }
 
-    // Lấy danh sách đề và tổng số đề
+    if (typeOfExamList.length > 0) {
+        orConditions.push({
+            typeOfExam: {
+                [Op.in]: typeOfExamList
+            }
+        });
+    }
+
+    if (chapterList.length > 0) {
+        orConditions.push({
+            chapter: {
+                [Op.in]: chapterList
+            }
+        });
+    }
+
+    // ✅ Điều kiện chính
+    let whereClause = {
+        public: true
+    };
+
+    if (classValue) {
+        whereClause.class = classValue;
+    }
+
+    if (orConditions.length > 0) {
+        whereClause = {
+            ...whereClause,
+            [Op.or]: orConditions
+        };
+    }
+
+    // ✅ Truy vấn danh sách đề
     const [examList, total] = await Promise.all([
         db.Exam.findAll({
             where: whereClause,
@@ -79,36 +113,33 @@ export const getExamPublic = async (req, res) => {
             order: [['createdAt', sortOrder]]
         }),
         db.Exam.count({ where: whereClause })
-    ])
+    ]);
 
-    const examIds = examList.map(exam => exam.id)
+    const examIds = examList.map(exam => exam.id);
 
-    // Truy vấn trạng thái từ bảng studentExamStatus
     const statuses = await db.StudentExamStatus.findAll({
         where: {
             studentId: userId,
             examId: examIds
         }
-    })
+    });
 
-    // Map dữ liệu theo examId để dễ lookup
     const statusMap = {};
     statuses.forEach(status => {
         statusMap[status.examId] = {
             isDone: status.isDone,
             isSave: status.isSave
-        }
-    })
+        };
+    });
 
-    // Gắn trạng thái vào từng exam
     const examListWithStatus = examList.map(exam => {
-        const status = statusMap[exam.id] || { isDone: false, isSave: false }
+        const status = statusMap[exam.id] || { isDone: false, isSave: false };
         return {
-            ...exam.toJSON(), // chuyển từ instance Sequelize sang object thường
+            ...exam.toJSON(),
             isDone: status.isDone,
             isSave: status.isSave
-        }
-    })
+        };
+    });
 
     return res.status(200).json({
         message: 'Danh sách đề',
@@ -116,8 +147,8 @@ export const getExamPublic = async (req, res) => {
         currentPage: page,
         totalPages: Math.ceil(total / limit),
         totalItems: total
-    })
-}
+    });
+};
 
 // examHandlers.js
 export const submitExam = async (socket, attemptId) => {
@@ -275,74 +306,88 @@ export const getQuestionByExamId = async (req, res) => {
         return res.status(400).json({ message: "❌ examId không hợp lệ!" });
     }
 
-    const sortOrder = req.query.sortOrder || "ASC";
+    const sortOrder = req.query.sortOrder || "desc";
     const search = req.query.search || "";
     const page = parseInt(req.query.page, 10) || 1;
     const limit = parseInt(req.query.limit, 10) || 10;
     const offset = (page - 1) * limit;
 
-    // Tìm đề thi trước
-    const exam = await db.Exam.findByPk(examId, {
-        include: [
-            {
-                model: db.Question,
-                as: "questions",
-                through: { attributes: [] },
-                include: [
-                    {
-                        model: db.Statement,
-                        as: "statements",
-                        attributes: ["id", "content", "imageUrl", "isCorrect"],
+    try {
+        const exam = await db.Exam.findByPk(examId, {
+            include: [
+                {
+                    model: db.Question,
+                    as: "questions",
+                    through: {
+                        attributes: ["order"],
                     },
-                ],
-            },
-        ],
-    });
+                    include: [
+                        {
+                            model: db.Statement,
+                            as: "statements",
+                            attributes: ["id", "content", "imageUrl", "isCorrect", "order"],
+                        },
+                    ],
+                },
+            ],
+        });
 
-    if (!exam) {
-        return res.status(404).json({ message: "❌ Không tìm thấy đề thi!" });
+        if (!exam) {
+            return res.status(404).json({ message: "❌ Không tìm thấy đề thi!" });
+        }
+
+        // Lọc câu hỏi
+        let filteredQuestions = exam.questions;
+
+        if (search.trim() !== "") {
+            filteredQuestions = filteredQuestions.filter((question) =>
+                [
+                    question.content,
+                    question.typeOfQuestion,
+                    question.chapter,
+                    question.difficulty,
+                    question.class,
+                    question.id?.toString(),
+                    question.description,
+                ]
+                    .filter(Boolean)
+                    .some((field) =>
+                        field.toLowerCase().includes(search.toLowerCase())
+                    )
+            );
+        }
+
+        // Sắp xếp theo order trong bảng trung gian ExamQuestions
+        filteredQuestions.sort((a, b) => {
+            const orderA = a.ExamQuestions?.order || 0;
+            const orderB = b.ExamQuestions?.order || 0;
+            return sortOrder === "desc" ? orderA - orderB : orderB - orderA;
+        });
+
+        // Sắp xếp mệnh đề bên trong từng câu hỏi
+        filteredQuestions.forEach((question) => {
+            if (Array.isArray(question.statements)) {
+                question.statements.sort((a, b) => a.order - b.order);
+            }
+        });
+
+        const total = filteredQuestions.length;
+        const paginatedQuestions = filteredQuestions.slice(offset, offset + limit);
+
+        return res.status(200).json({
+            message: "✅ Lấy danh sách câu hỏi thành công!",
+            data: paginatedQuestions,
+            currentPage: page,
+            totalPages: Math.ceil(total / limit),
+            totalItems: total,
+            exam,
+        });
+    } catch (error) {
+        console.error("❌ Lỗi khi lấy câu hỏi theo examId:", error);
+        return res.status(500).json({ message: "Lỗi server", error: error.message });
     }
-
-    // Lọc danh sách câu hỏi sau khi đã tìm thấy đề thi
-    let filteredQuestions = exam.questions;
-
-    if (search.trim() !== "") {
-        filteredQuestions = filteredQuestions.filter((question) =>
-            [
-                question.content,
-                question.typeOfQuestion,
-                question.chapter,
-                question.difficulty,
-                question.class,
-                question.id?.toString(),
-                question.description,
-            ]
-                .filter(Boolean) // Loại bỏ giá trị `null` hoặc `undefined`
-                .some((field) => field.toLowerCase().includes(search.toLowerCase()))
-        );
-    }
-
-    filteredQuestions.sort((a, b) => {
-        if (!a.createdAt || !b.createdAt) return 0;
-        return sortOrder === "ASC"
-            ? new Date(a.createdAt) - new Date(b.createdAt)
-            : new Date(b.createdAt) - new Date(a.createdAt);
-    });
-
-    // Áp dụng phân trang
-    const total = filteredQuestions.length;
-    const paginatedQuestions = filteredQuestions.slice(offset, offset + limit);
-
-    return res.status(200).json({
-        message: "Lấy danh sách câu hỏi thành công!",
-        data: paginatedQuestions,
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
-        totalItems: total,
-        exam: exam,
-    });
-
 };
+
 
 
 export const getPublicQuestionByExamId = async (req, res) => {
@@ -353,41 +398,58 @@ export const getPublicQuestionByExamId = async (req, res) => {
     }
 
     const exam = await db.Exam.findOne({
-        where: { id: examId, public: true }, // ✅ Chỉ lấy exam public
-        attributes: ['name', 'testDuration'], // 👉 chỉ trả về name & thời gian
-
+        where: { id: examId, public: true },
+        attributes: ['name', 'testDuration', 'class', 'solutionUrl', 'isCheatingCheckEnabled', 'attemptLimit'],
         include: [
             {
                 model: db.Question,
                 as: "questions",
-                through: { attributes: [] },
+                through: { attributes: ["order"] },
                 attributes: ["id", "content", "typeOfQuestion", "imageUrl"],
                 include: [
                     {
                         model: db.Statement,
                         as: "statements",
-                        attributes: ["id", "content"],
+                        attributes: ["id", "content", "imageUrl", "order"],
                     },
                 ],
             },
         ],
-        order: [[{ model: db.Question, as: "questions" }, "id", "ASC"]],
-
     });
 
     if (!exam) {
         return res.status(404).json({ message: "❌ Không tìm thấy đề thi công khai!" });
     }
 
+    // Sắp xếp câu hỏi theo order trong bảng ExamQuestions
+    exam.questions.sort((a, b) => {
+        const orderA = a.ExamQuestions?.order || 0;
+        const orderB = b.ExamQuestions?.order || 0;
+        return orderA - orderB;
+    });
+
+    // Sắp xếp các mệnh đề trong từng câu hỏi theo order
+    exam.questions.forEach((question) => {
+        if (Array.isArray(question.statements)) {
+            question.statements.sort((a, b) => a.order - b.order);
+        }
+    });
+
     return res.status(200).json({
-        message: "Lấy danh sách câu hỏi rút gọn thành công!",
+        message: "✅ Lấy danh sách câu hỏi rút gọn thành công!",
         questions: exam.questions,
         exam: {
             name: exam.name,
             testDuration: exam.testDuration,
+            class: exam.class,
+            solutionUrl: exam.solutionUrl,
+            isCheatingCheckEnabled: exam.isCheatingCheckEnabled,
+            attemptLimit: exam.attemptLimit,
         }
     });
+
 };
+
 
 
 export const getExamById = async (req, res) => {
@@ -428,62 +490,66 @@ export const postExam = async (req, res) => {
         let questionImageIndex = 0
         let statementImageIndex = 0
 
-        const createdQuestions = await Promise.all(
-            questions.map(async ({ questionData, statements }, i1) => {
-                let questionImageUrl = null
+        let createdQuestions = []
 
-                if (questionData.needImage && questionImages[questionImageIndex]) {
-                    const image = questionImages[questionImageIndex]
-                    questionImageIndex++
-                    questionImageUrl = await uploadImage(image)
-                    if (questionImageUrl) uploadedFiles.push(questionImageUrl)
-                }
+        for (let i1 = 0; i1 < questions.length; i1++) {
+            const { questionData, statements } = questions[i1]
+            let questionImageUrl = null
 
-                const newQuestion = await db.Question.create(
-                    { ...questionData, imageUrl: questionImageUrl },
-                    { transaction }
-                )
+            if (questionData.needImage && questionImages[questionImageIndex]) {
+                const image = questionImages[questionImageIndex]
+                questionImageIndex++
+                questionImageUrl = await uploadImage(image)
+                if (questionImageUrl) uploadedFiles.push(questionImageUrl)
+            }
 
-                await db.ExamQuestions.create(
-                    {
-                        examId: newExam.id,
-                        questionId: newQuestion.id,
-                        order: i1 + 1
-                    },
-                    { transaction }
-                )
+            const newQuestion = await db.Question.create(
+                { ...questionData, imageUrl: questionImageUrl },
+                { transaction }
+            )
 
-                let createdStatements = []
+            await db.ExamQuestions.create(
+                {
+                    examId: newExam.id,
+                    questionId: newQuestion.id,
+                    order: i1 + 1
+                },
+                { transaction }
+            )
 
-                if (Array.isArray(statements) && statements.length) {
-                    createdStatements = await Promise.all(
-                        statements.map(async (statement, i2) => {
-                            let statementImageUrl = null
+            let createdStatements = []
 
-                            if (statement.needImage && statementImages[statementImageIndex]) {
-                                const image1 = statementImages[statementImageIndex]
-                                statementImageIndex++
-                                statementImageUrl = await uploadImage(image1)
-                                if (statementImageUrl) uploadedFiles.push(statementImageUrl)
+            if (Array.isArray(statements) && statements.length) {
+                for (let i2 = 0; i2 < statements.length; i2++) {
+                    const statement = statements[i2]
+                    let statementImageUrl = null
 
-                            }
+                    if (statement.needImage && statementImages[statementImageIndex]) {
+                        const image1 = statementImages[statementImageIndex]
+                        statementImageIndex++
+                        statementImageUrl = await uploadImage(image1)
+                        if (statementImageUrl) uploadedFiles.push(statementImageUrl)
+                    }
 
-                            return db.Statement.create(
-                                {
-                                    ...statement,
-                                    imageUrl: statementImageUrl,
-                                    questionId: newQuestion.id,
-                                    order: i2 + 1
-                                },
-                                { transaction }
-                            )
-                        })
+                    const newStatement = await db.Statement.create(
+                        {
+                            ...statement,
+                            imageUrl: statementImageUrl,
+                            questionId: newQuestion.id,
+                            order: i2 + 1
+                        },
+                        { transaction }
                     )
-                }
 
-                return { question: newQuestion, statements: createdStatements }
+                    createdStatements.push(newStatement)
+                }
+            }
+
+            createdQuestions.push({
+                question: newQuestion,
+                statements: createdStatements
             })
-        )
+        }
 
         await transaction.commit()
 
@@ -602,7 +668,7 @@ export const saveExamForUser = async (req, res) => {
     return res.status(200).json({
         message: 'Thành công.',
         data: {
-            examId,
+            examId, 
             isSave: status.isSave
         }
     });

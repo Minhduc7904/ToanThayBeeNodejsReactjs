@@ -62,6 +62,7 @@ const codeSlice = createSlice({
     extraReducers: (builder) => {
         builder
             .addCase(fetchCodesByType.fulfilled, (state, action) => {
+
                 const { data } = action.payload;
                 const formattedCodes = {};
                 data.forEach(({ type, code, description }) => {

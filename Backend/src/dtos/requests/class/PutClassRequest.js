@@ -15,7 +15,7 @@ class PutClassRequest {
     static validate(data) {
         const schema = Joi.object({
             name: Joi.string().optional(),
-            description: Joi.string().optional(),
+            description: Joi.string().optional().allow(''),
             academicYear: Joi.string().optional(),
             status: Joi.string().optional(),
             slideId: Joi.number().optional(),

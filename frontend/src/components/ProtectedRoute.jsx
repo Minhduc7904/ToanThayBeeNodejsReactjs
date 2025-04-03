@@ -28,7 +28,7 @@ const ProtectedRoute = ({ allowedRoles }) => {
     }
 
     if (allowedRoles && !allowedRoles.includes(user.userType)) {
-        return <Navigate to="/dashboard" replace />;
+        return <Navigate to="/" replace />;
     }
 
     return <Outlet />;

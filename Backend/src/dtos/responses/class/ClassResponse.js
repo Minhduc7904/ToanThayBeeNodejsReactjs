@@ -11,6 +11,8 @@ class responseClass {
         this.studyTime = lop.studyTime
         this.studentClassStatus = status
         this.public = lop.public
+        this.class_code = lop.class_code
+        this.createdAt = lop.createdAt
     }
 }
 

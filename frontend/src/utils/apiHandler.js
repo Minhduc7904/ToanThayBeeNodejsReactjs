@@ -26,6 +26,7 @@ export const apiHandler = async (dispatch, apiFunc, params, successCallback, use
     } catch (error) {
         const errorMsg = error.response ? error.response.data.message : error.message;
         dispatch(setErrorMessage(errorMsg)); // Lưu lỗi vào stateApiSlice
+        return Promise.reject(errorMsg);
     } finally {
         dispatch(setLoading(false)); // Tắt trạng thái loading
     }

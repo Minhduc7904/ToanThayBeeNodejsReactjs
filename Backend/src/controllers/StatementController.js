@@ -1,4 +1,3 @@
-import { Op } from "sequelize"
 import db from "../models/index.js"
 import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
 import UserType from "../constants/UserType.js"

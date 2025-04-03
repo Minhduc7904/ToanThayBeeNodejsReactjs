@@ -48,7 +48,7 @@ const DropMenuBarAdmin = ({ options, placeholder = "Chọn một mục", selecte
 
             {/* Danh sách dropdown */}
             {isOpen && (
-                <ul className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50 overflow-y-auto max-h-60">
+                <ul className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50 overflow-y-auto hide-scrollbar max-h-60">
                     {options?.length > 0 ? (
                         options.map((option, index) => (
                             <li

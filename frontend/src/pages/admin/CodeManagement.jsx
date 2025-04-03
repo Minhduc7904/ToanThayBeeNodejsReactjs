@@ -7,6 +7,8 @@ import FunctionBarAdmin from "../../components/bar/FunctionBarAdmin";
 import AdminModal from "../../components/modal/AdminModal";
 import AddCodeModal from "../../components/modal/AddCodeModal";
 import { setIsAddView } from "../../features/filter/filterSlice";
+import { resetFilters } from "../../features/filter/filterSlice";
+import { useState } from "react";
 
 const CodeManagement = () => {
     const dispatch = useDispatch();
@@ -14,11 +16,20 @@ const CodeManagement = () => {
     const { search, currentPage, limit, totalItems, sortOrder } = useSelector(state => state.filter);
     const { isAddView, isFilterVIew } = useSelector(state => state.filter);
 
+    const [didInit, setDidInit] = useState(false); // 👉 Thêm cờ kiểm soát mount đầu tiên
 
     useEffect(() => {
-        dispatch(fetchAllCodes({ search, currentPage, limit, sortOrder }))
-            .unwrap()
-    }, [dispatch, search, currentPage, limit, sortOrder]);
+        if (!didInit) {
+            dispatch(resetFilters());
+            setDidInit(true);
+        }
+    }, [dispatch, didInit]);
+
+    useEffect(() => {
+        if (didInit) {
+            dispatch(fetchAllCodes({ search, currentPage, limit, sortOrder }));
+        }
+    }, [dispatch, search, currentPage, limit, sortOrder, didInit]);
 
     return (
         <AdminLayout>

@@ -1,45 +1,50 @@
-'use strict'
+// src/models/index.js
+import fs from 'fs';
+import path from 'path';
+import { Sequelize, DataTypes } from 'sequelize';
+import { fileURLToPath } from 'url';
+import configFile from '../config/config.js';
 
-const fs = require('fs')
-const path = require('path')
-const Sequelize = require('sequelize')
-const process = require('process')
-const basename = path.basename(__filename)
-const env = process.env.NODE_ENV || 'development'
-const config = require(__dirname + '/../config/config.js')[env]
-const db = {}
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const basename = path.basename(__filename);
+const env = process.env.NODE_ENV || 'development';
+const config = configFile[env];
+const db = {};
 
-let sequelize
+let sequelize;
 
 if (config.use_env_variable) {
-  sequelize = new Sequelize(process.env[config.use_env_variable], config)
+  sequelize = new Sequelize(process.env[config.use_env_variable], config);
 } else {
   sequelize = new Sequelize(config.database, config.username, config.password, {
-    ...config, 
-    logging: false, 
-  })
+    ...config,
+    logging: false,
+  });
 }
 
-fs
+const files = fs
   .readdirSync(__dirname)
-  .filter(file => (
-    file.indexOf('.') !== 0 &&
+  .filter((file) =>
     file !== basename &&
-    file.slice(-3) === '.js' &&
-    file.indexOf('.test.js') === -1
-  ))
-  .forEach(file => {
-    const model = require(path.join(__dirname, file))(sequelize, Sequelize.DataTypes)
-    db[model.name] = model
-  })
+    file.endsWith('.js') &&
+    !file.endsWith('.test.js')
+  );
 
-Object.keys(db).forEach(modelName => {
+for (const file of files) {
+  const modelPath = path.join(__dirname, file);
+  const { default: defineModel } = await import(`file://${modelPath}`);
+  const model = defineModel(sequelize, DataTypes);
+  db[model.name] = model;
+}
+
+for (const modelName of Object.keys(db)) {
   if (db[modelName].associate) {
-    db[modelName].associate(db)
+    db[modelName].associate(db);
   }
-})
+}
 
-db.sequelize = sequelize
-db.Sequelize = Sequelize
+db.sequelize = sequelize;
+db.Sequelize = Sequelize;
 
-module.exports = db
+export default db;

@@ -18,6 +18,9 @@ const QuestionOfExamAdmin = () => {
     const handleClickedPreviewExam = () => {
         navigate(`/admin/exam-management/${examId}/preview`);
     }
+    const handleClickedTracking = () => {
+        navigate(`/admin/exam-management/${examId}/tracking`);
+    }
     const dispatch = useDispatch();
     const { isAddView } = useSelector(state => state.filter);
     return (
@@ -56,6 +59,15 @@ const QuestionOfExamAdmin = () => {
                         onClick={handleClickedPreviewExam}
                         className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose cursor-pointer`}>
                         Xem đề thi
+                    </div>
+                    <div
+                        className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-[#090a0a]"}`}>
+                        -
+                    </div>
+                    <div
+                        onClick={handleClickedTracking}
+                        className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose cursor-pointer`}>
+                        Theo dõi
                     </div>
                 </div>
                 <FunctionBarAdmin />

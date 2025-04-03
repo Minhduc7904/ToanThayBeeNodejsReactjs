@@ -6,7 +6,6 @@ const Pagination = ({ currentPage, totalItems, limit, onPageChange }) => {
 
     const getPages = () => {
         const pages = [];
-
         if (totalPages <= 7) {
             for (let i = 1; i <= totalPages; i++) pages.push(i);
         } else {
@@ -18,7 +17,6 @@ const Pagination = ({ currentPage, totalItems, limit, onPageChange }) => {
                 pages.push(1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages);
             }
         }
-
         return pages;
     };
 
@@ -30,7 +28,7 @@ const Pagination = ({ currentPage, totalItems, limit, onPageChange }) => {
     };
 
     return (
-        <div className="flex justify-center items-center gap-1 mt-6 flex-wrap text-sm font-medium">
+        <div className="flex justify-center items-center gap-1 flex-wrap text-sm font-medium">
             <button
                 className="p-2 text-gray-600 hover:bg-gray-100 rounded disabled:opacity-40"
                 disabled={currentPage === 1}
@@ -50,7 +48,7 @@ const Pagination = ({ currentPage, totalItems, limit, onPageChange }) => {
                 <button
                     key={index}
                     onClick={() => handleClick(page)}
-                    className={`px-3 py-1 rounded-md border 
+                    className={`w-8 h-8 rounded-md border 
                         ${page === currentPage
                             ? "bg-blue-600 text-white border-blue-600"
                             : "bg-white text-gray-700 border-gray-300 hover:bg-blue-50"}

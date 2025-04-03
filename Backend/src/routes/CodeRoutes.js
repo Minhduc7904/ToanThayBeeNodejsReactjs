@@ -15,7 +15,7 @@ router.get('/v1/admin/code',
 )
 
 router.get('/v1/admin/code/type',
-    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    requireRoles([]),
     asyncHandler(CodeController.getCodeByType)
 )
 
@@ -23,8 +23,6 @@ router.get('/v1/admin/code/:code',
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(CodeController.getCodeByCode)
 )
-
-
 
 router.post('/v1/admin/code',
     requireRoles([UserType.ADMIN, UserType.TEACHER]),

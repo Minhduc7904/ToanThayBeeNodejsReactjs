@@ -1,6 +1,6 @@
-import { Sequelize, Op } from "sequelize"
 import db from "../models/index.js"
 import { formatImageUrl, checkLocalImageExists } from "../utils/imageHelper.js"
+import { Op } from "sequelize";
 
 export const getSlides = async (req, res) => {
     const search = req.query.search || ''

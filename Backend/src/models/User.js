@@ -1,6 +1,6 @@
 'use strict'
-const { Model } = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize'
+export default (sequelize, DataTypes) => {
   class User extends Model {
     /**
      * Helper method for defining associations.
@@ -14,6 +14,8 @@ module.exports = (sequelize, DataTypes) => {
       })
       User.hasMany(models.AssistantReport, { foreignKey: 'userId', as: 'reports' })
       User.hasMany(models.AssistantReport, { foreignKey: 'assistantId', as: 'assistantReports' })
+      User.hasMany(models.StudentExamAttempt, { foreignKey: 'studentId' });
+
     }
   }
   User.init({

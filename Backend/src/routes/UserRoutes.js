@@ -9,6 +9,7 @@ import { requireRoles } from '../middlewares/jwtMiddleware.js'
 import uploadGoogleImageMiddleware from '../middlewares/imageGoogleUpload.js'
 import { handleMulterError } from '../middlewares/handelMulter.js'
 import * as UserController from '../controllers/UserController.js'
+import upload from '../middlewares/uploadExcel.js';
 
 const router = express.Router()
 
@@ -16,6 +17,12 @@ const router = express.Router()
 router.post('/v1/user/register',
     validate(PostUserRequest),  
     asyncHandler(UserController.registerUser)
+)
+
+router.post('/v1/admin/bulk-register',
+    requireRoles([UserType.ADMIN]),
+    upload.single('file'),
+    UserController.bulkRegister
 )
 
 // Route đăng nhập người dùng

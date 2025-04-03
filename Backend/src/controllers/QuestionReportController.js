@@ -1,5 +1,4 @@
-import { Sequelize } from "../models"
-import db from "../models"
+import db from "../models/index.js"
 import { Op, literal } from 'sequelize'
 
 const { QuestionReport } = db

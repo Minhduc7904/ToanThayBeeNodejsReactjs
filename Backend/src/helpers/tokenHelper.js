@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import db from '../models';
+import db from '../models/index.js';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -29,7 +29,7 @@ const authenticateToken = async (req, res, next) => {
         const user = await db.User.findByPk(decoded.id); // Tìm người dùng từ ID trong token
 
         if (!user) {
-            return res.status(404).json({ message: '❌ Người dùng không tồn tại' });
+            return res.status(401).json({ message: '❌ Người dùng không tồn tại' });
         }
 
         if (user.currentToken !== token) {

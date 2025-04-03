@@ -10,7 +10,7 @@ const ExamRegulationModal = ({ isOpen, onClose, onStartExam, time }) => {
             <div className="bg-white text-black  w-[90%] max-w-2xl p-6 rounded-lg shadow-2xl max-h-[90vh] overflow-hidden flex flex-col">
                 <h2 className="text-2xl font-bold mb-4 text-center">Quy chế thi môn Toán năm 2025</h2>
 
-                <div className="overflow-y-auto pr-2 space-y-4 bg-gray-200 p-2">
+                <div className="overflow-y-auto hide-scrollbar pr-2 space-y-4 bg-gray-200 p-2">
                     <p><strong>🕒 Thời gian làm bài:</strong> {time} phút</p>
                     <p><strong>📝 Hình thức thi:</strong> Thi trắc nghiệm <span className="text-red-500 font-semibold">trực tuyến</span></p>
 

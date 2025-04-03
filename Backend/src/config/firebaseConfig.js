@@ -1,12 +1,13 @@
-// Import the functions you need from the SDKs you need
-import { initializeApp } from "firebase/app"
-import { getAnalytics } from "firebase/analytics"
-require('dotenv').config()
-// TODO: Add SDKs for Firebase products that you want to use
-// https://firebase.google.com/docs/web/setup#available-libraries
+// src/firebase/firebaseConfig.js (hoặc bất kỳ tên file nào bạn muốn)
 
-// Your web app's Firebase configuration
-// For Firebase JS SDK v7.20.0 and later, measurementId is optional
+import { initializeApp } from "firebase/app"
+// import { getAnalytics } from "firebase/analytics" // Bạn có thể bỏ nếu không dùng analytics
+import dotenv from 'dotenv'
+
+// Load .env
+dotenv.config()
+
+// Firebase config từ biến môi trường
 const firebaseConfig = {
     apiKey: process.env.FIREBASE_API_KEY,
     authDomain: process.env.FIREBASE_AUTH_DOMAIN,
@@ -18,5 +19,9 @@ const firebaseConfig = {
 }
 
 // Initialize Firebase
-export const firebaseApp = initializeApp(firebaseConfig)
-// export const analytics = getAnalytics(firebaseApp)
+const firebaseApp = initializeApp(firebaseConfig)
+
+// Nếu bạn dùng analytics, có thể enable như sau:
+// const analytics = getAnalytics(firebaseApp)
+
+export default firebaseApp

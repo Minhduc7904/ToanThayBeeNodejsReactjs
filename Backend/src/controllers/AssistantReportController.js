@@ -1,6 +1,5 @@
-import UserType from "../constants/UserType"
-import { Sequelize } from "../models"
-import db from "../models"
+import UserType from "../constants/UserType.js"
+import db from "../models/index.js"
 import { Op, literal } from 'sequelize'
 const { AssistantReport } = db
 

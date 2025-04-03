@@ -1,8 +1,6 @@
 'use strict'
-const {
-  Model
-} = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize'
+export default (sequelize, DataTypes) => {
   class Slide extends Model {
     /**
      * Helper method for defining associations.
@@ -10,7 +8,10 @@ module.exports = (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      Slide.hasMany(models.SlideImage, { foreignKey: "slideId", onDelete: "CASCADE" })
+      Slide.hasMany(models.SlideImage, {
+        foreignKey: 'slideId',
+        as: 'slideImages'
+      });
     }
   }
   Slide.init({

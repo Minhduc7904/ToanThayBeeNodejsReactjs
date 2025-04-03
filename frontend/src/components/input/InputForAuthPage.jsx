@@ -1,83 +1,71 @@
-// src/components/Input.jsx
 import { useState } from 'react';
 import { Eye, EyeOff } from 'lucide-react';
-
 
 const Input = ({
     type = 'text',
     name,
     placeholder,
-    title,
     value,
     onChange,
     required = false,
     className = '',
 }) => {
-    const formatDate = (input) => {
-        let numbers = input.replace(/\D/g, "");
-
-        if (numbers.length > 8) {
-            numbers = numbers.slice(0, 8);
-        }
-
-        let formattedValue = numbers;
-        if (numbers.length > 2) {
-            formattedValue = numbers.slice(0, 2) + "/" + numbers.slice(2);
-        }
-        if (numbers.length > 4) {
-            formattedValue =
-                numbers.slice(0, 2) + "/" + numbers.slice(2, 4) + "/" + numbers.slice(4);
-        }
-
-        return formattedValue;
-    };
-
-    const handleChangeDate = (e) => {
-        const formatted = formatDate(e.target.value);
-        onChange({ target: { name, value: formatted } });
-    }
-
+    const [isFocused, setIsFocused] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
 
+    const isPasswordField = type === 'password';
     const handleTogglePassword = () => setShowPassword((prev) => !prev);
 
-    const isPasswordField = type === 'password';
+    const shouldFloat = isFocused || (value && value.length > 0);
+
     return (
-        <div className="flex flex-col gap-2 w-full">
-            <div className="flex justify-between">
-                <p className="text-[#666666] text-base font-normal font-bevietnam">{title}
-                    {required && (
-                        <span className="text-red-500"> *</span>
-                    )}
-                </p>
-                {isPasswordField && (
-                    <button
-                        type="button"
-                        onClick={handleTogglePassword}
-                        className="text-gray-500 focus:outline-none flex items-center gap-2"
-                    >
-                        {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                        Hiện
-                    </button>
-                )}
-            </div>
+        <div className="relative w-full mt-4">
+            <input
+                id={name}
+                name={name}
+                type={isPasswordField && showPassword ? 'text' : type}
+                value={value}
+                onChange={onChange}
+                onFocus={() => setIsFocused(true)}
+                onBlur={() => setIsFocused(false)}
+                required={required}
+                autoComplete="off"
+                placeholder={placeholder}
+                className={`
+                    w-full border rounded-md px-3 pt-5 pb-2 h-12 text-sm text-gray-900 bg-white/50
+                    border-gray-300 focus:outline-none  
+                    placeholder-transparent
+                    transition-all duration-200
+                    ${className}
+                `}
+            />
 
-            <div className="relative w-full">
-                <input
-                    type={isPasswordField && showPassword ? 'text' : type}
-                    name={name}
-                    placeholder={placeholder}
-                    value={value}
-                    onChange={name === "birthDate" ? handleChangeDate : onChange}
-                    required={required}
-                    className={`appearance-none [&::-webkit-inner-spin-button]:appearance-none [&::-webkit-outer-spin-button]:appearance-none rounded-xl border border-[#666666] justify-start items-center inline-flex overflow-hidden ${className}`}
-                />
-                {isPasswordField && (
-                    <div className="absolute right-1 top-1/2 -translate-y-1/2 w-16 h-8 bg-white pointer-events-none"></div>
-                )}
-            </div>
+            <label
+                htmlFor={name}
+                className={`
+        absolute left-3 px-1 transition-all duration-200 font-bevietnam
+        ${shouldFloat
+                        ? "-top-2 text-xs text-black bg-white"
+                        : "top-3.5 text-sm text-gray-700"}
+    `}
+            >
+                {placeholder}
+                {required && <span className="text-red-500"> *</span>}
+            </label>
+
+
+
+            {isPasswordField && (
+                <button
+                    type="button"
+                    onClick={handleTogglePassword}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500"
+                >
+                    {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+                </button>
+            )}
+
         </div>
-
     );
 };
 

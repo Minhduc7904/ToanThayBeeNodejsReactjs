@@ -11,11 +11,21 @@ router.get('/v1/attempt',
     asyncHandler(AttemptController.getAttempts)
 )
 router.get('/v1/attempt/:id', 
+    requireRoles([]),
     asyncHandler(AttemptController.get)
 )
-router.get('/v1/attempt/exam/:examId', 
-    asyncHandler(AttemptController.getLuotLamBaiByDeId)
+router.get('/v1/user/attempt/exam/:examId/history',
+    requireRoles([]),
+    asyncHandler(AttemptController.getAttemptByStudentId)
 )
+router.get('/v1/admin/attempt/exam/:examId', 
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    asyncHandler(AttemptController.getAttemptsForAdminByExamId)
+)
+router.get('/v1/user/attempt/exam/:examId', 
+    asyncHandler(AttemptController.getAttemptByExamId)
+)
+
 router.post('/v1/attempt', 
     asyncHandler(AttemptController.postLuotLamBai)
 )

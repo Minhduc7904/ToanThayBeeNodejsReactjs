@@ -1,12 +1,10 @@
-// src/pages/RegisterPage.jsx
-import { useEffect, useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { register } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
 import AuthLayout from '../layouts/AuthLayout';
 import Input from '../components/input/InputForAuthPage';
 import Button from '../components/button/ButtonForAuthPage';
-import GoogleLoginButton from '../components/button/GoogleLoginButton';
 import AuthDropMenu from '../components/dropMenu/AuthDropMenu';
 import { validateRegister } from '../utils/validation';
 import { processRegisterForm } from '../utils/sanitizeInput';
@@ -30,13 +28,9 @@ export default function RegisterPage() {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Dùng biến mới để tránh gán lại giá trị cho const formData
         const processedData = processRegisterForm({ ...formData });
-
-        const check = validateRegister(processedData, password2);
-        if (!check) {
-            return;
-        }
+        const check = validateRegister(processedData, password2, dispatch);
+        if (!check) return;
 
         const resultAction = await dispatch(register(processedData));
         if (register.fulfilled.match(resultAction)) {
@@ -44,191 +38,172 @@ export default function RegisterPage() {
         }
     };
 
-    // const handleGoogleLogin = () => {
-    //     alert('Đang phát triển');
-    // };
-
     return (
         <AuthLayout>
-            <form onSubmit={handleSubmit} className="flex flex-col gap-[2rem] w-full">
-                <div className="flex flex-col justify-center items-center">
-                    <div className='text-[#333333] font-medium font-bevietnam text-[2rem]'>
-                        Tạo tài khoản mới
-                    </div>
-                    <div className="text-[#666666] font-bevietnam text-[1rem]">
-                        Vui lòng điền đầy đủ các trường
-                        <span className="text-red-500"> *</span> dưới đây
-                    </div>
+            <form
+                onSubmit={handleSubmit}
+                className="flex flex-col w-full px-4 sm:px-6 gap-2 py-8 max-w-sm mx-auto bg-white backdrop-blur-md shadow-xl rounded-xl"
+            >
+                <div className="mb-2 text-center text-2xl sm:text-  font-extrabold bg-gradient-to-r from-yellow-500 via-sky-600 to-indigo-600 bg-clip-text text-transparent tracking-wide drop-shadow-sm uppercase font-cubano">
+                    Đăng ký
                 </div>
-                {!nextStep && (
-                    <div className='flex flex-col gap-[1.5rem] w-[30rem]'>
-                        <div className="flex flex-row gap-4 w-full">
+
+                {!nextStep ? (
+                    <>
+                        <div className="flex gap-2">
                             <Input
                                 type="text"
                                 name="lastName"
-                                placeholder="Nhập họ và tên đệm"
-                                title="Họ và tên đệm"
+                                placeholder="Họ và tên đệm"
                                 value={formData.lastName}
                                 onChange={handleChange}
-                                className=" h-14 pl-6 pr-6 w-full "
                                 required
+                                className="h-10 text-sm"
                             />
                             <Input
                                 type="text"
                                 name="firstName"
-                                placeholder="Nhập tên"
-                                title="Nhập tên"
+                                placeholder="Tên"
                                 value={formData.firstName}
                                 onChange={handleChange}
-                                className=" h-14 pl-6 pr-6 w-full "
                                 required
+                                className="h-10 text-sm"
                             />
                         </div>
-                        <div className="flex flex-row gap-4 w-full">
-                            <AuthDropMenu
-                                title="Giới tính"
-                                type="gender"
-                                selected={formData.gender}
-                                onSelect={(value) => setFormData({ ...formData, gender: value })}
-                                className=" h-14 pl-6 w-full "
-                                required
-                            />
-                            <Input
-                                type="text"
+
+
+                        <div className="flex gap-2">
+
+
+                            <input
+                                type="date"
                                 name="birthDate"
-                                placeholder="DD/MM/YYYY"
-                                title="Năm sinh"
                                 value={formData.birthDate}
-                                onChange={handleChange}
-                                className=" h-14 pl-6 pr-6 w-full "
+                                onChange={(e) => {
+                                    console.log("birthDate:", e.target.value);
+                                    handleChange(e);
+                                }}
                                 required
+                                className="h-10 text-sm"
                             />
                         </div>
-                        <div className="flex flex-row gap-4 w-full">
-                            <Input
-                                type="text"
-                                name="highSchool"
-                                placeholder="Nhập trường học"
-                                title="Trường học"
-                                value={formData.highSchool}
-                                onChange={handleChange}
-                                className=" h-14 pl-6 pr-6 w-full "
-                                required
-                            />
+
+                        <Input
+                            type="text"
+                            name="highSchool"
+                            placeholder="Trường học"
+                            value={formData.highSchool}
+                            onChange={handleChange}
+                            required
+                            className="h-10 text-sm"
+                        />
+                        <div className="flex gap-2">
+
                             <AuthDropMenu
                                 title="Lớp"
                                 type="class"
                                 selected={formData.class}
                                 onSelect={(value) => setFormData({ ...formData, class: value })}
-                                className=" h-14 pl-6 w-full "
+                                className="h-10 text-sm w-full border border-gray-300"
+                                required
+                            />
+                            <AuthDropMenu
+                                title="Giới tính"
+                                type="gender"
+                                selected={formData.gender}
+                                onSelect={(value) => setFormData({ ...formData, gender: value })}
+                                className="h-10 text-sm w-full border border-gray-300"
                                 required
                             />
                         </div>
-                        <div className="flex flex-row gap-4 w-full">
-                            <Input
-                                type="text"
-                                name="email"
-                                placeholder="Nhập email"
-                                title="Email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                className=" h-14 pl-6 pr-6 w-full "
-                            />
-                            <Input
-                                type="tel"
-                                name="phone"
-                                placeholder="Nhập số điện thoại"
-                                title="Số điện thoại"
-                                value={formData.phone}
-                                onChange={handleChange}
-                                className=" h-14 pl-6 pr-6 w-full "
-                            />
-                        </div>
-                        <Button variant="primary" className="w-full" onClick={() => setNextStep(true)}>
-                            <p className="text-center text-white text-lg font-normal font-bevietnam">
-                                Tiếp theo
-                            </p>
-                        </Button>
 
-                    </div>
-                )}
-                {nextStep && (
-                    <div className='flex flex-col gap-[1.5rem] w-full'>
+                        <Input
+                            type="email"
+                            name="email"
+                            placeholder="Email"
+                            value={formData.email}
+                            onChange={handleChange}
+                            className="h-10 text-sm"
+                        />
+
+                        <Input
+                            type="tel"
+                            name="phone"
+                            placeholder="Số điện thoại"
+                            value={formData.phone}
+                            onChange={handleChange}
+                            className="h-10 text-sm"
+                        />
+
+                        <Button onClick={() => setNextStep(true)} className="w-full py-2 bg-yellow-500 hover:bg-yellow-600 text-white text-base font-semibold rounded-md">
+                            Tiếp theo
+                        </Button>
+                    </>
+                ) : (
+                    <>
                         <Input
                             type="text"
                             name="username"
                             placeholder="Tên đăng nhập"
-                            title="Tên đăng nhập"
                             value={formData.username}
                             onChange={handleChange}
-                            className=" h-14 pl-6 pr-6 w-[30rem] "
                             required
+                            className="h-10 text-sm"
                         />
+
                         <Input
                             type="password"
                             name="password"
                             placeholder="Mật khẩu"
-                            title="Mật khẩu"
                             value={formData.password}
                             onChange={handleChange}
-                            className=" h-14 pl-6 pr-6 w-[30rem] "
                             required
+                            className="h-10 text-sm"
                         />
 
                         <Input
                             type="password"
                             name="password2"
                             placeholder="Nhập lại mật khẩu"
-                            title="Nhập lại mật khẩu"
                             value={password2}
                             onChange={(e) => setPassword2(e.target.value)}
-                            className=" h-14 pl-6 pr-6 w-[30rem] "
                             required
+                            className="h-10 text-sm"
                         />
 
                         {password2 !== formData.password && password2.length > 2 && (
-                            <p className="text-red-500 text-center text-base font-bevietnam">
+                            <p className="text-red-500 text-sm text-center">
                                 Mật khẩu không khớp
                             </p>
                         )}
 
-
-                        <Button type="submit" disabled={loading} variant="secondary" className="w-full">
-                            <p className="text-center text-white text-lg font-normal font-bevietnam">
-                                {loading ? 'Đang đăng ký...' : 'Đăng ký'}
-                            </p>
-                        </Button>
-                        <Button variant="primary" className="w-full" onClick={() => setNextStep(false)}>
-                            <p className="text-center text-white text-lg font-normal font-bevietnam">
-                                Quay lại
-                            </p>
+                        <Button
+                            type="submit"
+                            disabled={loading}
+                            className="w-full py-2 bg-sky-600 hover:bg-sky-700 text-white text-base font-semibold rounded-md"
+                        >
+                            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
                         </Button>
 
-                    </div>
+                        <Button
+                            onClick={() => setNextStep(false)}
+                            className="w-full py-2 bg-gray-600 hover:bg-gray-700 text-gray-700 text-base font-semibold rounded-md"
+                        >
+                            Quay lại
+                        </Button>
+                    </>
                 )}
-                {/* <GoogleLoginButton onClick={handleGoogleLogin} /> */}
 
-            </form>
-            <div className="absolute right-6 top-6 flex-col">
-                <div>
-                    <span className="text-[#333333] text-base font-normal font-bevietnam">
-                        Đã có tài khoản? {" "}
-                    </span>
-                    <Link
-                        to="/login"
-                        className="text-[#333333] text-base font-normal font-bevietnam underline"
-                    >
-                        Đăng nhập
-                    </Link>
+                <div className="text-center text-sm text-gray-600 mt-2">
+                    <p>
+                        Đã có tài khoản?{" "}
+                        <Link to="/login" className="text-blue-700 hover:underline font-medium">
+                            Đăng nhập
+                        </Link>
+                    </p>
                 </div>
-                <Link
-                    to="/login"
-                    className="text-[#666666] text-base font-normal font-bevietnam"
-                >
-                    Quên tài khoản hoặc mật khẩu
-                </Link>
-            </div>
-
+            </form>
         </AuthLayout>
     );
 }
+

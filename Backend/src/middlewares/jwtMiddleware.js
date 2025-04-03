@@ -1,4 +1,4 @@
-import authenticateToken from '../helpers/tokenHelper'
+import authenticateToken from '../helpers/tokenHelper.js'
 /**
  * @param {string[]} roles
  */

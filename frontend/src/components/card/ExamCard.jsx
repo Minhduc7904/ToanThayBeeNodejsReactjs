@@ -1,65 +1,70 @@
-// components/card/ExamCard.jsx
-import ExamDefaultImage from "../../assets/images/defaultExamImage.jpg"
+import ExamDefaultImage from "../../assets/images/defaultExamImage.jpg";
 import { useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { saveExamForUser } from "../../features/exam/examSlice";
 
 const ExamCard = ({ exam }) => {
-    const { name, year, createdAt, imageUrl, id, isSave } = exam;
+    const { name, year, createdAt, imageUrl, id, isSave, isDone } = exam;
     const navigate = useNavigate();
-
-    const handleClicked = () => {
-        navigate(`/practice/exam/${id}`);
-    }
-
     const dispatch = useDispatch();
-    const handleSaveExam = () => {
-        dispatch(saveExamForUser({ examId: id }));
-    }
+
+    const handleClicked = () => navigate(`/practice/exam/${id}`);
+    const handleSaveExam = () => dispatch(saveExamForUser({ examId: id }));
 
     return (
-        <div
-            className="w-full sm:w-auto flex flex-row bg-white overflow-hidden p-2 border-r border-black">
-            {/* Ảnh */}
+        <div className="w-full sm:max-w-md flex bg-white shadow-sm hover:shadow-md transition overflow-hidden border border-gray-200">
+            {/* Image */}
             <div
                 onClick={handleClicked}
-                className="w-1/2 aspect-[1/1.4142] border border-gray-300 max-w-[8rem] "
+                className="w-1/3 aspect-[3/4] cursor-pointer"
                 title={name}
             >
                 <img
                     src={imageUrl || ExamDefaultImage}
                     alt={name}
-                    className="object-cover w-full h-full cursor-pointer transition duration-300 hover:brightness-75"
+                    className="object-cover w-full h-full transition duration-300 hover:brightness-90"
                 />
             </div>
 
-            {/* Nội dung */}
-            <div className="w-2/3 flex flex-col justify-between">
-                <div className="flex px-4 flex-col gap-1">
-                    <p
+            {/* Content */}
+            <div className="w-2/3 flex flex-col justify-between px-4 py-3 gap-2">
+                <div>
+                    <h3
                         onClick={handleClicked}
-                        className="text-sm font-semibold text-zinc-900 hover:text-blue-500 cursor-pointer">{name}
-                    </p>
-
-
-                    <div className="flex flex-row items-center gap-1">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
-                            <path d="M12 7V12H17M12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 10.8181 3.23279 9.64778 3.68508 8.55585C4.13738 7.46392 4.80031 6.47177 5.63604 5.63604C6.47177 4.80031 7.46392 4.13738 8.55585 3.68508C9.64778 3.23279 10.8181 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12C21 14.3869 20.0518 16.6761 18.364 18.364C16.6761 20.0518 14.3869 21 12 21Z" stroke="black" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" />
+                        className="text-base font-semibold text-zinc-800 hover:text-blue-600 cursor-pointer line-clamp-2"
+                        title={name}
+                    >
+                        {name}
+                    </h3>
+                    <p className="text-xs text-zinc-500 mt-1 flex items-center gap-1">
+                        <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            width="16"
+                            height="16"
+                            fill="none"
+                            viewBox="0 0 24 24"
+                        >
+                            <path
+                                d="M12 7V12H17M12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 10.8181 3.23279 9.64778 3.68508 8.55585C4.13738 7.46392 4.80031 6.47177 5.63604 5.63604C6.47177 4.80031 7.46392 4.13738 8.55585 3.68508C9.64778 3.23279 10.8181 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12C21 14.3869 20.0518 16.6761 18.364 18.364C16.6761 20.0518 14.3869 21 12 21Z"
+                                stroke="currentColor"
+                                strokeWidth="2"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                            />
                         </svg>
-                        <p
-                            onClick={handleClicked}
-                            className="text-sm text-zinc-600 hover:text-blue-500 cursor-pointer">{new Date(createdAt).toLocaleDateString("vi-VN", {
-                                day: "2-digit",
-                                month: "2-digit",
-                                year: "numeric"
-                            })}</p>
-                    </div>
+                        {new Date(createdAt).toLocaleDateString("vi-VN", {
+                            day: "2-digit",
+                            month: "2-digit",
+                            year: "numeric",
+                        })}
+                    </p>
                 </div>
-                <div className="flex flex-row justify-start items-center gap-1 px-4">
+
+                {/* Action buttons */}
+                <div className="flex items-center justify-between">
                     <button
                         onClick={handleSaveExam}
-                        className={`rounded hover:bg-gray-100 transition duration-200 ${isSave ? "text-blue-600" : "text-gray-700"
-                            }`}
+                        className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
                         title={isSave ? "Đã lưu đề thi" : "Lưu đề thi"}
                     >
                         {isSave ? (
@@ -83,16 +88,17 @@ const ExamCard = ({ exam }) => {
                             </svg>
                         )}
                     </button>
-                    <div title={exam.isDone ? "Đã làm" : "Chưa làm"}>
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
-                            className={`${exam.isDone ? "fill-green-500" : "fill-gray-500"}`}
-                        >
-                            <path fill-rule="evenodd" clip-rule="evenodd" d="M12 21C13.1819 21 14.3522 20.7672 15.4442 20.3149C16.5361 19.8626 17.5282 19.1997 18.364 18.364C19.1997 17.5282 19.8626 16.5361 20.3149 15.4442C20.7672 14.3522 21 13.1819 21 12C21 10.8181 20.7672 9.64778 20.3149 8.55585C19.8626 7.46392 19.1997 6.47177 18.364 5.63604C17.5282 4.80031 16.5361 4.13738 15.4442 3.68508C14.3522 3.23279 13.1819 3 12 3C9.61305 3 7.32387 3.94821 5.63604 5.63604C3.94821 7.32387 3 9.61305 3 12C3 14.3869 3.94821 16.6761 5.63604 18.364C7.32387 20.0518 9.61305 21 12 21ZM11.768 15.64L16.768 9.64L15.232 8.36L10.932 13.519L8.707 11.293L7.293 12.707L10.293 15.707L11.067 16.481L11.768 15.64Z" />
-                        </svg>
+
+                    <div
+                        title={isDone ? "Đã làm" : "Chưa làm"}
+                        className="text-xs flex items-center gap-1"
+                    >
+                        <div className={`w-3 h-3 rounded-full ${isDone ? "bg-green-500" : "bg-gray-400"}`} />
+                        <span className="text-zinc-500">{isDone ? "Đã làm" : "Chưa làm"}</span>
                     </div>
                 </div>
             </div>
-        </div >
+        </div>
     );
 };
 

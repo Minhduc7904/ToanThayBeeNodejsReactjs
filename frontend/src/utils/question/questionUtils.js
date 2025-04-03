@@ -354,7 +354,7 @@ export const splitContentTLN = (content, correctAnswersText, dispatch) => {
     let questionContent = "";
     let foundQuestion = false;
     let index = 0;
-    const correctAnswers = correctAnswersText.trim().split(" ");
+    const correctAnswers = correctAnswersText.trim().replace(/,/g, ".").split(" ");
 
     for (let line of lines) {
         if (/^Câu\s*\d+\./.test(line)) {

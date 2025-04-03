@@ -20,7 +20,7 @@ export const AuthCheckbox = () => {
 
     return (
         <div
-            className="w-[1.5rem] h-[1.5rem] cursor-pointer select-none flex items-center justify-center"
+            className="w-[1.25rem] h-[1.25rem] cursor-pointer select-none flex items-center justify-center"
             onClick={handleClick}
         >
             <img

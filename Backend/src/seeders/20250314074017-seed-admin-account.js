@@ -1,7 +1,7 @@
 "use strict";
 const bcrypt = require("bcrypt");
 
-module.exports = {
+export default {
   up: async (queryInterface, Sequelize) => {
     // ✅ Mã hóa mật khẩu trước khi lưu vào database
     const hashedPassword = await bcrypt.hash("070904", 10);
@@ -16,6 +16,7 @@ module.exports = {
         userType: "AD", // 🔹 Đảm bảo "AD" có trong bảng allCode
         gender: true, // 🔹 BOOLEAN (true = 1, false = 0)
         phone: "0392923661",
+        birthDate: new Date("2004-07-09"),
         class: "12", // 🔹 Đảm bảo "12" có trong bảng allCode
         status: "HSTN", // 🔹 Đảm bảo "HSTN" có trong bảng allCode
         highSchool: "THPT Thăng Long",

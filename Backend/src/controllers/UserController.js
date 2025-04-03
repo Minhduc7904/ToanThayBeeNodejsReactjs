@@ -1,15 +1,17 @@
-import { Sequelize } from "../models"
-import db from "../models"
-import UserResponse from "../dtos/responses/user/UserResponse"
+import db from "../models/index.js"
+import UserResponse from "../dtos/responses/user/UserResponse.js"
 import bcrypt from "bcrypt"
-import UserType from "../constants/UserType"
-import UserStatus from "../constants/UserStatus"
+import UserType from "../constants/UserType.js"
+import UserStatus from "../constants/UserStatus.js"
 import jwt from "jsonwebtoken"
 import { ref, uploadBytesResumable, getDownloadURL, deleteObject, getStorage } from 'firebase/storage'
 import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
 import { Op } from "sequelize"
+import { parseExcel, sanitizeExcelUser } from '../utils/excelParser.js';
+import { createUserBulk } from '../services/user.service.js';
+import dotenv from 'dotenv'
+dotenv.config()
 
-require('dotenv').config()
 
 export const registerUser = async (req, res) => {
     const { email, username, phone } = req.body
@@ -56,6 +58,20 @@ export const registerUser = async (req, res) => {
     })
 }
 
+export const bulkRegister = async (req, res) => {
+    try {
+        const rawUsers = parseExcel(req.file.path);
+        const users = rawUsers.map(sanitizeExcelUser);
+        const result = await createUserBulk(users);
+
+        res.status(200).json({ message: 'Đăng ký hàng loạt thành công', result });
+    } catch (err) {
+        res.status(500).json({ message: 'Lỗi xử lý file Excel', error: err.message });
+    }
+};
+
+
+
 export const login = async (req, res) => {
     const { username, email, password } = req.body;
 
@@ -88,10 +104,10 @@ export const login = async (req, res) => {
 
     // Set token vào HttpOnly cookie
     res.cookie('token', token, {
-        httpOnly: true, // Không cho phép truy cập từ JS phía client
-        secure: process.env.NODE_ENV === 'production', // Chỉ gửi cookie qua HTTPS ở production
-        sameSite: 'strict',
-        maxAge: 2592000000, // 30 ngày (30 * 24 * 60 * 60 * 1000 ms)
+        httpOnly: true,
+        secure: true, // ✅ Chỉ true khi deploy
+        sameSite: 'None', // ✅ None để cho phép cross-origin
+        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 ngày
     });
 
     // res.cookie('token', token, {
@@ -112,7 +128,6 @@ export const checkLogin = async (req, res) => {
     try {
         // Lấy token từ cookie
         const token = req.cookies.token;
-        console.log(token)
         if (!token) {
             return res.status(401).json({ message: 'Chưa đăng nhập' });
         }
@@ -364,6 +379,7 @@ export const getUsersByClass = async (req, res) => {
     const page = parseInt(req.query.page, 10) || 1
     const limit = parseInt(req.query.limit, 10) || 10
     const offset = (page - 1) * limit
+    const sortOrder = req.query.sortOrder || 'ASC'
 
     if (!classId) {
         return res.status(400).json({ message: '❌ Thiếu classId!' })
@@ -387,6 +403,7 @@ export const getUsersByClass = async (req, res) => {
         ],
         limit,
         offset,
+        order: [['status', sortOrder]],
     })
     const formattedUsers = users.map(userRecord => {
         const user = userRecord.student

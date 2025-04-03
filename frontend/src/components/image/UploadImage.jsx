@@ -1,26 +1,30 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setErrorMessage } from "../../features/state/stateApiSlice";
 
-const ImageUpload = ({ image, setImage, question = true, inputId, className='' }) => {
+const ImageUpload = ({ image, setImage, question = true, inputId, className = '' }) => {
     const dispatch = useDispatch();
     const [preview, setPreview] = useState(null);
-    const [isDragging, setIsDragging] = useState(false); // Trạng thái kéo thả
+    const [isDragging, setIsDragging] = useState(false);
+    const uploadRef = useRef(null); // 👈 ref cho vùng upload
 
-    // Xử lý khi chọn file qua input
+    const validateAndSetImage = (file) => {
+        if (!["image/jpeg", "image/png"].includes(file.type)) {
+            dispatch(setErrorMessage("Chỉ cho phép định dạng JPEG hoặc PNG!"));
+            return;
+        }
+        if (file.size > 5 * 1024 * 1024) {
+            dispatch(setErrorMessage("Kích thước ảnh vượt quá 5MB!"));
+            return;
+        }
+        setImage(file);
+        setPreview(URL.createObjectURL(file));
+    };
+
     const handleFileChange = (event) => {
         const file = event.target.files[0];
         if (file) {
-            if (!["image/jpeg", "image/png"].includes(file.type)) {
-                dispatch(setErrorMessage(("Chỉ cho phép định dạng JPEG hoặc PNG!")));
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                dispatch(setErrorMessage(("Kích thước ảnh vượt quá 5MB!")));
-                return;
-            }
-            setImage(file);
-            setPreview(URL.createObjectURL(file));
+            validateAndSetImage(file);
         }
     };
 
@@ -30,7 +34,6 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className='' }
         }
     }, [image]);
 
-    // Xử lý hiệu ứng khi kéo thả
     const handleDragOver = (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -45,23 +48,37 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className='' }
         event.preventDefault();
         event.stopPropagation();
         setIsDragging(false);
-
         const file = event.dataTransfer.files[0];
         if (file) {
-            if (!["image/jpeg", "image/png"].includes(file.type)) {
-                dispatch(setErrorMessage(("Chỉ cho phép định dạng JPEG hoặc PNG!")));
-                return;
-            }
-            if (file.size > 5 * 1024 * 1024) {
-                dispatch(setErrorMessage(("Kích thước ảnh vượt quá 5MB!")));
-                return;
-            }
-            setImage(file);
-            setPreview(URL.createObjectURL(file));
+            validateAndSetImage(file);
         }
     };
 
-    // Dùng inputId để trigger input file
+    const handlePaste = (event) => {
+        const items = event.clipboardData?.items;
+        if (items) {
+            for (let i = 0; i < items.length; i++) {
+                const item = items[i];
+                if (item.type.indexOf("image") !== -1) {
+                    const file = item.getAsFile();
+                    if (file) {
+                        validateAndSetImage(file);
+                    }
+                }
+            }
+        }
+    };
+
+    useEffect(() => {
+        const el = uploadRef.current;
+        if (!el) return;
+
+        el.addEventListener("paste", handlePaste);
+        return () => {
+            el.removeEventListener("paste", handlePaste);
+        };
+    }, []);
+
     const handleUploadClick = () => {
         document.getElementById(inputId).click();
     };
@@ -73,7 +90,9 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className='' }
 
     return (
         <div
-            className={`flex ${className ? className : 'w-[15rem]'}  h-full flex-col ${question ? 'gap-[0.75rem] p-4' : 'flex-1'} justify-center items-center rounded-[1.625rem] border-2 border-dashed
+            ref={uploadRef}
+            tabIndex={0} // 👈 cần để vùng div có thể nhận paste
+            className={`flex ${className ? className : 'w-[15rem]'} h-full flex-col ${question ? 'gap-[0.75rem] p-4' : 'flex-1'} justify-center items-center rounded-[1.625rem] border-2 border-dashed
             ${isDragging ? "border-blue-500 bg-blue-100" : "border-[#CDCFD0] bg-white"}
             transition-all duration-300 ease-in-out`}
             onDragOver={handleDragOver}
@@ -86,7 +105,7 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className='' }
                         {question && (
                             <>
                                 <div className="text-center text-[#202325] text-sm font-medium font-['Be Vietnam Pro'] leading-tight">
-                                    Chọn ảnh từ máy của bạn
+                                    Chọn ảnh từ máy của bạn hoặc dán bằng Ctrl + V
                                 </div>
                                 <div className="text-center text-[#979c9e] text-sm font-normal font-['Be Vietnam Pro'] leading-tight">
                                     Định dạng JPEG, PNG,... <br />
@@ -104,7 +123,6 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className='' }
                             Tải ảnh lên
                         </div>
                     </button>
-                    {/* Input file ẩn sử dụng inputId duy nhất */}
                     <input
                         id={inputId}
                         type="file"

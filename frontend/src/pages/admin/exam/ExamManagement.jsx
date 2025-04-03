@@ -8,9 +8,8 @@ import ExamDetail from "../../../components/detail/ExamDetail";
 import AddExamModal from "../../../components/modal/AddExamModal";
 import AdminModal from "../../../components/modal/AdminModal";
 import { fetchExams } from "../../../features/exam/examSlice";
-
-import * as examApi from "../../../features/exam/examSlice";
-
+import { useState } from "react";
+import { resetFilters } from "../../../features/filter/filterSlice";
 
 const ExamManagement = () => {
     const dispatch = useDispatch();
@@ -18,12 +17,19 @@ const ExamManagement = () => {
     const { isAddView, isFilterVIew } = useSelector(state => state.filter);
     const { search, currentPage, limit, totalItems, sortOrder } = useSelector(state => state.filter);
     const { exams } = useSelector(state => state.exams);
-
+    const [didInit, setDidInit] = useState(false); // 👉 Thêm cờ kiểm soát mount đầu tiên
+    useEffect(() => {
+        if (!didInit) {
+            dispatch(resetFilters());
+            setDidInit(true);
+        }
+    }, [dispatch, didInit]);
 
     useEffect(() => {
-        dispatch(examApi.fetchExams({ search, currentPage, limit, sortOrder }))
-            .unwrap()
-    }, [dispatch, search, currentPage, limit, sortOrder]);
+        if (didInit) {
+            dispatch(fetchExams({ search, currentPage, limit, sortOrder }));
+        }
+    }, [dispatch, search, currentPage, limit, sortOrder, didInit]);
 
 
     return (

@@ -10,6 +10,7 @@ import stateReducer from '../features/state/stateApiSlice';
 import examReducer from '../features/exam/examSlice';
 import classReducer from '../features/class/classSlice';
 import answerReducer from '../features/answer/answerSlice';
+import attemptReducer from '../features/attempt/attemptSlice';
 
 export const store = configureStore({
     reducer: {
@@ -23,5 +24,6 @@ export const store = configureStore({
         exams: examReducer,
         classes: classReducer,
         answers: answerReducer,
+        attempts: attemptReducer,
     },
 });

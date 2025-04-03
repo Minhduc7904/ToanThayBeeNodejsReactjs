@@ -1,21 +1,25 @@
 // src/layouts/AuthLayout.jsx
 import '../styles/AuthLayout.css';
-import backgroundImage from '../assets/images/anh-nen1.jpg'; // Import ảnh từ src/assets
 import { BeeMathLogo } from '../components/logo/BeeMathLogo';
+import backgroundImage from '../assets/images/anh-nen1.jpg'; // Import ảnh từ src/assets
+import ParticlesBackground from '../components/ParticlesBackground';
 
 const AuthLayout = ({ children }) => {
     return (
-        <div
-            className="w-screen h-screen flex items-center justify-center bg-cover bg-center bg-no-repeat"
-            style={{ backgroundImage: `url(${backgroundImage})` }}
+        <div className="relative w-screen h-screen flex items-center justify-center 
+                         overflow-hidden"
+            style={{
+                backgroundImage: `url(${backgroundImage})`, // Sử dụng ảnh từ src/assets
+                backgroundSize: 'cover',
+                backgroundPosition: 'center',
+            }}
         >
-            <div className="bg-white/90 flex flex-col items-center rounded-3xl p-[3rem] border border-gray-400/30 shadow-md ">
-                <BeeMathLogo className="absolute top-6 left-6 w-[3.5rem] h-[3.5rem] " />
+            <ParticlesBackground />
+            <BeeMathLogo className="absolute top-6 left-6 w-[3rem] h-[3rem]" />
 
-                {children} 
-            </div>
+            {children}
         </div>
     );
 };
 
-export default AuthLayout; 
+export default AuthLayout;

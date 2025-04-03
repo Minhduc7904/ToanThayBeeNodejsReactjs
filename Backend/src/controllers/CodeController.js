@@ -1,5 +1,4 @@
-import { Sequelize } from "../models"
-import db from "../models"
+import db from "../models/index.js"
 import { Op, or } from "sequelize";
 
 export const getAllCode = async (req, res, next) => {
@@ -49,7 +48,8 @@ export const getCodeByType = async (req, res) => {
 
     if (!codes || codes.length === 0) {
         return res.status(404).json({
-            message: "Không tìm thấy mã code cho các type này"
+            message: "Không tìm thấy mã code cho các type này",
+            data: []
         });
     }
 

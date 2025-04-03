@@ -2,7 +2,7 @@ import { get } from 'http'
 import path from 'path'
 import fs from 'fs'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable, deleteObject } from 'firebase/storage'
-import config from '../config/firebaseConfig'
+import config from '../config/firebaseConfig.js'
 
 
 export async function uploadImages(req, res) {

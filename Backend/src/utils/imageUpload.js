@@ -1,7 +1,7 @@
 import path from 'path'
 import fs from 'fs'
 import { getDownloadURL, getStorage, ref, uploadBytesResumable, deleteObject } from 'firebase/storage'
-import config from '../config/firebaseConfig'
+import config from '../config/firebaseConfig.js'
 
 /**
  * Upload image to Firebase Storage

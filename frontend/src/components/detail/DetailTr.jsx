@@ -6,10 +6,6 @@ import SuggestInputBarAdmin from "../input/suggestInputBarAdmin";
 const DetailTr = ({ title, value, valueText, required = false, onChange, type = 1, placeholder, options = [] }) => {
     const [edit, setEdit] = useState(false);
 
-    useEffect(() => {
-        console.log(options)
-    }, [options])
-
     return (
         <tr className="border border-[#E7E7ED]">
             <td className="p-3 flex justify-between items-center">
@@ -54,6 +50,7 @@ const DetailTr = ({ title, value, valueText, required = false, onChange, type = 
                     ) : type === 4 ? (
                             <input
                                 type="number"
+                                min="0" // ✅ không cho phép giá trị âm
                                 placeholder={placeholder}
                                 value={value}
                                 onChange={onChange}

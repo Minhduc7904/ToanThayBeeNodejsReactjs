@@ -4,6 +4,8 @@ import { fetchUsers } from "../../features/user/userSlice";
 import { setSortOrder } from "../../features/filter/filterSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
+import { useState } from "react";
+import { resetFilters } from "../../features/filter/filterSlice";
 
 const UserList = () => {
     const dispatch = useDispatch();
@@ -11,10 +13,20 @@ const UserList = () => {
     const { search, currentPage, limit, totalItems, sortOrder } = useSelector(state => state.filter);
     const { loading } = useSelector(state => state.states);
     const navigate = useNavigate();
+    const [didInit, setDidInit] = useState(false); // 👉 Thêm cờ kiểm soát mount đầu tiên
 
     useEffect(() => {
-        dispatch(fetchUsers({ search, currentPage, limit, sortOrder }))
-    }, [dispatch, search, currentPage, limit, sortOrder]);
+        if (!didInit) {
+            dispatch(resetFilters());
+            setDidInit(true);
+        }
+    }, [dispatch, didInit]);
+
+    useEffect(() => {
+        if (didInit) {
+            dispatch(fetchUsers({ search, currentPage, limit, sortOrder }));
+        }
+    }, [dispatch, search, currentPage, limit, sortOrder, didInit]);
 
     if (loading) return (
         <div className="flex items-center justify-center h-screen">
@@ -57,7 +69,7 @@ const UserList = () => {
 
             </div>
 
-            <div className="flex-grow overflow-y-auto">
+            <div className="flex-grow h-[70vh] overflow-y-auto hide-scrollbar">
                 <table className="w-full border-collapse border border-[#E7E7ED]">
                     <thead className="bg-[#F6FAFD] sticky top-0 z-10">
                         <tr className="border border-[#E7E7ED]">

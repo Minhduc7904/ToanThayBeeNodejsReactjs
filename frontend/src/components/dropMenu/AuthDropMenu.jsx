@@ -40,7 +40,7 @@ const DropMenu = ({ title, type, selected, onSelect, className, required }) => {
             <div className="relative w-full">
                 <button
                     type="button"
-                    className={`bg-white px-4 py-2 rounded-xl border border-[#666666] w-full flex justify-between items-center ${className}`}
+                    className={`bg-white px-4 py-2 rounded border border-[#666666] w-full flex justify-between items-center ${className}`}
                     onClick={() => setIsOpen((prev) => !prev)}
                 >
                     <span

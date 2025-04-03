@@ -1,8 +1,6 @@
 'use strict'
-const {
-  Model
-} = require('sequelize')
-module.exports = (sequelize, DataTypes) => {
+import { Model } from 'sequelize'
+export default (sequelize, DataTypes) => {
   class ExamQuestions  extends Model {
     /**
      * Helper method for defining associations.
@@ -23,6 +21,9 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.INTEGER,
       allowNull: false,
       primaryKey: true
+    },
+    order: {
+      type: DataTypes.INTEGER,
     },
   }, {
     sequelize,

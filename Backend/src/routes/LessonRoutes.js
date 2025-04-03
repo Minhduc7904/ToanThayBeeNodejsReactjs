@@ -27,7 +27,7 @@ router.put('/v1/admin/lesson/:id',
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(LessonController.changeLesson)
 )
-router.delete('/v1/admin/lesson/:id', 
+router.delete('/v1/admin/lesson/:lessonId', 
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(LessonController.deleteLesson)
 )

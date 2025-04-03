@@ -11,14 +11,9 @@ export const getAllExamAPI = ({ search = "", currentPage = 1, limit = 10, sortOr
     });
 };
 
-export const getAllPublicExamAPI = ({ search = "", currentPage = 1, limit = 10, sortOrder = 'asc' }) => {
+export const getAllPublicExamAPI = (data) => {
     return api.get("/v1/user/exam", {
-        params: {
-            search,
-            page: currentPage,
-            limit,
-            sortOrder,
-        }
+        params: data
     });
 }
 

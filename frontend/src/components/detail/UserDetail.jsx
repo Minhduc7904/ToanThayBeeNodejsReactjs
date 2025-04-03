@@ -66,7 +66,7 @@ const UserDetail = ({ userId }) => {
                 if (studentData.status !== student.status) {
                     dispatch(putUserStatus({ id: student.id, status: studentData.status }));
                 }
-            } 
+            }
             dispatch(putUser({ id: student.id, user: data }));
         }
 
@@ -98,14 +98,14 @@ const UserDetail = ({ userId }) => {
     return (
         <div className="flex flex-col gap-4 min-h-0 w-full h-full">
             <div className="flex gap-2 items-center">
-                <button onClick={() => navigate(-1)} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
+                <button onClick={() => navigate("/admin/student-management")} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                         <path d="M12.6667 8.66675L5.50292 15.8289C5.38989 15.94 5.33337 16.0856 5.33337 16.2312M12.6667 23.3334L5.50292 16.6335C5.38989 16.5224 5.33337 16.3768 5.33337 16.2312M5.33337 16.2312H26.6667" stroke="#131214" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </button>
                 <div className="relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose">Chi tiết học sinh - {student.id}</div>
             </div>
-            <div className="flex-grow h-full overflow-y-auto">
+            <div className="flex-grow h-full overflow-y-auto hide-scrollbar">
                 <table className="w-full border-collapse h-full border border-[#E7E7ED]">
                     <thead className="bg-[#F6FAFD]">
                         <tr className="border border-[#E7E7ED]">
@@ -165,11 +165,11 @@ const UserDetail = ({ userId }) => {
                             type={0}
                             required={true}
                         />
-                        
+
                         <DetailTr
                             title="Email"
                             value={studentData?.email}
-                            valueText={studentData?.email ? studentData?.email : "Chưa cập nhật"} 
+                            valueText={studentData?.email ? studentData?.email : "Chưa cập nhật"}
                             type={1}
                             required={true}
                             placeholder={"Nhập email"}
@@ -222,11 +222,9 @@ const UserDetail = ({ userId }) => {
                     type="button"
                     onClick={handlePutUser}
                     data-icon Position="None" data-mode="Light" data-size="Large" data-state="Default" data-type="Primary"
-                    className="h-12 px-8 py-4 bg-[#253f61] hover:bg-[#1b2e47] active:bg-[#16263a] transition-all duration-300 rounded-[48px] flex justify-center items-center gap-2.5"
+                    className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-800"
                 >
-                    <div className="text-center justify-center text-white text-md font-medium font-['Inter'] leading-normal">
-                        Lưu
-                    </div>
+                    Lưu
                 </button>
             </div>
         </div>

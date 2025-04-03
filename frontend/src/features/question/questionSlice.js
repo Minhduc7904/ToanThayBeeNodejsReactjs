@@ -28,7 +28,7 @@ export const fetchExamQuestions = createAsyncThunk(
 );
 
 export const fetchPublicQuestionsByExamId = createAsyncThunk(
-    "exams/fetchPublicQuestionsByExamId",
+    "questions/fetchPublicQuestionsByExamId",
     async (id, { dispatch }) => {
         return await apiHandler(dispatch, questionApi.getPublicExamQuestionsAPI, { id }, (data) => {
             dispatch(setExam(data.exam));
@@ -109,7 +109,11 @@ const questionSlice = createSlice({
         },
         setQuestion: (state, action) => {
             state.question = action.payload;
-        }
+        },
+        setQuestions: (state, action) => {
+            state.questions = action.payload;
+        },
+
     },
     extraReducers: (builder) => {
         builder
@@ -145,5 +149,5 @@ const questionSlice = createSlice({
     },
 });
 
-export const { setQuestion } = questionSlice.actions;
+export const { setQuestion, setQuestions } = questionSlice.actions;
 export default questionSlice.reducer;

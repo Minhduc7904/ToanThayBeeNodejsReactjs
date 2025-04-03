@@ -13,11 +13,17 @@ const AddExamModal = ({ onClose, fetchExams }) => {
     const dispatch = useDispatch();
     const { codes } = useSelector(state => state.codes);
     const [contentTN, setContentTN] = useState("");
+    const [countTN, setCountTN] = useState(0);
     const [contentDS, setContentDS] = useState("");
+    const [countDS, setCountDS] = useState(0);
     const [contentTLN, setContentTLN] = useState("");
+    const [countTLN, setCountTLN] = useState(0);
     const [correctAnswerTN, setCorrectAnswerTN] = useState("");
+    const [previewTN, setPreviewTN] = useState([]);
     const [correctAnswerDS, setCorrectAnswerDS] = useState("");
+    const [previewDS, setPreviewDS] = useState([]);
     const [correctAnswerTLN, setCorrectAnswerTLN] = useState("");
+    const [previewTLN, setPreviewTLN] = useState([]);
     const [isStep1, setIsStep1] = useState(true);
     const [isStep2, setIsStep2] = useState(false);
     const [isStep3, setIsStep3] = useState(false);
@@ -61,10 +67,6 @@ const AddExamModal = ({ onClose, fetchExams }) => {
         handleQuestionsChange({ target: { value: newImg !== null } }, index, "needImage");
     }
 
-    useEffect(() => {
-        console.log(questionImages);
-    }, [questionImages])
-
     const handleStatementChange = (e, index, idxStatement, name) => {
         const { value } = e.target;
         const list = [...questions];
@@ -74,7 +76,6 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
 
     const handleUploadStatementImage = (index, newImg, idxStatement, idxQuestion) => {
-        console.log(statementImages);
         setStatementImages((prev) => {
             const list = [...prev];
             list[index] = newImg;
@@ -111,7 +112,6 @@ const AddExamModal = ({ onClose, fetchExams }) => {
         check = splitContentTLN(contentTLN, correctAnswerTLN, dispatch);
         if (!check) return;
         const questionTLN = check
-        console.log(questionTN, questionDS, questionTLN);
         const questionFake = [...questionTN, ...questionDS, ...questionTLN];
         if (questionFake.length === 0) {
             setIsStep1(false);
@@ -150,13 +150,6 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
     const handleSummit = (e) => {
         e.preventDefault();
-        console.log({
-            examData,
-            examImage,
-            questions,
-            questionImages,
-            statementImages
-        });
         dispatch(postExam({
             examData,
             examImage,
@@ -170,6 +163,27 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                 dispatch(fetchExams({ search, currentPage, limit, totalItems, sortOrder }));
             })
     }
+
+    useEffect(() => {
+        const preview = correctAnswerTN.trim().split(' ')
+        setPreviewTN(preview);
+        const previewDS = correctAnswerDS.trim().split(' ')
+        setPreviewDS(previewDS);
+        const previewTLN = correctAnswerTLN.trim().split(' ')
+        setPreviewTLN(previewTLN);
+    }, [correctAnswerTN, correctAnswerDS, correctAnswerTLN]);
+
+    useEffect(() => {
+        const countMatches = (content) => {
+            const matches = content.match(/Câu\s\d+\./g); // Regex khớp "Câu x."
+            return matches ? matches.length : 0;
+        };
+
+        setCountTN(countMatches(contentTN));
+        setCountDS(countMatches(contentDS));
+        setCountTLN(countMatches(contentTLN));
+    }, [contentTN, contentDS, contentTLN]);
+
 
     useEffect(() => {
         if (Array.isArray(codes["chapter"])) {
@@ -234,7 +248,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                     required
                                     value={examData.name}
                                     onChange={(e) => setExamData({ ...examData, name: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
+                                    className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437]  font-medium font-['Inter'] leading-normal"
                                     placeholder="Nhập tên đề thi"
                                 />
                             </div>
@@ -327,7 +341,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                     required
                                     value={examData.passRate}
                                     onChange={(e) => setExamData({ ...examData, passRate: e.target.value })}
-                                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
+                                    className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437]  font-medium font-['Inter'] leading-normal"
                                     placeholder="Nhập tỷ lệ đạt"
                                 />
                             </div>
@@ -339,7 +353,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                     selectedOption={examData.testDuration}
                                     onChange={(option) => setExamData({ ...examData, testDuration: option })}
                                     options={[
-                                        { code: null, description: "Không giới hạn"},
+                                        { code: null, description: "Không giới hạn" },
                                         { code: 120, description: "120 phút" },
                                         { code: 90, description: "90 phút" },
                                         { code: 60, description: "60 phút" },
@@ -387,7 +401,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 type="button"
                                 onClick={handleSetStep2}
                                 data-icon Position="None" data-mode="Light" data-size="Large" data-state="Default" data-type="Primary" className="h-12 px-8 py-4 bg-[#253f61] rounded-[48px] flex justify-center items-center gap-2.5">
-                                <div className="text-center justify-center text-white text-lg font-medium font-['Inter'] leading-normal">Tiếp theo</div>
+                                <div className="text-center justify-center text-white  font-medium font-['Inter'] leading-normal">Tiếp theo</div>
                             </button>
                         </div>
                     </>
@@ -395,55 +409,80 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
                 {isStep2 && (
                     <>
-                        <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
-                            <div className="self-stretch px-1 inline-flex w-full items-start gap-10">
-                                <div className="inline-flex flex-1 flex-col justify-start w-full items-start gap-2">
-                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
-                                        Đáp án TN <span className="text-red-500"> *</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={correctAnswerTN}
-                                        onChange={(e) => setCorrectAnswerTN(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
-                                        placeholder="Nhập đáp án"
-                                    />
-                                </div>
-                                <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
-                                        Đáp án Đ/S <span className="text-red-500"> *</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={correctAnswerDS}
-                                        onChange={(e) => setCorrectAnswerDS(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
-                                        placeholder="Nhập đáp án"
-                                    />
-                                </div>
-                                <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
-                                        Đáp án TLN <span className="text-red-500"> *</span>
-                                    </div>
-                                    <input
-                                        type="text"
-                                        required
-                                        value={correctAnswerTLN}
-                                        onChange={(e) => setCorrectAnswerTLN(e.target.value)}
-                                        className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
-                                        placeholder="Nhập đáp án"
-                                    />
-                                </div>
+                        <div className="inline-flex flex-1 flex-col justify-start w-full items-start gap-2">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                Đáp án TN <span className="text-red-500"> *</span>
+                            </div>
+                            <input
+                                type="text"
+                                required
+                                value={correctAnswerTN}
+                                onChange={(e) => setCorrectAnswerTN(e.target.value)}
+                                className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437]  font-medium font-['Inter'] leading-normal"
+                                placeholder="Nhập đáp án"
+                            />
+                            <div className="flex flex-row gap-2 items-center ">
+                                {(previewTN.length > 0 && correctAnswerTN) && (
+                                    previewTN.map((item, index) => (
+                                        <p key={index}>Câu {index + 1}: <span className="text-red-500">{item}</span></p>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+                        <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                Đáp án Đ/S <span className="text-red-500"> *</span>
+
+                            </div>
+                            <input
+                                type="text"
+                                required
+                                value={correctAnswerDS}
+                                onChange={(e) => setCorrectAnswerDS(e.target.value)}
+                                className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437]  font-medium font-['Inter'] leading-normal"
+                                placeholder="Nhập đáp án"
+                            />
+                            <div className="flex flex-row gap-2 items-center ">
+                                {(previewDS.length > 0 && correctAnswerDS) && (
+                                    previewDS.map((item, index) => (
+                                        <p key={index}>Câu {index + 1}: <span className="text-red-500">{item}</span></p>
+                                    ))
+                                )}
                             </div>
 
                         </div>
+                        <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                Đáp án TLN <span className="text-red-500"> *</span>
+                            </div>
+                            <input
+                                type="text"
+                                required
+                                value={correctAnswerTLN}
+                                onChange={(e) => setCorrectAnswerTLN(e.target.value)}
+                                className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437]  font-medium font-['Inter'] leading-normal"
+                                placeholder="Nhập đáp án"
+                            />
+                            <div className="flex flex-row gap-2 items-center ">
+                                {(previewTLN.length > 0 && correctAnswerTLN) && (
+                                    previewTLN.map((item, index) => (
+                                        <p key={index}>Câu {index + 1}: <span className="text-red-500">{item}</span></p>
+                                    ))
+                                )}
+                            </div>
+                        </div>
+
                         <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
-                                    Câu hỏi và mệnh đề TN <span className="text-red-500"> *</span>
-                                </label>
+                                <div className="flex flex-row justify-between items-center">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        Câu hỏi và mệnh đề TN <span className="text-red-500"> *</span>
+                                    </label>
+                                    <p className="text-red-500 font-['Be Vietnam Pro']">
+                                        Số câu hỏi: {countTN}
+                                    </p>
+                                </div>
+
                                 <textarea
                                     required
                                     placeholder="Nhập nội dung câu hỏi và mệnh đề"
@@ -453,10 +492,11 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 />
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
+
                                 <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                     Xem trước Latex
                                 </label>
-                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                     <LatexRenderer text={contentTN} />
                                 </div>
                             </div>
@@ -464,9 +504,15 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
                         <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
-                                    Câu hỏi và mệnh đề Đ/S <span className="text-red-500"> *</span>
-                                </label>
+                                <div className="flex flex-row justify-between items-center">
+
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        Câu hỏi và mệnh đề Đ/S <span className="text-red-500"> *</span>
+                                    </label>
+                                    <p className="text-red-500 font-['Be Vietnam Pro']">
+                                        Số câu hỏi: {countDS}
+                                    </p>
+                                </div>
                                 <textarea
                                     required
                                     placeholder="Nhập nội dung câu hỏi và mệnh đề"
@@ -479,16 +525,22 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                     Xem trước Latex
                                 </label>
-                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                     <LatexRenderer text={contentDS} />
                                 </div>
                             </div>
                         </div>
                         <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
-                                    Câu hỏi và mệnh đề TLN <span className="text-red-500"> *</span>
-                                </label>
+                                <div className="flex flex-row justify-between items-center">
+
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        Câu hỏi và mệnh đề TLN <span className="text-red-500"> *</span>
+                                    </label>
+                                    <p className="text-red-500 font-['Be Vietnam Pro']">
+                                        Số câu hỏi: {countTLN}
+                                    </p>
+                                </div>
                                 <textarea
                                     required
                                     placeholder="Nhập nội dung câu hỏi và mệnh đề"
@@ -501,7 +553,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                     Xem trước Latex
                                 </label>
-                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                     <LatexRenderer text={contentTLN} />
                                 </div>
                             </div>
@@ -518,7 +570,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 type="button"
                                 onClick={handleSetStep3}
                                 data-icon data-mode="Light" data-size="Large" data-state="Default" data-type="Primary" className="h-12 px-8 py-4 bg-[#253f61] rounded-[48px] flex justify-center items-center gap-2.5">
-                                <div className="text-center justify-center text-white text-lg font-medium font-['Inter'] leading-normal">Tiếp theo</div>
+                                <div className="text-center justify-center text-white  font-medium font-['Inter'] leading-normal">Tiếp theo</div>
                             </button>
                         </div>
                     </>
@@ -558,7 +610,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                     <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                         Xem trước Latex
                                     </label>
-                                    <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                    <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                         <LatexRenderer text={questions[i].questionData.content} />
                                     </div>
 
@@ -593,7 +645,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                                 required
                                                 value={questions[i].questionData.correctAnswer}
                                                 onChange={(e) => handleQuestionsChange(e, i, "correctAnswer")}
-                                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
+                                                className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437]  font-medium font-['Inter'] leading-normal"
                                                 placeholder="Nhập đáp án"
                                             />
                                         </div>
@@ -629,7 +681,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                                 Xem trước Latex
                                             </label>
                                             {questions[i].statements.map((statement, index) => (
-                                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                                     <LatexRenderer text={statement.content} />
                                                 </div>
                                             ))}
@@ -639,7 +691,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                                 Đáp án
                                             </label>
                                             {questions[i].statements.map((statement, index) => (
-                                                <div className={`flex flex-1 p-[0.5rem] overflow-y-auto break-all items-center justify-center ${statement.isCorrect ? "text-green-500" : "text-red-500"}`} >
+                                                <div className={`flex flex-1 p-[0.5rem] overflow-y-auto hide-scrollbar break-all items-center justify-center ${statement.isCorrect ? "text-green-500" : "text-red-500"}`} >
                                                     {statement.isCorrect ? "Đúng" : "Sai"}
                                                 </div>
                                             ))}
@@ -690,7 +742,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 type="button"
                                 onClick={handleSummit}
                                 data-icon data-mode="Light" data-size="Large" data-state="Default" data-type="Primary" className="h-12 px-8 py-4 bg-[#253f61] rounded-[48px] flex justify-center items-center gap-2.5">
-                                <div className="text-center justify-center text-white text-lg font-medium font-['Inter'] leading-normal">Tạo đề thi</div>
+                                <div className="text-center justify-center text-white  font-medium font-['Inter'] leading-normal">Tạo đề thi</div>
                             </button>
                         </div>
                     </>

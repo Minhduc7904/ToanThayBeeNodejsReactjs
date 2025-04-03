@@ -65,11 +65,11 @@ const AdminSidebar = () => {
 
 
     return (
-        <div className={`flex flex-col justify-between bg-white ${closeSidebar ? '' : 'w-[16rem]'}  h-full p-[1.25rem]  shadow-[0px_1px_8px_2px_rgba(20,20,20,0.08)]`}>
+        <div className={`fixed left-0 flex flex-col h-screen justify-between bg-white ${closeSidebar ? '' : 'w-[16rem]'}  h-full p-[1.25rem]  shadow-[0px_1px_8px_2px_rgba(20,20,20,0.08)]`}>
             <div className="flex-col w-full justify-start items-start gap-5 inline-flex">
                 <HeaderSidebar />
                 <div className="flex flex-col gap-3 w-full">
-                    <MenuSidebar onClick={() => navigate('/dashboard')} route={'/dashboard'} icon={icon1} text={'Tổng quan'} />
+                    <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon1} text={'Tổng quan'} />
 
                     <button
                         className={`p-3 w-full justify-center items-center rounded-lg gap-4 inline-flex 
@@ -113,14 +113,14 @@ const AdminSidebar = () => {
                         </div>
                     )}
 
-                    <MenuSidebar onClick={() => navigate('/dashboard')} icon={icon2} text={'Báo cáo thống kê'} />
+                    <MenuSidebar onClick={() => navigate('/')} icon={icon2} text={'Báo cáo thống kê'} />
 
                 </div>
             </div>
             <div className="flex-col w-full justify-start items-start gap-3 inline-flex">
-                <MenuSidebar onClick={() => navigate('/dashboard')} route={'/dashboard'} icon={icon3} text={'Thông báo'} icon2={notification} />
-                <MenuSidebar onClick={() => navigate('/dashboard')} route={'/dashboard'} icon={icon4} text={'Trợ giúp'} />
-                <MenuSidebar onClick={handleLogout} route={'/dashboard'} icon={icon5} text={'Đăng xuất'} />
+                <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon3} text={'Thông báo'} icon2={notification} />
+                <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon4} text={'Trợ giúp'} />
+                <MenuSidebar onClick={handleLogout} route={'/'} icon={icon5} text={'Đăng xuất'} />
                 <UserSidebar />
             </div>
         </div>

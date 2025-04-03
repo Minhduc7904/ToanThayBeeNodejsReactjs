@@ -63,6 +63,10 @@ const ExamDetail = ({ selectedExamId }) => {
         navigate(`/admin/exam-management/${exam.id}/preview`);
     }
 
+    const handleClickedTracking = () => {
+        navigate(`/admin/exam-management/${exam.id}/tracking`);
+    }
+
     if (!exam && !loading) {
         return (
             <>
@@ -111,6 +115,15 @@ const ExamDetail = ({ selectedExamId }) => {
                     className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose cursor-pointer`}>
                     Xem đề thi
                 </div>
+                <div
+                    className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-[#090a0a]"}`}>
+                    -
+                </div>
+                <div
+                    onClick={handleClickedTracking}
+                    className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose cursor-pointer`}>
+                    Theo dõi
+                </div>
             </div>
             {loading ? (
                 <div className="flex items-center justify-center h-screen">
@@ -118,7 +131,7 @@ const ExamDetail = ({ selectedExamId }) => {
                 </div>
             ) : (
                 <>
-                    <div className="flex h-full overflow-y-auto">
+                    <div className="flex h-full overflow-y-auto hide-scrollbar">
                         <table className="w-full border-collapse border border-[#E7E7ED]">
                             <thead className="bg-[#F6FAFD]">
                                 <tr className="border border-[#E7E7ED]">
@@ -178,6 +191,28 @@ const ExamDetail = ({ selectedExamId }) => {
                                     placeholder={"Nhập mô tả"}
                                     onChange={(e) => dispatch(setExam({ ...exam, description: e.target.value }))}
                                 />
+
+                                <DetailTr
+                                    title="Số lần làm bài"
+                                    value={exam?.attemptLimit}
+                                    valueText={exam?.attemptLimit}
+                                    type={4}
+                                    onChange={(e) => dispatch(setExam({ ...exam, attemptLimit: e.target.value }))}
+                                    placeholder={"Nhập số lần làm bài"}
+                                />
+                                <DetailTr
+                                    title="Theo dõi hành vi"
+                                    value={exam?.isCheatingCheckEnabled}
+                                    type={3}
+                                    required={true}
+                                    options={[
+                                        { code: true, description: "Có" },
+                                        { code: false, description: "Không" },
+                                    ]}
+                                    onChange={(option) => dispatch(setExam({ ...exam, isCheatingCheckEnabled: option }))}
+                                    valueText={exam?.isCheatingCheckEnabled ? "Có" : "Không"}
+                                />
+
                                 <DetailTr
                                     title="Thời gian"
                                     value={exam?.testDuration}
@@ -209,7 +244,7 @@ const ExamDetail = ({ selectedExamId }) => {
                                     placeholder={"Nhập URL lời giải"}
                                     onChange={(e) => dispatch(setExam({ ...exam, solutionUrl: e.target.value }))}
                                 />
-                                
+
                                 <tr className="border border-[#E7E7ED]">
                                     <td className="p-3 flex justify-between items-center">
                                         <label className="text-[#202325] text-md font-bold">
@@ -221,7 +256,7 @@ const ExamDetail = ({ selectedExamId }) => {
                                             putImageFunction={handlePutImage} />
                                     </td>
                                 </tr>
-                                <DetailTr 
+                                <DetailTr
                                     title="Công khai"
                                     value={exam?.public}
                                     type={3}
@@ -251,11 +286,9 @@ const ExamDetail = ({ selectedExamId }) => {
                             type="button"
                             onClick={handlePutExam}
                             data-icon Position="None" data-mode="Light" data-size="Large" data-state="Default" data-type="Primary"
-                            className="h-12 px-8 py-4 bg-[#253f61] hover:bg-[#1b2e47] active:bg-[#16263a] transition-all duration-300 rounded-[48px] flex justify-center items-center gap-2.5"
+                            className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-800"
                         >
-                            <div className="text-center justify-center text-white text-md font-medium font-['Inter'] leading-normal">
-                                Lưu
-                            </div>
+                            Lưu
                         </button>
                     </div>
                 </>

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useDispatch } from "react-redux";
 import { setErrorMessage } from "../../features/state/stateApiSlice";
 
@@ -7,6 +7,7 @@ const PutImage = ({ imageUrl, inputId, id, className = '', putImageFunction }) =
     const [preview, setPreview] = useState(null);
     const [isDragging, setIsDragging] = useState(false); // Trạng thái kéo thả
     const [image, setImage] = useState(null);
+    const uploadRef = useRef(null);
 
     // Xử lý khi chọn file qua input
     const handleFileChange = (event) => {
@@ -24,6 +25,41 @@ const PutImage = ({ imageUrl, inputId, id, className = '', putImageFunction }) =
             setPreview(URL.createObjectURL(file));
         }
     };
+
+    useEffect(() => {
+        const uploadElement = uploadRef.current;
+        if (!uploadElement) return;
+
+        const handlePaste = (event) => {
+            const items = event.clipboardData?.items;
+            if (items) {
+                for (let i = 0; i < items.length; i++) {
+                    const item = items[i];
+                    if (item.type.indexOf("image") !== -1) {
+                        const file = item.getAsFile();
+                        if (file) {
+                            if (!["image/jpeg", "image/png"].includes(file.type)) {
+                                dispatch(setErrorMessage("Chỉ cho phép định dạng JPEG hoặc PNG!"));
+                                return;
+                            }
+                            if (file.size > 5 * 1024 * 1024) {
+                                dispatch(setErrorMessage("Kích thước ảnh vượt quá 5MB!"));
+                                return;
+                            }
+                            setImage(file);
+                            setPreview(URL.createObjectURL(file));
+                        }
+                    }
+                }
+            }
+        };
+
+        uploadElement.addEventListener("paste", handlePaste);
+        return () => {
+            uploadElement.removeEventListener("paste", handlePaste);
+        };
+    }, [dispatch]);
+
 
     useEffect(() => {
         if (image) {
@@ -81,12 +117,16 @@ const PutImage = ({ imageUrl, inputId, id, className = '', putImageFunction }) =
 
     return (
         <div
+            ref={uploadRef}
+
             className={`flex ${className ? className : 'w-[15rem]'}  h-full flex-col gap-[0.75rem] p-4 justify-center items-center rounded-[1.625rem] border-2 border-dashed
             ${isDragging ? "border-blue-500 bg-blue-100" : "border-[#CDCFD0] bg-white"}
             transition-all duration-300 ease-in-out`}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            tabIndex={0} // 👈 để div có thể nhận sự kiện paste khi được focus
+
         >
             {!preview ? (
                 <>

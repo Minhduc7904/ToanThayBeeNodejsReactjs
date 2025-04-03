@@ -13,9 +13,10 @@ class PostClassRequest {
     }
     
     static validate(data) {
+        console.log(data)
         const schema = Joi.object({
             name: Joi.string().required(),
-            description: Joi.string().optional(),
+            description: Joi.string().optional().allow(''),
             academicYear: Joi.string().required(),
             status: Joi.string().required(),
             slideId: Joi.number().optional(),

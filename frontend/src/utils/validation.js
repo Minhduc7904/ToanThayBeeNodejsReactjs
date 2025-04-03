@@ -2,6 +2,7 @@ import { setErrorMessage } from "../features/state/stateApiSlice";
 
 
 export const validateRegister = (data, password2, dispatch) => {
+    console.log(data);
     if (!data.lastName) {
         dispatch(setErrorMessage("Họ và tên đệm không được để trống."))
         return false;

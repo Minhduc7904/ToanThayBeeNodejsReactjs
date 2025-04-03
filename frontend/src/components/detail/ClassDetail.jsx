@@ -1,6 +1,6 @@
 import { use, useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchClassById } from "../../features/class/classSlice";
+import { fetchClassById, putClass } from "../../features/class/classSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 import { setClass } from "../../features/class/classSlice";
@@ -8,6 +8,8 @@ import DropMenuBarAdmin from "../dropMenu/OptionBarAdmin";
 import { fetchCodesByType } from "../../features/code/codeSlice";
 import { setSuccessMessage } from "../../features/state/stateApiSlice";
 import DetailTr from "./DetailTr";
+import PutMultipleImages from "../image/PutMultipleImages";
+import { putSlideImagesForClass } from "../../features/class/classSlice";
 
 const ClassDetail = ({ classId }) => {
     const dispatch = useDispatch();
@@ -16,13 +18,45 @@ const ClassDetail = ({ classId }) => {
     const { codes } = useSelector((state) => state.codes);
     const { loading } = useSelector((state) => state.states);
     const [classData, setClassData] = useState(null);
+    const initialImages = classDetail?.slide?.slideImages?.map(img => ({
+        id: img.id,
+        url: img.imageUrl,
+    })) || [];
+    const handlePutImageFuction = (images, keepImageIds, classId) => {
+        dispatch(putSlideImagesForClass({
+            classId,
+            images,
+            keepImageIds,
+            slideId: classDetail?.slideId,
+        })).unwrap()
+            .then(() => {
+                if (classId) dispatch(fetchClassById(classId));
+            })
+    };
+
+    const handleClickedUsers = () => {
+        navigate(`/admin/class-management/${classId}/users`);
+    };
+
+    const handlePutClass = () => {
+        const data = {
+            name: classData.name,
+            description: classData.description,
+            dow: classData.dow,
+            studyTime: classData.studyTime,
+            academicYear: classData.academicYear,
+            status: classData.status,
+            public: classData.public,
+        }
+        if (classId) dispatch(putClass({data, id: classId}))
+    };
 
     useEffect(() => {
         dispatch(fetchCodesByType(["class status", "year", "dow", "duration"]));
     }, [dispatch]);
 
     useEffect(() => {
-        dispatch(fetchClassById(classId));
+        if (classId) dispatch(fetchClassById(classId));
     }, [dispatch, classId]);
 
     useEffect(() => {
@@ -30,8 +64,6 @@ const ClassDetail = ({ classId }) => {
             setClassData({ ...classDetail });
         }
     }, [classDetail]);
-
-
 
     if (loading) return (
         <div className="flex items-center justify-center h-screen">
@@ -57,14 +89,46 @@ const ClassDetail = ({ classId }) => {
     return (
         <div className="flex flex-col gap-4 min-h-0 w-full h-full">
             <div className="flex gap-2 items-center">
-                <button onClick={() => navigate(-1)} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
+                <button onClick={() => navigate("/admin/class-management")} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                         <path d="M12.6667 8.66675L5.50292 15.8289C5.38989 15.94 5.33337 16.0856 5.33337 16.2312M12.6667 23.3334L5.50292 16.6335C5.38989 16.5224 5.33337 16.3768 5.33337 16.2312M5.33337 16.2312H26.6667" stroke="#131214" stroke-width="1.5" stroke-linecap="round" />
                     </svg>
                 </button>
                 <div className="relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose">Chi tiết lớp học - {classId}</div>
             </div>
-            <div className="flex-grow h-full overflow-y-auto">
+            <div className="flex w-full h-2 border-b border-[#E7E7ED]"></div>
+            <div className="flex gap-2 items-center border-b border-[#E7E7ED]">
+                <div
+                    className={`relative justify-center text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-gray-500 underline`}>
+                    Chi tiết
+                </div>
+                <div
+                    className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-[#090a0a]"}`}>
+                    -
+                </div>
+                <div
+                    onClick={handleClickedUsers}
+                    className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose "text-[#090a0a] cursor-pointer`}>
+                    Danh sách học sinh
+                </div>
+                <div
+                    className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose text-[#090a0a]"}`}>
+                    -
+                </div>
+                <div
+                    onClick={() => navigate(`/admin/class-management/${classId}/lessons`)}
+                    className={`relative justify-center text-[#090a0a] text-2xl font-bold font-['Be_Vietnam_Pro'] leading-loose cursor-pointer`}>
+                    Danh sách buổi học
+                </div>
+            </div>
+            <div className="flex w-full h-2 border-b border-[#E7E7ED]"></div>
+            <PutMultipleImages
+                initialImages={initialImages}
+                putImageFunction={handlePutImageFuction}
+                classId={classId}
+            />
+            <div className="flex w-full h-2 border-b border-[#E7E7ED]"></div>
+            <div className="flex-grow h-full overflow-y-auto hide-scrollbar">
                 <table className="w-full h-full border-collapse border border-[#E7E7ED]">
                     <thead className="bg-[#F6FAFD]">
                         <tr className="border border-[#E7E7ED]">
@@ -76,6 +140,11 @@ const ClassDetail = ({ classId }) => {
                         <DetailTr
                             title="ID"
                             value={classData?.id}
+                            type={0}
+                        />
+                        <DetailTr
+                            title="Mã lớp"
+                            value={classData?.class_code}
                             type={0}
                         />
                         <DetailTr
@@ -122,7 +191,7 @@ const ClassDetail = ({ classId }) => {
                         <DetailTr
                             title="Số học sinh"
                             value={classData?.studentCount}
-                            
+
                             type={0}
                         />
                         <DetailTr
@@ -156,6 +225,16 @@ const ClassDetail = ({ classId }) => {
                         />
                     </tbody>
                 </table>
+            </div>
+            <div className="flex w-full justify-end">
+                <button
+                    type="button"
+                    onClick={handlePutClass}
+                    data-icon Position="None" data-mode="Light" data-size="Large" data-state="Default" data-type="Primary"
+                    className="px-4 py-2 bg-slate-700 text-white rounded hover:bg-slate-800"
+                >
+                    Lưu
+                </button>
             </div>
         </div>
     )

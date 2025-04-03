@@ -61,7 +61,7 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
                 onFocus={() => setShowSuggestions(true)}
             />
             {showSuggestions && (
-                <ul className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50 overflow-y-auto max-h-60">
+                <ul className="absolute left-0 mt-2 w-full bg-white border border-gray-300 rounded-lg shadow-lg z-50 overflow-y-auto hide-scrollbar max-h-60">
                     {filteredOptions?.length > 0 ? (
                         filteredOptions.map((option, index) => (
                             <li

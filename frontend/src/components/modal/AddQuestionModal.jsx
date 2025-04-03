@@ -169,7 +169,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                             <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                 Xem trước Latex
                             </label>
-                            <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                            <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                 <LatexRenderer text={content} />
                             </div>
 
@@ -290,7 +290,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                             <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                 Xem trước Latex
                             </label>
-                            <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                            <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                 <LatexRenderer text={question.solution} />
                             </div>
                         </div>
@@ -334,7 +334,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                 <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                     Xem trước Latex
                                 </label>
-                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                     <LatexRenderer text={question.content} />
                                 </div>
 
@@ -368,7 +368,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                             Xem trước Latex
                                         </label>
                                         {statements.map((statement, index) => (
-                                            <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                            <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                                 <LatexRenderer text={statement.content} />
                                             </div>
                                         ))}
@@ -378,7 +378,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                             Đáp án
                                         </label>
                                         {statements.map((statement, index) => (
-                                            <div className={`flex flex-1 p-[0.5rem] overflow-y-auto break-all items-center justify-center ${statement.isCorrect ? "text-green-500" : "text-red-500"}`} >
+                                            <div className={`flex flex-1 p-[0.5rem] overflow-y-auto hide-scrollbar break-all items-center justify-center ${statement.isCorrect ? "text-green-500" : "text-red-500"}`} >
                                                 {statement.isCorrect ? "Đúng" : "Sai"}
                                             </div>
                                         ))}
@@ -448,7 +448,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                 <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
                                     Xem trước Latex
                                 </label>
-                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto break-all">
+                                <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
                                     <LatexRenderer text={question.solution} />
                                 </div>
 
