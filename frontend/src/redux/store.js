@@ -11,6 +11,9 @@ import examReducer from '../features/exam/examSlice';
 import classReducer from '../features/class/classSlice';
 import answerReducer from '../features/answer/answerSlice';
 import attemptReducer from '../features/attempt/attemptSlice';
+import articleReducer from '../features/article/articleSlice';
+import imageReducer from '../features/image/imageSlice';
+import achievementReducer from '../features/achievement/achievementSlice';
 
 export const store = configureStore({
     reducer: {
@@ -25,5 +28,8 @@ export const store = configureStore({
         classes: classReducer,
         answers: answerReducer,
         attempts: attemptReducer,
+        articles: articleReducer,
+        images: imageReducer,
+        achievements: achievementReducer,
     },
 });

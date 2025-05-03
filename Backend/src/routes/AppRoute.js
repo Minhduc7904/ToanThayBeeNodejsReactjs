@@ -14,8 +14,14 @@ import LearningItemRoutes from './LearningItemRoutes.js'
 import CodeRouters from './CodeRoutes.js'
 import StatementRoutes from './StatementRoutes.js'
 import SlideRoutes from './SlideRoutes.js'
+import ArticleRoutes from './ArticleRoutes.js'
+import AchievementRoutes from './AchievementRoutes.js'
+import corsMiddleware from '../middlewares/corsMiddleware.js'
 
 export const AppRoute = (app) => {
+    // Áp dụng CORS middleware cho tất cả các route
+    app.use(corsMiddleware);
+
     // User routes
     app.use('/api/', UserRoutes)
 
@@ -30,7 +36,7 @@ export const AppRoute = (app) => {
 
     // Class routes
     app.use('/api/', ClassRoutes)
-    
+
     // AssistantReport routes
     app.use('/api/', AssistantReportRoutes)
 
@@ -45,10 +51,10 @@ export const AppRoute = (app) => {
 
     // Answer routes
     app.use('/api/', AnswerRoutes)
-    
+
     // Cheat routes
     app.use('/api/', CheatRoutes)
-    
+
     // LearningItem routes
     app.use('/api/', LearningItemRoutes)
 
@@ -57,7 +63,13 @@ export const AppRoute = (app) => {
 
     // Statement routes
     app.use('/api/', StatementRoutes)
-    
+
     // Slide routes
     app.use('/api/', SlideRoutes)
+
+    // Article routes
+    app.use('/api/', ArticleRoutes)
+
+    // Achievement routes
+    app.use('/api/', AchievementRoutes)
 }

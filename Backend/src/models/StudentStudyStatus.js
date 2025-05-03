@@ -8,7 +8,16 @@ export default (sequelize, DataTypes) => {
      * The `models/index` file will call this method automatically.
      */
     static associate(models) {
-      // define association here
+      StudentStudyStatus.belongsTo(models.User, {
+        foreignKey: 'studentId',
+        as: 'student'
+      });
+
+      // Một learning item có thể có nhiều trạng thái học tập từ các học sinh
+      StudentStudyStatus.belongsTo(models.LearningItem, {
+        foreignKey: 'learningItemId',
+        as: 'learningItem'
+      });
     }
   }
   StudentStudyStatus.init({
@@ -23,7 +32,7 @@ export default (sequelize, DataTypes) => {
       primaryKey: true
     },
     isDone: DataTypes.BOOLEAN,
-    studyTime : DataTypes.DATE
+    studyTime: DataTypes.DATE
   }, {
     sequelize,
     modelName: 'StudentStudyStatus',

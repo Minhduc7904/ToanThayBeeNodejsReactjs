@@ -111,10 +111,10 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
         if (Array.isArray(codes["chapter"])) {
             if (question.class && question.class.trim() !== "") {
                 setOptionChapter(
-                    codes["chapter"].filter((code) => code.code.startsWith(question.class))
+                    codes["chapter"].filter((code) => code.code.startsWith(question.class) && code.code.length === 5)
                 );
             } else {
-                setOptionChapter(codes["chapter"]);
+                setOptionChapter(codes["chapter"].filter((code) => code.code.length === 5));
             }
         } else {
             setOptionChapter([]);
@@ -135,17 +135,17 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                 <div className="flex flex-row gap-2 items-center">
                     <div
                         onClick={() => setIsNext(false)}
-                        className={`${!isNext ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        className={`${!isNext ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-bevietnam leading-9`}>
                         Bước 1
                     </div>
                     -
                     <div
                         onClick={handleNextPage}
-                        className={`${isNext ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        className={`${isNext ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-bevietnam leading-9`}>
                         Bước 2
                     </div>
                 </div>
-                <div className="flex flex-row items-center text-[#253f61] font-bold font-['Be Vietnam Pro'] leading-9">
+                <div className="flex flex-row items-center text-[#253f61] font-bold font-bevietnam leading-9">
                     {!isNext ? "Thông tin câu hỏi" : "Xác nhận"}
 
                 </div>
@@ -154,7 +154,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                 <>
                     <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                 Câu hỏi và mệnh đề <span className="text-red-500"> *</span>
                             </label>
                             <textarea
@@ -166,7 +166,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                             />
                         </div>
                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                 Xem trước Latex
                             </label>
                             <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -184,7 +184,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                     {/* Kiểu câu hỏi */}
                     <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Kiểu câu hỏi <span className="text-red-500"> *</span>
                             </div>
                             <DropMenuBarAdmin
@@ -196,7 +196,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
 
                         {/* Đáp án */}
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Đáp án <span className="text-red-500"> *</span>
                             </div>
                             <input
@@ -204,7 +204,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                 required
                                 value={correctAnswer}
                                 onChange={(e) => setCorrectAnswer(e.target.value)}
-                                className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] text-lg font-medium font-['Inter'] leading-normal"
+                                className="w-full py-[0.5rem] px-[0.5rem] bg-white border border-gray-300 rounded-lg outline-1 outline-[#e3e4e5] inline-flex justify-start items-center gap-2.5 text-[#303437] font-medium font-['Inter'] leading-normal"
                                 placeholder="Nhập đáp án"
                             />
                         </div>
@@ -216,7 +216,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                     <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                         {/* Độ khó */}
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Độ khó
                             </div>
                             <DropMenuBarAdmin
@@ -228,7 +228,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
 
                         {/* Lớp */}
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Lớp <span className="text-red-500"> *</span>
                             </div>
                             <DropMenuBarAdmin
@@ -238,7 +238,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                             />
                         </div>
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Chương
                             </div>
                             <SuggestInputBarAdmin
@@ -250,7 +250,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                     </div>
                     <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                 Mô tả
                             </label>
                             <textarea
@@ -263,7 +263,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                     </div>
                     <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                 Link lời giải
                             </label>
                             <textarea
@@ -276,7 +276,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                     </div>
                     <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                 Lời giải
                             </label>
                             <textarea
@@ -287,7 +287,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                             />
                         </div>
                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                 Xem trước Latex
                             </label>
                             <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -320,7 +320,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                     <div className="flex flex-col gap-[1.25rem] w-full">
                         <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Câu hỏi <span className="text-red-500"> *</span>
                                 </label>
                                 <textarea
@@ -331,7 +331,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                 />
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Xem trước Latex
                                 </label>
                                 <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -349,7 +349,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                             <>
                                 <div className="flex w-full h-[20rem] gap-[1.25rem] items-stretch">
                                     <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                             Mệnh đề <span className="text-red-500"> *</span>
                                         </label>
 
@@ -364,7 +364,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                         ))}
                                     </div>
                                     <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                             Xem trước Latex
                                         </label>
                                         {statements.map((statement, index) => (
@@ -374,7 +374,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                         ))}
                                     </div>
                                     <div className=" flex flex-col gap-[0.25rem]">
-                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                             Đáp án
                                         </label>
                                         {statements.map((statement, index) => (
@@ -385,7 +385,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                     </div>
                                     {question.typeOfQuestion === "DS" && (
                                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                                 Độ khó
                                             </label>
                                             {statements.map((statement, index) => (
@@ -399,7 +399,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                         </div>
                                     )}
                                     <div className=" flex flex-col gap-[0.25rem]">
-                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                             Hình ảnh
                                         </label>
                                         {statementImages.map((img, index) => (
@@ -418,7 +418,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                         ) : (
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
                                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                         Đáp án <span className="text-red-500"> *</span>
                                     </div>
                                     <input
@@ -434,7 +434,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                         )}
                         <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Lời giải
                                 </label>
                                 <textarea
@@ -445,7 +445,7 @@ const AddQuestionModal = ({ onClose, examId = null, fetchQuestions }) => {
                                 />
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Xem trước Latex
                                 </label>
                                 <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">

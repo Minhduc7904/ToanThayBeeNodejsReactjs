@@ -12,6 +12,10 @@ export default (sequelize, DataTypes) => {
         foreignKey: 'lessonId',
         as: 'lesson',         
       })
+      LearningItem.hasMany(models.StudentStudyStatus, {
+        foreignKey: 'learningItemId',
+        as: 'studyStatuses'
+      });
     }
   }
   LearningItem.init({

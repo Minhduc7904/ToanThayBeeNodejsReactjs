@@ -37,3 +37,4 @@ export const putUserTypeAPI = ({id , type}) => {
 export const putUserStatusAPI = ({id , status}) => {
     return api.put(`/v1/admin/user/${id}/status`, {status});
 }
+

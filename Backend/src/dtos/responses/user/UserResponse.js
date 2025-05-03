@@ -16,6 +16,7 @@ class responseUser {
         this.university = user.university
         this.studentClassStatus = status
         this.createdAt = user.createdAt
+        this.avatarUrl = user.avatarUrl
     }
 }
 

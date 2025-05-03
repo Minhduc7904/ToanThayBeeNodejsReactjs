@@ -87,7 +87,6 @@ export default function RegisterPage() {
                                 className="h-10 text-sm"
                             />
                         </div>
-
                         <Input
                             type="text"
                             name="highSchool"

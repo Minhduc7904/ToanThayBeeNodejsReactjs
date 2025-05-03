@@ -1,101 +1,178 @@
-import ExamDefaultImage from "../../assets/images/defaultExamImage.jpg";
+import ExamDefaultImage from "../../assets/images/defaultExamImage.png";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { saveExamForUser } from "../../features/exam/examSlice";
 
-const ExamCard = ({ exam }) => {
-    const { name, year, createdAt, imageUrl, id, isSave, isDone } = exam;
+const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("vi-VN", {
+        day: "2-digit",
+        month: "2-digit",
+        year: "numeric",
+    });
+};
+
+const ExamCard = ({ exam, codes }) => {
+    const { name, typeOfExam, class: examClass, chapter, testDuration, createdAt, imageUrl, id, isSave, isDone } = exam;
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
     const handleClicked = () => navigate(`/practice/exam/${id}`);
-    const handleSaveExam = () => dispatch(saveExamForUser({ examId: id }));
+    const handleSaveExam = (e) => {
+        e.stopPropagation();
+        dispatch(saveExamForUser({ examId: id }));
+    };
 
     return (
-        <div className="w-full sm:max-w-md flex bg-white shadow-sm hover:shadow-md transition overflow-hidden border border-gray-200">
-            {/* Image */}
-            <div
-                onClick={handleClicked}
-                className="w-1/3 aspect-[3/4] cursor-pointer"
-                title={name}
-            >
-                <img
-                    src={imageUrl || ExamDefaultImage}
-                    alt={name}
-                    className="object-cover w-full h-full transition duration-300 hover:brightness-90"
-                />
-            </div>
-
-            {/* Content */}
-            <div className="w-2/3 flex flex-col justify-between px-4 py-3 gap-2">
-                <div>
-                    <h3
-                        onClick={handleClicked}
-                        className="text-base font-semibold text-zinc-800 hover:text-blue-600 cursor-pointer line-clamp-2"
-                        title={name}
-                    >
-                        {name}
-                    </h3>
-                    <p className="text-xs text-zinc-500 mt-1 flex items-center gap-1">
-                        <svg
-                            xmlns="http://www.w3.org/2000/svg"
-                            width="16"
-                            height="16"
-                            fill="none"
-                            viewBox="0 0 24 24"
+        <div
+            className="bg-white rounded shadow-md hover:shadow-lg transition overflow-hidden border border-gray-200 cursor-pointer flex flex-col h-full"
+            onClick={handleClicked}
+        >
+            <div className="p-3 sm:p-4 flex-1 flex flex-col">
+                {/* Header with icon */}
+                <div className="flex-1 space-y-2">
+                    <div className="flex items-center justify-between">
+                        <div className="flex flex-col">
+                            <p
+                                title={name}
+                                className="text-sm font-semibold font-bevietnam text-black flex-1"
+                            >
+                                {name?.length > 30 ? name?.slice(0, 30) + "..." : name}
+                            </p>
+                            <p className="text-xs font-medium text-gray-800">
+                                {codes && codes['exam type']?.find(c => c.code === typeOfExam)?.description || typeOfExam || ''}
+                            </p>
+                        </div>
+                        <div className="items-center sm:flex hidden gap-2">
+                            <button
+                                onClick={handleSaveExam}
+                                className="text-sm text-blue-600 hover:text-blue-700 hover:bg-slate-100 p-1 rounded flex items-center gap-1"
+                                title={isSave ? "Đã lưu đề thi" : "Lưu đề thi"}
+                            >
+                                {isSave ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 fill-blue-600">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                        <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                    </svg>
+                                )}
+                            </button>
+                            <div className={`p-2 rounded-full ${isDone ? 'bg-green-50' : 'bg-cyan-50'}`}>
+                                {isDone ? (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
+                                        <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                        <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                    </svg>
+                                ) : (
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-700">
+                                        <path d="M12 8v4l3 3"></path>
+                                        <circle cx="12" cy="12" r="10"></circle>
+                                    </svg>
+                                )}
+                            </div>
+                        </div>
+                    </div>
+                    <div className="items-center sm:hidden flex gap-2">
+                        <button
+                            onClick={handleSaveExam}
+                            className="text-sm text-blue-600 hover:text-blue-700 hover:bg-slate-100 p-1 rounded flex items-center gap-1"
+                            title={isSave ? "Đã lưu đề thi" : "Lưu đề thi"}
                         >
-                            <path
-                                d="M12 7V12H17M12 21C10.8181 21 9.64778 20.7672 8.55585 20.3149C7.46392 19.8626 6.47177 19.1997 5.63604 18.364C4.80031 17.5282 4.13738 16.5361 3.68508 15.4442C3.23279 14.3522 3 13.1819 3 12C3 10.8181 3.23279 9.64778 3.68508 8.55585C4.13738 7.46392 4.80031 6.47177 5.63604 5.63604C6.47177 4.80031 7.46392 4.13738 8.55585 3.68508C9.64778 3.23279 10.8181 3 12 3C14.3869 3 16.6761 3.94821 18.364 5.63604C20.0518 7.32387 21 9.61305 21 12C21 14.3869 20.0518 16.6761 18.364 18.364C16.6761 20.0518 14.3869 21 12 21Z"
-                                stroke="currentColor"
-                                strokeWidth="2"
-                                strokeLinecap="round"
-                                strokeLinejoin="round"
-                            />
-                        </svg>
-                        {new Date(createdAt).toLocaleDateString("vi-VN", {
-                            day: "2-digit",
-                            month: "2-digit",
-                            year: "numeric",
-                        })}
-                    </p>
+                            {isSave ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600 fill-blue-600">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-gray-400">
+                                    <path d="M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            )}
+                        </button>
+                        <div className={`p-2 rounded-full ${isDone ? 'bg-green-50' : 'bg-cyan-50'}`}>
+                            {isDone ? (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-600">
+                                    <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                                    <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                                </svg>
+                            ) : (
+                                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-cyan-700">
+                                    <path d="M12 8v4l3 3"></path>
+                                    <circle cx="12" cy="12" r="10"></circle>
+                                </svg>
+                            )}
+                        </div>
+                    </div>
+
+                    {/* Divider */}
+                    <div className="h-px w-full bg-gray-100"></div>
+
+                    {/* Exam details */}
+
+                    <div className="flex flex-wrap items-center text-xs sm:text-sm text-gray-600 gap-x-2 gap-y-1">
+                        {/* Item 1 */}
+                        <div className="flex items-center shrink-0">
+                            <svg className="md:mr-2 mr-[0.1rem] text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z" />
+                            </svg>
+                            <span>Lớp: <span className="font-medium text-gray-800">{examClass}</span></span>
+                        </div>
+
+                        {/* Separator */}
+                        <span className="text-gray-300">|</span>
+
+                        {/* Item 2 */}
+                        <div className="flex items-center shrink-0">
+                            <svg className="md:mr-2 mr-[0.1rem] text-gray-400 min-w-[16px]" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z" />
+                                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z" />
+                            </svg>
+                            <span>Chương: <span className="font-medium text-gray-800">{chapter ? codes['chapter']?.find(c => c.code === chapter)?.description || chapter : 'Không có'}</span></span>
+                        </div>
+
+                        {/* Separator */}
+                        <span className="text-gray-300">|</span>
+
+                        {/* Item 3 */}
+                        
+                        <div className="flex items-center shrink-0">
+                            <svg className="md:mr-2 mr-[0.1rem] text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <circle cx="12" cy="12" r="10" />
+                                <polyline points="12 6 12 12 16 14" />
+                            </svg>
+                            <span>Thời gian: <span className="font-medium text-gray-800">{testDuration ? testDuration + ' phút' : 'Không có'}</span></span>
+                        </div>
+
+                        {/* Separator */}
+                        <span className="text-gray-300">|</span>
+
+                        {/* Item 4 */}
+                        <div className="flex items-center shrink-0">
+                            <svg className="md:mr-2 mr-[0.1rem] text-gray-400" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                <line x1="16" y1="2" x2="16" y2="6"></line>
+                                <line x1="8" y1="2" x2="8" y2="6"></line>
+                                <line x1="3" y1="10" x2="21" y2="10"></line>
+                            </svg>
+                            <span>Ngày đăng: <span className="font-medium text-gray-800">{formatDate(createdAt)}</span></span>
+                        </div>
+                    </div>
                 </div>
 
-                {/* Action buttons */}
-                <div className="flex items-center justify-between">
-                    <button
-                        onClick={handleSaveExam}
-                        className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
-                        title={isSave ? "Đã lưu đề thi" : "Lưu đề thi"}
-                    >
-                        {isSave ? (
-                            <svg xmlns="http://www.w3.org/2000/svg" width="12" height="17" viewBox="0 0 16 22" fill="none" className="fill-blue-600">
-                                <path fill-rule="evenodd" clip-rule="evenodd" d="M2 0C1.46957 0 0.960859 0.210714 0.585786 0.585786C0.210714 0.960859 0 1.46957 0 2V18C0 18.5304 0.210714 19.0391 0.585786 19.4142C0.960859 19.7893 1.46957 20 2 20H14C14.5304 20 15.0391 19.7893 15.4142 19.4142C15.7893 19.0391 16 18.5304 16 18V4.414C15.9999 3.88361 15.7891 3.37499 15.414 3L13 0.586C12.625 0.210901 12.1164 0.000113275 11.586 0H2ZM12.238 8.793C12.3335 8.70075 12.4097 8.59041 12.4621 8.4684C12.5145 8.3464 12.5421 8.21518 12.5433 8.0824C12.5444 7.94962 12.5191 7.81794 12.4688 7.69505C12.4185 7.57215 12.3443 7.4605 12.2504 7.3666C12.1565 7.27271 12.0449 7.19846 11.922 7.14818C11.7991 7.0979 11.6674 7.0726 11.5346 7.07375C11.4018 7.0749 11.2706 7.10249 11.1486 7.1549C11.0266 7.20731 10.9162 7.28349 10.824 7.379L6.582 11.622L5.167 10.207C4.9784 10.0248 4.7258 9.92405 4.4636 9.92633C4.2014 9.9286 3.95059 10.0338 3.76518 10.2192C3.57977 10.4046 3.4746 10.6554 3.47233 10.9176C3.47005 11.1798 3.57084 11.4324 3.753 11.621L5.803 13.672C5.90515 13.7742 6.02644 13.8553 6.15993 13.9106C6.29342 13.9659 6.4365 13.9944 6.581 13.9944C6.7255 13.9944 6.86858 13.9659 7.00207 13.9106C7.13556 13.8553 7.25685 13.7742 7.359 13.672L12.238 8.793Z" />
-                            </svg>
-                        ) : (
-                            <svg
-                                xmlns="http://www.w3.org/2000/svg"
-                                width="12"
-                                height="17"
-                                viewBox="0 0 16 22"
-                                fill="none"
-                                className={`transition duration-200 fill-gray-500`}
-                            >
-                                <path
-                                    fillRule="evenodd"
-                                    clipRule="evenodd"
-                                    d="M2 0C1.47 0 0.96 0.21 0.59 0.59C0.21 0.96 0 1.47 0 2V18C0 18.53 0.21 19.04 0.59 19.41C0.96 19.79 1.47 20 2 20H14C14.53 20 15.04 19.79 15.41 19.41C15.79 19.04 16 18.53 16 18V4.414C15.9999 3.88361 15.7891 3.37499 15.414 3L13 0.586C12.625 0.21 12.12 0 11.59 0H2ZM2 2H11.586L14 4.414V18H2V2ZM12.238 8.793C12.33 8.7 12.41 8.59 12.46 8.47C12.51 8.35 12.54 8.21 12.54 8.08C12.54 7.95 12.52 7.81 12.47 7.69C12.42 7.57 12.34 7.46 12.25 7.36C12.16 7.27 12.04 7.2 11.92 7.15C11.8 7.1 11.67 7.07 11.53 7.07C11.4 7.07 11.27 7.1 11.15 7.15C11.02 7.21 10.91 7.28 10.82 7.38L6.582 11.622L5.167 10.207C4.98 10.02 4.72 9.92 4.46 9.92C4.2 9.93 3.95 10.03 3.76 10.22C3.58 10.4 3.47 10.65 3.47 10.91C3.47 11.18 3.57 11.43 3.75 11.62L5.803 13.672C5.91 13.77 6.02 13.85 6.16 13.91C6.29 13.97 6.44 13.99 6.58 13.99C6.72 13.99 6.87 13.96 7 13.91C7.13 13.86 7.26 13.77 7.36 13.67L12.238 8.793Z"
-                                />
-                            </svg>
-                        )}
-                    </button>
 
-                    <div
-                        title={isDone ? "Đã làm" : "Chưa làm"}
-                        className="text-xs flex items-center gap-1"
+                {/* Action button */}
+                <div className="mt-3">
+                    <button
+                        className={`w-full ${isDone ? 'bg-green-600 hover:bg-green-700' : 'bg-cyan-600 hover:bg-cyan-700'} text-white py-1.5 sm:py-2 rounded-md text-sm sm:text-base font-medium transition-colors testDuration-200 flex items-center justify-center`}
+                        onClick={handleClicked}
                     >
-                        <div className={`w-3 h-3 rounded-full ${isDone ? "bg-green-500" : "bg-gray-400"}`} />
-                        <span className="text-zinc-500">{isDone ? "Đã làm" : "Chưa làm"}</span>
-                    </div>
+                        <span>{isDone ? 'Xem lại bài làm' : 'Bắt đầu làm bài'}</span>
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="ml-2">
+                            <polyline points="9 18 15 12 9 6"></polyline>
+                        </svg>
+                    </button>
                 </div>
             </div>
         </div>

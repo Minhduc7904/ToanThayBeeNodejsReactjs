@@ -1,6 +1,6 @@
 import path from 'path'
 import fs from 'fs'
-import { getDownloadURL, getStorage, ref, uploadBytesResumable, deleteObject } from 'firebase/storage'
+import { getDownloadURL, getStorage, ref, listAll, uploadBytesResumable, deleteObject } from 'firebase/storage'
 import config from '../config/firebaseConfig.js'
 
 /**
@@ -8,26 +8,26 @@ import config from '../config/firebaseConfig.js'
  * @param {Object} req - Express request object
  * @returns {Object} - { file: downloadURL }
  */
-export async function uploadImageToFirebase(req) {
+export async function uploadImageToFirebase(req, folder = 'images') {
     if (!req.file) {
-        throw new Error('❌ No file provided. Please select an image to upload.')
+        throw new Error('No file provided. Please select an image to upload.')
     }
 
     try {
         const storage = getStorage()
         const newFileName = `${Date.now()}-${req.file.originalname}`
-        const storageRef = ref(storage, `images/${newFileName}`)
+        const storageRef = ref(storage, `${folder}/${newFileName}`)
 
         const snapshot = await uploadBytesResumable(storageRef, req.file.buffer, {
             contentType: req.file.mimetype,
         })
 
         const downloadURL = await getDownloadURL(snapshot.ref)
-        console.log(`✅ File uploaded successfully: ${downloadURL}`)
+        console.log(`File uploaded successfully: ${downloadURL}`)
 
         return { file: downloadURL.trim() }
     } catch (error) {
-        console.error('❌ Error uploading to Firebase:', error)
+        console.error('Error uploading to Firebase:', error)
         throw new Error('Failed to upload image.')
     }
 }
@@ -52,7 +52,7 @@ export async function deleteImage(req) {
     let { url } = req.body
 
     if (!url || typeof url !== 'string') {
-        return { success: false, message: '❌ Invalid URL provided.' }
+        return { success: false, message: 'Invalid URL provided.' }
     }
 
     url = url.trim()
@@ -62,28 +62,50 @@ export async function deleteImage(req) {
         if (url.startsWith('https://firebasestorage')) {
             const fileRef = getFileRefFromUrl(storage, url)
             await deleteObject(fileRef)
-            console.log(`✅ Firebase image deleted: ${url}`)
+            console.log(`Firebase image deleted: ${url}`)
             return { success: true, message: 'Image deleted from Firebase.' }
         } else if (!url.startsWith('http://') && !url.startsWith('https://')) {
             const filePath = path.join(__dirname, '../public/uploads', path.basename(url))
             if (fs.existsSync(filePath)) {
                 fs.unlinkSync(filePath)
-                console.log(`✅ Local image deleted: ${filePath}`)
+                console.log(`Local image deleted: ${filePath}`)
                 return { success: true, message: 'Image deleted from local storage.' }
             }
-            return { success: false, message: '❌ Local file not found.' }
+            return { success: false, message: 'Local file not found.' }
         } else {
-            return { success: false, message: '❌ Unsupported URL format.' }
+            return { success: false, message: 'Unsupported URL format.' }
         }
     } catch (error) {
-        console.error('❌ Error deleting image:', error)
+        console.error('Error deleting image:', error)
         return { success: false, message: 'Failed to delete image.' }
     }
 }
 
-export const uploadImage = async (file) => {
+/**
+ * Get all image URLs from a Firebase Storage folder
+ * @param {string} folder - Folder path in Firebase Storage (e.g., 'images/')
+ * @returns {Promise<string[]>} - Array of image download URLs
+ */
+export async function getAllImagesFromFolder(folder = 'images') {
+    try {
+        const storage = getStorage()
+        const folderRef = ref(storage, folder)
+        const res = await listAll(folderRef)
+
+        const urls = await Promise.all(
+            res.items.map(itemRef => getDownloadURL(itemRef))
+        )
+
+        return urls
+    } catch (error) {
+        console.error('Error fetching images from folder:', error)
+        throw new Error('Failed to get images from Firebase folder.')
+    }
+}
+
+export const uploadImage = async (file, folder = 'images') => {
     if (!file) return null
-    const { file: url } = await uploadImageToFirebase({ file })
+    const { file: url } = await uploadImageToFirebase({ file }, folder)
     return url
 }
 
@@ -91,9 +113,9 @@ export const cleanupUploadedFiles = async (files) => {
     await Promise.all(files.map(async (url) => {
         try {
             await deleteImage({ body: { url } })
-            console.log(`✅ Đã xóa ảnh: ${url}`)
+            console.log(`Đã xóa ảnh: ${url}`)
         } catch (err) {
-            console.error(`❌ Lỗi khi xóa ảnh ${url}:`, err)
+            console.error(`Lỗi khi xóa ảnh ${url}:`, err)
         }
     }))
 }

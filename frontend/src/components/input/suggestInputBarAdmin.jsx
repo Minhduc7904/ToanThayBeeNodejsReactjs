@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 
-const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", selectedOption, onChange }) => {
+const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", selectedOption, onChange, className = "w-full" }) => {
     const [inputValue, setInputValue] = useState("");
     const [filteredOptions, setFilteredOptions] = useState([...options]);
     const [showSuggestions, setShowSuggestions] = useState(false);
@@ -24,11 +24,14 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
         const value = e.target.value;
         setInputValue(value);
         // Lọc các option theo giá trị input (không phân biệt chữ hoa thường)
+        
+
         const filtered = options.filter((option) =>
             option.description.toLowerCase().includes(value.toLowerCase())
         );
         const change = options?.find((option) => option.description.toLowerCase() === value.toLowerCase())?.code
         if (change) onChange(change);
+        if (value === "") onChange(null);
         setFilteredOptions(filtered);
         setShowSuggestions(true);
     };
@@ -51,7 +54,7 @@ const SuggestInputBarAdmin = ({ options, placeholder = "Chọn một mục", sel
     }, []);
 
     return (
-        <div ref={wrapperRef} className="relative w-full flex-1">
+        <div ref={wrapperRef} className={`relative ${className} flex-1`}>
             <input
                 type="text"
                 className="w-full bg-white border border-gray-300 rounded-[0.5rem] py-[0.5rem] px-[0.5rem] focus:outline-none focus:ring-2 focus:ring-blue-500 text-[#303437] text-md font-medium font-['Inter'] leading-normal"

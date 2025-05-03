@@ -9,6 +9,27 @@ import LatexRenderer from "../latex/RenderLatex";
 import { splitContentDS, splitContentTLN, splitContentTN, validateExamData } from "../../utils/question/questionUtils";
 import { compose } from "@reduxjs/toolkit";
 
+const ListQuestions = ({ questions, title, onClick, i }) => {
+
+    return (
+        <div className="flex flex-row w-full justify-start items-center border-b border-[#e3e4e5] pb-2">
+            <div className="text-[#090a0a] font-bold font-bevietnam leading-loose whitespace-nowrap mr-4 flex-shrink-0 min-w-[6.2rem]">
+                {title}:
+            </div>
+            <div className="flex flex-row gap-5 w-full overflow-x-auto min-h-max ">
+                {questions.map((question, index) => (
+                    <div
+                        key={index + title}
+                        onClick={() => onClick(index)}
+                        className={`cursor-pointer border border-[#e3e4e5] rounded-[1rem] flex justify-center whitespace-nowrap items-center gap-2.5 ${i === index ? 'bg-[#253f61] text-white' : 'bg-white text-[#253f61]'} px-2 py-1`}>
+                        Câu hỏi {index + 1}
+                    </div>
+                ))}
+            </div>
+        </div>
+    )
+}
+
 const AddExamModal = ({ onClose, fetchExams }) => {
     const dispatch = useDispatch();
     const { codes } = useSelector(state => state.codes);
@@ -47,9 +68,39 @@ const AddExamModal = ({ onClose, fetchExams }) => {
         solutionUrl: "",
         imageUrl: "",
         public: false,
+        isClassroomExam: false,
     })
 
     const [questions, setQuestions] = useState([]);
+    const [questionTN, setQuestionTN] = useState([]);
+    const [questionDS, setQuestionDS] = useState([]);
+    const [questionTLN, setQuestionTLN] = useState([]);
+
+    useEffect(() => {
+        console.log("index", i);
+    }, [i]);
+
+    useEffect(() => {
+        if (!questions.length) return;
+
+        const grouped = {
+            TN: [],
+            DS: [],
+            TLN: []
+        };
+
+        questions.forEach((question) => {
+            const type = question.questionData.typeOfQuestion;
+            if (grouped[type]) {
+                grouped[type].push(question);
+            }
+        });
+
+        setQuestionTN(grouped.TN);
+        setQuestionDS(grouped.DS);
+        setQuestionTLN(grouped.TLN);
+    }, [questions]);
+
 
     const handleQuestionsChange = (e, index, name) => {
         const { value } = e.target;
@@ -150,19 +201,49 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
     const handleSummit = (e) => {
         e.preventDefault();
-        dispatch(postExam({
-            examData,
-            examImage,
-            questions,
-            questionImages,
-            statementImages
-        }))
+
+        const sanitize = (val) =>
+            val && typeof val === "string" ? val.trim() || null : val;
+
+        const sanitizeExamData = {
+            name: sanitize(examData.name),
+            typeOfExam: sanitize(examData.typeOfExam),
+            class: sanitize(examData.class),
+            chapter: sanitize(examData.chapter),
+            year: sanitize(examData.year),
+            description: sanitize(examData.description),
+            testDuration: sanitize(examData.testDuration),
+            passRate: examData.passRate?.trim() ? examData.passRate?.trim() : null,
+            solutionUrl: sanitize(examData.solutionUrl),
+            public: examData.public,
+            imageUrl: sanitize(examData.imageUrl),
+            isClassroomExam: examData.isClassroomExam,
+        };
+        console.log("sanitizeExamData", sanitizeExamData);
+        dispatch(
+            postExam({
+                examData: sanitizeExamData,
+                examImage,
+                questions,
+                questionImages,
+                statementImages,
+            })
+        )
             .unwrap()
             .then(() => {
                 onClose();
-                dispatch(fetchExams({ search, currentPage, limit, totalItems, sortOrder }));
-            })
-    }
+                dispatch(
+                    fetchExams({
+                        search,
+                        currentPage,
+                        limit,
+                        totalItems,
+                        sortOrder,
+                    })
+                );
+            });
+    };
+
 
     useEffect(() => {
         const preview = correctAnswerTN.trim().split(' ')
@@ -175,9 +256,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
     useEffect(() => {
         const countMatches = (content) => {
-            const matches = content.match(/Câu\s\d+\./g); // Regex khớp "Câu x."
+            const matches = content.match(/([Cc]âu)\s*\d+[\.:]/g); // Hỗ trợ Câu/câu 1. hoặc Câu/câu 1:
             return matches ? matches.length : 0;
         };
+
 
         setCountTN(countMatches(contentTN));
         setCountDS(countMatches(contentDS));
@@ -189,10 +271,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
         if (Array.isArray(codes["chapter"])) {
             if (examData.class && examData.class.trim() !== "") {
                 setOptionChapter(
-                    codes["chapter"].filter((code) => code.code.startsWith(examData.class))
+                    codes["chapter"].filter((code) => code.code.startsWith(examData.class) && code.code.length === 4)
                 );
             } else {
-                setOptionChapter(codes["chapter"]);
+                setOptionChapter(codes["chapter"].filter((code) => code.code.length === 4));
             }
         } else {
             setOptionChapter([]);
@@ -202,7 +284,13 @@ const AddExamModal = ({ onClose, fetchExams }) => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full w-full">
-                <LoadingSpinner color="border-black" size="5rem" />
+                <LoadingSpinner
+                    type="dots"
+                    color="border-blue-600"
+                    size="4rem"
+                    showText={true}
+                    text="Đang tải..."
+                />
             </div>
         )
     }
@@ -213,23 +301,23 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                 <div className="flex flex-row gap-2 items-center">
                     <div
                         onClick={handleSetStep1}
-                        className={`${isStep1 ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        className={`${isStep1 ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-bevietnam leading-9`}>
                         Bước 1
                     </div>
                     -
                     <div
                         onClick={handleSetStep2}
-                        className={`${isStep2 ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        className={`${isStep2 ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-bevietnam leading-9`}>
                         Bước 2
                     </div>
                     -
                     <div
                         onClick={handleSetStep3}
-                        className={`${isStep3 ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-['Be Vietnam Pro'] leading-9`}>
+                        className={`${isStep3 ? 'text-[#253f61] underline' : 'cursor-pointer'} font-bold font-bevietnam leading-9`}>
                         Bước 3
                     </div>
                 </div>
-                <div className="flex flex-row items-center text-[#253f61] font-bold font-['Be Vietnam Pro'] leading-9">
+                <div className="flex flex-row items-center text-[#253f61] font-bold font-bevietnam leading-9">
                     {isStep1 && "Thông tin đề thi"}
                     {isStep2 && "Câu hỏi"}
                     {isStep3 && "Xác nhận"}
@@ -240,7 +328,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                     <>
                         <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Tên <span className="text-red-500"> *</span>
                                 </div>
                                 <input
@@ -262,7 +350,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                         <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                             {/* Độ khó */}
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Kiểu đề <span className="text-red-500"> *</span>
                                 </div>
                                 <DropMenuBarAdmin
@@ -277,7 +365,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
                             {/* Lớp */}
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Lớp <span className="text-red-500"> *</span>
                                 </div>
                                 <DropMenuBarAdmin
@@ -289,7 +377,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             </div>
                             {examData.typeOfExam === "OT" ? (
                                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                         Chương
                                     </div>
                                     <SuggestInputBarAdmin
@@ -306,7 +394,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                         <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                             {/* Độ khó */}
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Năm <span className="text-red-500"> *</span>
                                 </div>
                                 <DropMenuBarAdmin
@@ -318,21 +406,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             </div>
 
                             {/* Lớp */}
+
+
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
-                                    Công khai <span className="text-red-500"> *</span>
-                                </div>
-                                <DropMenuBarAdmin
-                                    selectedOption={examData.public}
-                                    onChange={(option) => setExamData({ ...examData, public: option })}
-                                    options={[
-                                        { code: true, description: "Công khai" },
-                                        { code: false, description: "Không công khai" }
-                                    ]}
-                                />
-                            </div>
-                            <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Tỷ lệ đạt (%)
                                 </div>
                                 <input
@@ -346,7 +423,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 />
                             </div>
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Thời gian (phút)
                                 </div>
                                 <DropMenuBarAdmin
@@ -364,9 +441,34 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             </div>
 
                         </div>
+                        <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
+                                Tùy chọn <span className="text-red-500"> *</span>
+                            </div>
+                            <div className="w-full px-2 py-2 bg-white border border-gray-300 rounded-lg flex flex-col gap-2">
+                                <label className="flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={examData.public}
+                                        onChange={(e) => setExamData({ ...examData, public: e.target.checked })}
+                                        className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
+                                    />
+                                    <span className="ml-2 text-gray-700">Công khai đề thi</span>
+                                </label>
+                                <label className="flex items-center cursor-pointer">
+                                    <input
+                                        type="checkbox"
+                                        checked={examData.isClassroomExam}
+                                        onChange={(e) => setExamData({ ...examData, isClassroomExam: e.target.checked })}
+                                        className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
+                                    />
+                                    <span className="ml-2 text-gray-700">Đề thi trên lớp</span>
+                                </label>
+                            </div>
+                        </div>
                         <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Mô tả
                                 </div>
                                 <textarea
@@ -379,7 +481,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                         </div>
                         <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                             <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                     Link lời giải
                                 </div>
                                 <textarea
@@ -410,7 +512,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                 {isStep2 && (
                     <>
                         <div className="inline-flex flex-1 flex-col justify-start w-full items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Đáp án TN <span className="text-red-500"> *</span>
                             </div>
                             <input
@@ -430,7 +532,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             </div>
                         </div>
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Đáp án Đ/S <span className="text-red-500"> *</span>
 
                             </div>
@@ -452,7 +554,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
                         </div>
                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                 Đáp án TLN <span className="text-red-500"> *</span>
                             </div>
                             <input
@@ -475,10 +577,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                         <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
                                 <div className="flex flex-row justify-between items-center">
-                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                         Câu hỏi và mệnh đề TN <span className="text-red-500"> *</span>
                                     </label>
-                                    <p className="text-red-500 font-['Be Vietnam Pro']">
+                                    <p className="text-red-500 font-bevietnam">
                                         Số câu hỏi: {countTN}
                                     </p>
                                 </div>
@@ -493,7 +595,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
 
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Xem trước Latex
                                 </label>
                                 <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -506,10 +608,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
                                 <div className="flex flex-row justify-between items-center">
 
-                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                         Câu hỏi và mệnh đề Đ/S <span className="text-red-500"> *</span>
                                     </label>
-                                    <p className="text-red-500 font-['Be Vietnam Pro']">
+                                    <p className="text-red-500 font-bevietnam">
                                         Số câu hỏi: {countDS}
                                     </p>
                                 </div>
@@ -522,7 +624,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 />
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Xem trước Latex
                                 </label>
                                 <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -534,10 +636,10 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
                                 <div className="flex flex-row justify-between items-center">
 
-                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                         Câu hỏi và mệnh đề TLN <span className="text-red-500"> *</span>
                                     </label>
-                                    <p className="text-red-500 font-['Be Vietnam Pro']">
+                                    <p className="text-red-500 font-bevietnam">
                                         Số câu hỏi: {countTLN}
                                     </p>
                                 </div>
@@ -550,7 +652,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 />
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Xem trước Latex
                                 </label>
                                 <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -578,25 +680,17 @@ const AddExamModal = ({ onClose, fetchExams }) => {
 
                 {(isStep3 && questions.length !== 0) && (
                     <>
-                        <div className="flex flex-row gap-5 w-full overflow-x-auto min-h-max border-b border-[#e3e4e5] pb-2">
-                            {questions.map((question, index) => (
-                                <div
-                                    key={index}
-                                    onClick={() => {
-                                        setI(index);
-                                    }}
-                                    className={`cursor-pointer border border-[#e3e4e5] rounded-[1rem] flex justify-center  whitespace-nowrap items-center gap-2.5 ${i === index ? 'bg-[#253f61] text-white' : 'bg-white text-[#253f61]'} px-2 py-1`}>
-                                    Câu hỏi {index + 1}
-                                    {/* className="text-[#253f61] font-bold font-['Be Vietnam Pro'] leading-loose whitespace-nowrap">
-                                    Câu hỏi {index + 1} */}
-                                </div>
-                            ))}
+                        <div className="flex flex-col items-center justify-start w-full gap-2">
+                            <ListQuestions questions={questionTN} title={'Trắc nghiệm'} onClick={(index) => setI(index)} i={i} />
+                            <ListQuestions questions={questionDS} title={'Đúng sai'} onClick={(index) => setI(index + questionTN.length)} i={i - questionTN.length} />
+                            <ListQuestions questions={questionTLN} title={'Trả lời ngắn'} onClick={(index) => setI(index + questionDS.length + questionTN.length)} i={i - (questionDS.length + questionTN.length)} />
+
                         </div>
 
                         <div className="flex flex-col gap-[1.25rem] w-full">
                             <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                                 <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                         Câu hỏi <span className="text-red-500"> *</span>
                                     </label>
                                     <textarea
@@ -607,7 +701,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                     />
                                 </div>
                                 <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                         Xem trước Latex
                                     </label>
                                     <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -624,7 +718,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                             </div>
                             <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                         Lớp <span className="text-red-500"> *</span>
                                     </div>
                                     <DropMenuBarAdmin
@@ -637,7 +731,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 {questions[i].questionData.typeOfQuestion === "TLN" ? (
                                     <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
                                         <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                                            <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                                                 Đáp án <span className="text-red-500"> *</span>
                                             </div>
                                             <input
@@ -662,7 +756,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                 <>
                                     <div className="flex w-full gap-[1.25rem] items-stretch">
                                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                                 Mệnh đề <span className="text-red-500"> *</span>
                                             </label>
 
@@ -677,7 +771,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                             ))}
                                         </div>
                                         <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                                 Xem trước Latex
                                             </label>
                                             {questions[i].statements.map((statement, index) => (
@@ -687,7 +781,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                             ))}
                                         </div>
                                         <div className=" flex flex-col gap-[0.25rem]">
-                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                                 Đáp án
                                             </label>
                                             {questions[i].statements.map((statement, index) => (
@@ -698,7 +792,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                         </div>
                                         {questions[i].questionData.typeOfQuestion === "DS" && (
                                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                                     Độ khó
                                                 </label>
                                                 {questions[i].statements.map((statement, index) => (
@@ -713,7 +807,7 @@ const AddExamModal = ({ onClose, fetchExams }) => {
                                             </div>
                                         )}
                                         <div className=" flex flex-col gap-[0.25rem]">
-                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                            <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                                 Hình ảnh
                                             </label>
                                             {questions[i].statements.map((statement, index) => (

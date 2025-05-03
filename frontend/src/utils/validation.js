@@ -53,8 +53,8 @@ export const validateRegister = (data, password2, dispatch) => {
         dispatch(setErrorMessage("Số điện thoại không được để trống."));
         return false;
     }
-    if (data.phone && !/^\d{10}$/.test(data.phone)) {
-        dispatch(setErrorMessage("Số điện thoại phải có 10 chữ số."));
+    if (data.phone && !/^(0|\+84)\d{9}$/.test(data.phone)) {
+        dispatch(setErrorMessage("Số điện thoại không hợp lệ"));
         return false;
     }
     return true;

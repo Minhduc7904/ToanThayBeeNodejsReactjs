@@ -11,6 +11,18 @@ export const getAllExamAPI = ({ search = "", currentPage = 1, limit = 10, sortOr
     });
 };
 
+export const getNewestExamAPI = () => {
+    return api.get("/v1/user/exam/newest");
+}
+
+export const getRelatedExamAPI = (id) => {
+    return api.get(`/v1/user/exam/${id}/related`);
+}
+
+export const getExamsSavedAPI = () => {
+    return api.get("/v1/user/exam/saved");
+}
+
 export const getAllPublicExamAPI = (data) => {
     return api.get("/v1/user/exam", {
         params: data
@@ -25,10 +37,32 @@ export const getExamPublic = (id) => {
     return api.get(`/v1/user/exam/${id}`);
 }
 
+export const reExamination = (id) => {
+    return api.get(`/v1/user/answer/re-examination/${id}`);
+}
+
 export const putExamAPI = async ({ examId, examData }) => {
     const response = await api.put(`/v1/admin/exam/${examId}`, examData);
     return response.data;
 }
+
+export const summitExamAPI = async ({ attemptId }) => {
+    return await api.post(`/v1/user/submit-exam`, { attemptId });
+}
+
+export const uploadSolutionPdfAPI = async ({ examId, pdfFile }) => {
+    const formData = new FormData();
+
+    formData.append("pdf", pdfFile);
+
+    const response = await api.post(`/v1/admin/exam/${examId}/upload-pdf`, formData, {
+        headers: {
+            "Content-Type": "multipart/form-data",
+        },
+    });
+
+    return response.data;
+};
 
 export const putImageExamAPI = async ({ examId, examImage }) => {
     const formData = new FormData();

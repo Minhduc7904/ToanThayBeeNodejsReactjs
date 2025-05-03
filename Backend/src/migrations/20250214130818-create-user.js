@@ -36,7 +36,6 @@ export default {
         onUpdate: 'CASCADE'
       },
       gender: {
-        allowNull: false,
         type: Sequelize.BOOLEAN
       },
       birthDate: {
@@ -44,7 +43,6 @@ export default {
       },
       phone: {
         allowNull: false,
-        unique: true,
         type: Sequelize.STRING
       },
       highSchool: {

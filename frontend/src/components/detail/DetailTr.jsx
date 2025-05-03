@@ -23,7 +23,7 @@ const DetailTr = ({ title, value, valueText, required = false, onChange, type = 
             </td>
             <td className="p-3 text-[#72777a] text-md">
                 {!edit ? (
-                    <>{valueText ? valueText : value}</>
+                    <>{type === 5 ? (value ? "Có" : "Không") : (valueText ? valueText : value)}</>
                 ) : (
                     type === 1 ? (
                         <input
@@ -56,15 +56,27 @@ const DetailTr = ({ title, value, valueText, required = false, onChange, type = 
                                 onChange={onChange}
                                 className="w-full h-full resize-none border border-[#707070] rounded-[0.5rem] p-[0.5rem]"
                             />
+                    ) : type === 5 ? (
+                        <div className="flex items-center">
+                            <label className="flex items-center cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={value}
+                                    onChange={(e) => onChange(e.target.checked)}
+                                    className="form-checkbox h-5 w-5 text-blue-600 rounded focus:ring-blue-500"
+                                />
+                                <span className="ml-2 text-gray-700">{value ? "Có" : "Không"}</span>
+                            </label>
+                        </div>
                     ) : (
-                        <SuggestInputBarAdmin 
+                        <SuggestInputBarAdmin
                             options={options}
                             placeholder={placeholder}
                             selectedOption={value}
                             onChange={onChange}
                         />
 
-                        
+
                     )
                 )}
             </td>

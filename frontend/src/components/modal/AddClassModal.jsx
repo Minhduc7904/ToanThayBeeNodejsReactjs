@@ -37,7 +37,13 @@ const AddClassModal = ({ onClose }) => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-full w-full">
-            <LoadingSpinner color="border-black" size="5rem" />
+            <LoadingSpinner
+                type="dots"
+                color="border-blue-600"
+                size="4rem"
+                showText={true}
+                text="Đang tải..."
+            />
         </div>
     )
 
@@ -49,7 +55,7 @@ const AddClassModal = ({ onClose }) => {
         >
             <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Tên lớp <span className="text-red-500"> *</span>
                     </div>
                     <input
@@ -62,7 +68,7 @@ const AddClassModal = ({ onClose }) => {
                     />
                 </div>
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Năm học <span className="text-red-500"> *</span>
                     </div>
                     <DropMenuBarAdmin
@@ -77,7 +83,7 @@ const AddClassModal = ({ onClose }) => {
             </div>
             <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Thứ <span className="text-red-500"> *</span>
                     </div>
                     <DropMenuBarAdmin
@@ -89,7 +95,7 @@ const AddClassModal = ({ onClose }) => {
                     />
                 </div>
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Thời gian học <span className="text-red-500"> *</span>
                     </div>
                     <DropMenuBarAdmin
@@ -101,7 +107,7 @@ const AddClassModal = ({ onClose }) => {
                     />
                 </div>
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Công khai
                     </div>
                     <DropMenuBarAdmin
@@ -118,7 +124,7 @@ const AddClassModal = ({ onClose }) => {
 
             <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Mô tả
                     </div>
                     <textarea

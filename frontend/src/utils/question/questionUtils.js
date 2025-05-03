@@ -18,7 +18,7 @@ export const validateCorrectAnswer = (question, correctAnswer, dispatch, content
     if (correctAnswer.trim() === "") {
         dispatch(setErrorMessage("Đáp án không được để trống!"));
         return false;
-        
+
     } else {
         if (question.typeOfQuestion === 'TLN' && !/^[-+]?\d+(\.\d+)?$/.test(correctAnswer.replace(",", "."))) {
             dispatch(setErrorMessage("Đáp án phải là một số!"));
@@ -104,8 +104,6 @@ export const processInput = (question, correctAnswer, content, dispatch) => {
     // Loại bỏ tiền tố "Câu X." ở đầu nội dung câu hỏi nếu có
     questionContent = questionContent.trim().replace(/^Câu\s*\d+\.\s*/, "");
 
-
-
     if (question.typeOfQuestion === "DS" || question.typeOfQuestion === "TN") {
         if (statementLines.length < 2 || statementLines === null || statementLines === undefined) {
             dispatch(setErrorMessage("Mệnh đề không hợp lệ"));
@@ -187,9 +185,10 @@ export const processInputForUpdate = (question) => {
     return newQuestion;
 };
 
-
 export const splitContentTN = (content, correctAnswersText, dispatch) => {
-    if (content.trim() === "" || correctAnswersText.trim() === "") return { questionsTN: [], countTN: 0 };
+    if (content.trim() === "" || correctAnswersText.trim() === "")
+        return { questionsTN: [], countTN: 0 };
+
     const lines = content
         .split("\n")
         .map((line) => line.trim())
@@ -202,12 +201,13 @@ export const splitContentTN = (content, correctAnswersText, dispatch) => {
     let foundStatement = false;
     let index = 0;
     let countTN = 0;
+
     const correctAnswers = correctAnswersText.trim().split(" ");
 
     for (let line of lines) {
-        if (/^Câu\s*\d+\./.test(line)) {
+        // Nhận diện tiêu đề câu hỏi: Câu 1. hoặc Câu 1:
+        if (/^([Cc]âu)\s*\d+[\.:]/.test(line)) {
             if (foundQuestion) {
-                // Lưu câu hỏi trước đó
                 questionsTN.push({
                     questionData: {
                         typeOfQuestion: "TN",
@@ -219,27 +219,40 @@ export const splitContentTN = (content, correctAnswersText, dispatch) => {
             }
 
             foundQuestion = true;
-            questionContent = line.replace(/^Câu\s*\d+\.\s*/, ""); // Xóa "Câu X."
+            questionContent = line.replace(/^([Cc]âu)\s*\d+[\.:]\s*/, "");
             statementLines = [];
             foundStatement = false;
-        } else if (/^[A-D]\./.test(line)) {
-            foundStatement = true;
-            statementLines.push({
-                index: countTN,
-                content: line.slice(2).trim(),
-                isCorrect: correctAnswers[index] && correctAnswers[index] === line[0],
-            });
-            countTN++;
-        } else if (foundStatement) {
-            // Nếu là nội dung bổ sung cho đáp án
+        }
+
+        // Nhận diện các định dạng đáp án: A. B. A) B) a) b) a. b.
+        else if (/^[a-dA-D][\.\)]/.test(line)) {
+            const match = line.match(/^([a-dA-D])[\.\)]\s*(.*)$/);
+            if (match) {
+                const [, option, text] = match;
+                foundStatement = true;
+                statementLines.push({
+                    index: countTN,
+                    content: text.trim(),
+                    isCorrect:
+                        correctAnswers[index] &&
+                        correctAnswers[index].toUpperCase() === option.toUpperCase(),
+                });
+                countTN++;
+            }
+        }
+
+        // Nội dung phụ của đáp án
+        else if (foundStatement) {
             statementLines[statementLines.length - 1].content += " " + line;
-        } else {
-            // Nếu là nội dung bổ sung cho câu hỏi
+        }
+
+        // Nội dung phụ của câu hỏi
+        else {
             questionContent += " " + line;
         }
     }
 
-    // Đẩy câu hỏi cuối cùng vào danh sách
+    // Thêm câu cuối
     if (foundQuestion) {
         questionsTN.push({
             questionData: {
@@ -250,9 +263,12 @@ export const splitContentTN = (content, correctAnswersText, dispatch) => {
         });
     }
 
-    // Kiểm tra số lượng câu hỏi khớp với số lượng đáp án
     if (questionsTN.length !== correctAnswers.length) {
-        dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
+        dispatch(
+            setErrorMessage(
+                "Số lượng đáp án không khớp với số lượng câu hỏi!"
+            )
+        );
         return false;
     }
 
@@ -273,13 +289,14 @@ export const splitContentDS = (content, correctAnswersText, count, dispatch) => 
     let foundQuestion = false;
     let foundStatement = false;
     let index = 0;
+
     const correctAnswers = correctAnswersText.trim().split(" ").map(group => group.split("-"));
 
     for (let line of lines) {
-        if (/^Câu\s*\d+\./.test(line)) {
+        // Câu hỏi mới
+        if (/^([Cc]âu)\s*\d+[\.:]/.test(line)) {
             if (foundQuestion) {
-                // Kiểm tra nếu số lượng mệnh đề không khớp với đáp án đúng/sai
-                if (correctAnswers[index] === undefined) {
+                if (!correctAnswers[index]) {
                     dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
                     return false;
                 }
@@ -288,7 +305,6 @@ export const splitContentDS = (content, correctAnswersText, count, dispatch) => 
                     return false;
                 }
 
-                // Lưu câu hỏi trước đó
                 questionsDS.push({
                     questionData: {
                         typeOfQuestion: "DS",
@@ -300,29 +316,43 @@ export const splitContentDS = (content, correctAnswersText, count, dispatch) => 
             }
 
             foundQuestion = true;
-            questionContent = line.replace(/^Câu\s*\d+\.\s*/, ""); // Xóa "Câu X."
+            questionContent = line.replace(/^([Cc]âu)\s*\d+[\.:]\s*/, "");
             statementLines = [];
             foundStatement = false;
-        } else if (/^[a-d]\)/.test(line)) {
-            foundStatement = true;
-            statementLines.push({
-                index: count,
-                content: line.slice(2).trim(),
-                isCorrect: correctAnswers[index] && correctAnswers[index][statementLines.length] === "Đ", // "Đ" là đúng, "S" là sai
-            });
-            count++;
-        } else if (foundStatement) {
-            // Nếu là nội dung bổ sung cho mệnh đề trước
+        }
+
+        // Dòng mệnh đề (a. b) A. A))
+        else if (/^[a-dA-D][\.\)]/.test(line)) {
+            const match = line.match(/^([a-dA-D])[\.\)]\s*(.*)$/);
+            if (match) {
+                const [, , text] = match;
+                foundStatement = true;
+                const currentAnswer = correctAnswers[index]?.[statementLines.length];
+
+                statementLines.push({
+                    index: count,
+                    content: text.trim(),
+                    isCorrect: currentAnswer === "Đ",
+                });
+
+                count++;
+            }
+        }
+
+        // Nội dung bổ sung cho mệnh đề
+        else if (foundStatement) {
             statementLines[statementLines.length - 1].content += " " + line;
-        } else {
-            // Nếu là nội dung bổ sung cho câu hỏi
+        }
+
+        // Nội dung phụ cho câu hỏi
+        else {
             questionContent += " " + line;
         }
     }
 
-    // Đẩy câu hỏi cuối cùng vào danh sách
+    // Thêm câu cuối
     if (foundQuestion) {
-        if (correctAnswers[index] === undefined) {
+        if (!correctAnswers[index]) {
             dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
             return false;
         }
@@ -344,7 +374,8 @@ export const splitContentDS = (content, correctAnswersText, count, dispatch) => 
 };
 
 export const splitContentTLN = (content, correctAnswersText, dispatch) => {
-    if (content.trim() === "" || correctAnswersText.trim() === "") return []
+    if (content.trim() === "" || correctAnswersText.trim() === "") return [];
+
     const lines = content
         .split("\n")
         .map((line) => line.trim())
@@ -357,47 +388,52 @@ export const splitContentTLN = (content, correctAnswersText, dispatch) => {
     const correctAnswers = correctAnswersText.trim().replace(/,/g, ".").split(" ");
 
     for (let line of lines) {
-        if (/^Câu\s*\d+\./.test(line)) {
+        // Bắt đầu câu hỏi mới
+        if (/^([Cc]âu)\s*\d+[\.:]/.test(line)) {
             if (foundQuestion) {
                 if (index >= correctAnswers.length) {
                     dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
                     return false;
                 }
-                // Lưu câu hỏi trước đó
+
                 questionsTLN.push({
                     questionData: {
                         typeOfQuestion: "TLN",
                         content: questionContent.trim(),
                         correctAnswer: correctAnswers[index],
-                    }
+                    },
                 });
+
                 index++;
             }
+
             foundQuestion = true;
-            questionContent = line.replace(/^Câu\s*\d+\.\s*/, ""); // Xóa "Câu X."
+            questionContent = line.replace(/^([Cc]âu)\s*\d+[\.:]\s*/, "");
         } else {
-            // Nếu là nội dung bổ sung cho câu hỏi
+            // Nội dung bổ sung cho câu hỏi
             questionContent += " " + line;
         }
     }
 
-    // Đẩy câu hỏi cuối cùng vào danh sách
+    // Câu cuối cùng
     if (foundQuestion) {
         if (index >= correctAnswers.length) {
             dispatch(setErrorMessage("Số lượng đáp án không khớp với số lượng câu hỏi!"));
             return false;
         }
+
         questionsTLN.push({
             questionData: {
                 typeOfQuestion: "TLN",
                 content: questionContent.trim(),
                 correctAnswer: correctAnswers[index],
-            }
+            },
         });
     }
 
     return questionsTLN;
 };
+
 
 
 export const validateExamData = (examData, dispatch) => {

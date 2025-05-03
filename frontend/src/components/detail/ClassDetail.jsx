@@ -42,7 +42,7 @@ const ClassDetail = ({ classId }) => {
         const data = {
             name: classData.name,
             description: classData.description,
-            dow: classData.dow,
+            dayOfWeek: classData.dayOfWeek,
             studyTime: classData.studyTime,
             academicYear: classData.academicYear,
             status: classData.status,
@@ -67,7 +67,13 @@ const ClassDetail = ({ classId }) => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-screen">
-            <LoadingSpinner color="border-black" size="5rem" />
+            <LoadingSpinner
+                type="dots"
+                color="border-blue-600"
+                size="4rem"
+                showText={true}
+                text="Đang tải thông tin lớp học..."
+            />
         </div>
     )
 
@@ -164,7 +170,7 @@ const ClassDetail = ({ classId }) => {
                             title="Thứ"
                             value={classData?.dayOfWeek}
                             valueText={Array.isArray(codes["dow"]) ? codes["dow"].find((item) => item.code === classData?.dayOfWeek)?.description : ""}
-                            onChange={(option) => setClassData({ ...classData, dow: option })}
+                            onChange={(option) => setClassData({ ...classData, dayOfWeek: option })}
                             type={3}
                             options={Array.isArray(codes["dow"]) ? codes["dow"] : []}
                         />

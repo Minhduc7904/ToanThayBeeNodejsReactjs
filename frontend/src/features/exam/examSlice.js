@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import * as examApi from "../../services/examApi";
-import { setCurrentPage, setTotalPages, setTotalItems } from "../filter/filterSlice";
+import { setCurrentPage, setTotalPages, setTotalItems, setLimit } from "../filter/filterSlice";
 import { apiHandler } from "../../utils/apiHandler";
 
 export const fetchExams = createAsyncThunk(
@@ -14,6 +14,34 @@ export const fetchExams = createAsyncThunk(
     }
 );
 
+export const fetchNewestExams = createAsyncThunk(
+    "exams/fetchNewestExams",
+    async (_, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.getNewestExamAPI, null, () => { }, false, false);
+    }
+);
+
+export const fetchSavedExam = createAsyncThunk(
+    "exams/fetchSavedExam",
+    async (_, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.getExamsSavedAPI, null, () => { }, false, false);
+    }
+);
+
+export const reExamination = createAsyncThunk(
+    "exams/reExamination",
+    async (id, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.reExamination, id, () => { }, true, false, false, false);
+    }
+);
+
+export const summitExam = createAsyncThunk(
+    "exams/summitExam",
+    async (attemptId, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.summitExamAPI, { attemptId }, () => { }, true, false);
+    }
+);
+
 export const fetchPublicExams = createAsyncThunk(
     "exams/fetchPublicExams",
     async (data, { dispatch }) => {
@@ -21,7 +49,41 @@ export const fetchPublicExams = createAsyncThunk(
             dispatch(setCurrentPage(data.currentPage));
             dispatch(setTotalPages(data.totalPages));
             dispatch(setTotalItems(data.totalItems));
-        }, true, false);
+            dispatch(setLimit(data.limit));
+        }, false, false);
+    }
+);
+
+export const fetchRelatedExams = createAsyncThunk(
+    "exams/fetchRelatedExams",
+    async (id, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.getRelatedExamAPI, id, () => { }, false, false);
+    }
+);
+
+// Thêm action mới để kiểm tra và chỉ gọi API khi cần thiết
+export const fetchRelatedExamsIfNeeded = createAsyncThunk(
+    "exams/fetchRelatedExamsIfNeeded",
+    async (id, { dispatch, getState }) => {
+        const state = getState();
+        const { relatedExams, lastFetchedRelatedExams } = state.exams;
+
+        // Kiểm tra xem đã có dữ liệu trong cache chưa
+        const hasData = relatedExams[id] && relatedExams[id].length > 0;
+
+        // Kiểm tra thời gian cache (5 phút = 300000ms)
+        const now = Date.now();
+        const lastFetched = lastFetchedRelatedExams[id] || 0;
+        const isCacheValid = now - lastFetched < 300000;
+
+        // Nếu có dữ liệu và cache còn hợp lệ, sử dụng dữ liệu cache
+        if (hasData && isCacheValid) {
+            // Cập nhật state.exams để hiển thị dữ liệu cache
+            return { data: relatedExams[id] };
+        }
+
+        // Nếu không có dữ liệu hoặc cache hết hạn, gọi API
+        return await dispatch(fetchRelatedExams(id)).unwrap();
     }
 );
 
@@ -35,7 +97,7 @@ export const fetchExamById = createAsyncThunk(
 export const fetchPublicExamById = createAsyncThunk(
     "exams/fetchPublicExamById",
     async (id, { dispatch }) => {
-        return await apiHandler(dispatch, examApi.getExamPublic, id, () => { }, true, false);
+        return await apiHandler(dispatch, examApi.getExamPublic, id, () => { }, false, false);
     }
 );
 
@@ -60,6 +122,13 @@ export const postExam = createAsyncThunk(
     }
 );
 
+export const uploadSolutionPdf = createAsyncThunk(
+    "exams/uploadSolutionPdf",
+    async ({ examId, pdfFile }, { dispatch }) => {
+        return await apiHandler(dispatch, examApi.uploadSolutionPdfAPI, { examId, pdfFile }, () => { }, true, false, true);
+    }
+);
+
 export const saveExamForUser = createAsyncThunk(
     "exams/saveExamForUser",
     async ({ examId }, { dispatch }) => {
@@ -79,6 +148,11 @@ const examSlice = createSlice({
     initialState: {
         exams: [],
         exam: null,
+        relatedExams: {}, // Lưu trữ đề thi liên quan theo examId
+        lastFetchedRelatedExams: {}, // Lưu thời gian gọi API cuối cùng theo examId
+        loadingExam: false,
+        loadingSubmit: false,
+        isSubmit: false,
     },
     reducers: {
         setExam: (state, action) => {
@@ -93,6 +167,38 @@ const examSlice = createSlice({
             .addCase(fetchExams.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.exams = action.payload.data;
+                }
+            })
+            .addCase(fetchNewestExams.pending, (state) => {
+                state.exams = [];
+            })
+            .addCase(fetchNewestExams.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.exams = action.payload.data;
+                }
+            })
+            .addCase(fetchSavedExam.pending, (state) => {
+                state.exams = [];
+                state.loadingExam = true;
+            })
+            .addCase(fetchSavedExam.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.exams = action.payload.data;
+                }
+                state.loadingExam = false;
+            })
+            .addCase(fetchSavedExam.rejected, (state) => {
+                state.loadingExam = false;
+            })
+            .addCase(fetchRelatedExams.pending, () => {
+                // Không xóa state.exams nữa để tránh làm mất dữ liệu hiện tại
+            })
+            .addCase(fetchRelatedExams.fulfilled, (state, action) => {
+                if (action.payload) {
+                    const examId = action.meta.arg; // Lấy examId từ tham số gọi API
+                    state.exams = action.payload.data;
+                    state.relatedExams[examId] = action.payload.data;
+                    state.lastFetchedRelatedExams[examId] = Date.now();
                 }
             })
             .addCase(fetchExamById.pending, (state) => {
@@ -122,13 +228,63 @@ const examSlice = createSlice({
             .addCase(saveExamForUser.fulfilled, (state, action) => {
                 if (action.payload) {
                     const { examId, isSave } = action.payload;
-                    if (state.exams) state.exams.map((exam) => {
-                        exam.isSave = exam.id === examId ? isSave : exam.isSave;
-                        return exam;
-                    });
-                    if (state.exam) state.exam.isSave = isSave;
+
+                    // Trường hợp 1: Khi exams chứa đối tượng có thuộc tính exam (từ API saved exams)
+                    if (state.exams.length > 0 && state.exams[0]?.exam) {
+                        if (isSave === false) {
+                            // Nếu isSave = false, loại bỏ exam khỏi danh sách đã lưu
+                            state.exams = state.exams.filter(exam => exam.exam?.id !== examId);
+                        } else {
+                            // Nếu isSave = true, cập nhật trạng thái
+                            state.exams = state.exams.map(exam => {
+                                if (exam.exam?.id === examId) {
+                                    return { ...exam, isSave: true };
+                                }
+                                return exam;
+                            });
+                        }
+                        return;
+                    }
+
+                    // Trường hợp 2: Khi exams chứa danh sách exam thông thường
+                    if (state.exams && Array.isArray(state.exams)) {
+                        state.exams = state.exams.map(exam => {
+                            if (exam.id === examId) {
+                                return { ...exam, isSave: isSave };
+                            }
+                            return exam;
+                        });
+                    }
+
+                    // Cập nhật trạng thái cho exam hiện tại nếu có
+                    if (state.exam) {
+                        state.exam.isSave = isSave;
+                    }
                 }
-            });
+            })
+            .addCase(uploadSolutionPdf.fulfilled, (state, action) => {
+                console.log(action.payload)
+                const pdfUrl = action.payload
+                if (state.exam) {
+                    state.exam.solutionPdfUrl = pdfUrl;
+                }
+            })
+            .addCase(fetchRelatedExamsIfNeeded.fulfilled, (state, action) => {
+                if (action.payload && action.payload.data) {
+                    state.exams = action.payload.data;
+                }
+            })
+            .addCase(summitExam.pending, (state) => {
+                state.loadingSubmit = true;
+            })
+            .addCase(summitExam.fulfilled, (state, action) => {
+                state.loadingSubmit = false;
+                state.isSubmit = true;
+            })
+            .addCase(summitExam.rejected, (state) => {
+                state.loadingSubmit = false;
+                state.isSubmit = false;
+            })
     }
 });
 

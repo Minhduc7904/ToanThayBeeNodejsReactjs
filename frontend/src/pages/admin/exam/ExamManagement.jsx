@@ -37,7 +37,7 @@ const ExamManagement = () => {
             <AdminModal isOpen={isAddView} headerText={'Tạo câu hỏi mới'} onClose={() => dispatch(setIsAddView(false))} >
                 <AddExamModal onClose={() => dispatch(setIsAddView(false))} fetchExams={fetchExams} />
             </AdminModal>
-            <div className="text-[#090a0a] text-[32px] font-bold font-['Be Vietnam Pro'] leading-9">
+            <div className="text-[#090a0a] text-[32px] font-bold font-bevietnam leading-9">
                 Danh sách đề thi
             </div>
             <FunctionBarAdmin />

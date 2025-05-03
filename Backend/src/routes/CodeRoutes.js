@@ -15,7 +15,6 @@ router.get('/v1/admin/code',
 )
 
 router.get('/v1/admin/code/type',
-    requireRoles([]),
     asyncHandler(CodeController.getCodeByType)
 )
 

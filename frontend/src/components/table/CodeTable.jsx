@@ -22,15 +22,16 @@ const CodeTable = ({ codes }) => {
         { code: "highSchool", description: "Trường" },
         { code: "chapter", description: "Chương" },
         { code: "difficulty", description: "Độ khó" },
+
     ]
     const typeExists = (type) => optionTypeCode.some(option => option.code === type);
 
     const handleClickedRow = (code) => {
-        if (typeExists(code.type)) {
+        // if (typeExists(code.type)) {
             
             setCode(code);
             setIsEdit(true);
-        }
+        // }
     }
 
     if (loading) return (

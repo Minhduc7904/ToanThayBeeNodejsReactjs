@@ -11,6 +11,14 @@ export const getAllClassesAPI = ({ search = "", currentPage = 1, limit = 10, sor
     });
 };
 
+export const getClassPublicAPI = () => {
+    return api.get(`/v1/user/class`);
+}
+
+export const getClassOverviewAPI = () => {
+    return api.get(`/v1/user/class/overview`);
+}
+
 export const getClassByIdAPI = (id) => {
     return api.get(`/v1/admin/class/${id}`);
 };
@@ -18,6 +26,10 @@ export const getClassByIdAPI = (id) => {
 export const getClassByUserAPI = () => {
     return api.get("/v1/user/class/joined",);
 };
+
+export const getUncompletedLearningItemAPI = () => {
+    return api.get(`/v1/user/learning-item/uncompleted`);
+}
 
 export const joinClassAPI = (classCode) => {
     return api.post(`/v1/user/class/${classCode}/join`);
@@ -113,6 +125,10 @@ export const deleteLessonAPI = async ({ lessonId }) => {
 
 export const deleteLearningItemAPI = async ({ learningItemId }) => {
     return await api.delete(`/v1/admin/learning-item/${learningItemId}`);
+}
+
+export const markLearningItemAPI = async ({ learningItemId }) => {
+    return await api.put(`v1/user/learning-item/${learningItemId}/mark`);
 }
 
 export const postLearningItemAPI = async ({ data }) => {

@@ -10,30 +10,21 @@ export const createUserBulk = async (users) => {
         success: [],
         failed: [],
     };
+    let index = 0;
 
     for (const user of users) {
-        const { username, email, phone, password } = user;
+        const { username, phone, password } = user;
 
         try {
             // Check bắt buộc
-            if (!username && !email) {
-                throw new Error('Thiếu username hoặc email');
+            if (!username) {
+                throw new Error('Thiếu username');
             }
 
             // Kiểm tra trùng lặp
             if (username) {
                 const existUsername = await db.User.findOne({ where: { username } });
                 if (existUsername) throw new Error('Username đã tồn tại');
-            }
-
-            if (email) {
-                const existEmail = await db.User.findOne({ where: { email } });
-                if (existEmail) throw new Error('Email đã tồn tại');
-            }
-
-            if (phone) {
-                const existPhone = await db.User.findOne({ where: { phone } });
-                if (existPhone) throw new Error('Số điện thoại đã tồn tại');
             }
 
             // Hash password
@@ -47,6 +38,8 @@ export const createUserBulk = async (users) => {
                 userType: UserType.STUDENT,
                 status: UserStatus.ACTIVE,
             });
+
+            console.log(++index, newUser.toJSON());
 
             results.success.push(new UserResponse(newUser));
         } catch (err) {

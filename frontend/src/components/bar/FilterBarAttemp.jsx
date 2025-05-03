@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { setLimit, setSearch, setCurrentPage } from "../../features/filter/filterSlice";
 import Pagination from "../Pagination";
 import { fetchAttemptByExamIdAdmin } from "../../features/attempt/attemptSlice";
+import { FileSpreadsheet } from "lucide-react";
+import { exportAttemptsToExcel } from "../../utils/excelExport";
 
 const FilterBarAttemp = ({ examId }) => {
     const dispatch = useDispatch();
@@ -30,6 +32,27 @@ const FilterBarAttemp = ({ examId }) => {
         dispatch(setSearch(""));
         dispatch(setLimit(10));
         dispatch(setCurrentPage(1));
+    };
+
+    const handleExportToExcel = () => {
+        try {
+            // Fetch all attempts for the exam
+            dispatch(fetchAttemptByExamIdAdmin({ examId, search, currentPage: 1, limit: 1000 }))
+                .unwrap()
+                .then((result) => {
+                    if (result && result.data && result.data.data) {
+                        // Get the exam name from the first attempt if available
+                        const examName = result.data.data[0]?.exam?.name || `Exam_${examId}`;
+                        // Export to Excel
+                        exportAttemptsToExcel(result.data.data, examName);
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching attempts for export:', error);
+                });
+        } catch (error) {
+            console.error('Error exporting to Excel:', error);
+        }
     };
 
     useEffect(() => {
@@ -70,13 +93,23 @@ const FilterBarAttemp = ({ examId }) => {
                         />
                     </div>
 
-                    <button
-                        onClick={handleResetFilters}
-                        className="px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm border border-gray-300"
-                        title="Đặt lại bộ lọc"
-                    >
-                        🔄 Đặt lại
-                    </button>
+                    <div className="flex gap-2">
+                        <button
+                            onClick={handleResetFilters}
+                            className="px-3 py-2 rounded-full bg-gray-100 hover:bg-gray-200 text-gray-700 text-sm border border-gray-300"
+                            title="Đặt lại bộ lọc"
+                        >
+                            🔄 Đặt lại
+                        </button>
+                        <button
+                            onClick={handleExportToExcel}
+                            className="px-3 py-2 rounded-full bg-green-600 hover:bg-green-700 text-white text-sm flex items-center gap-1"
+                            title="Xuất Excel"
+                        >
+                            <FileSpreadsheet className="w-4 h-4" />
+                            <span>Excel</span>
+                        </button>
+                    </div>
                 </div>
                 <div className="flex items-center justify-end flex-row gap-4 w-full">
                     <div className="flex items-center gap-2 text-sm text-gray-700">

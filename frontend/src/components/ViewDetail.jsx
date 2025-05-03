@@ -4,9 +4,10 @@ import { fetchPublicExamById, setExam } from "../features/exam/examSlice";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import LoadingSpinner from "./loading/LoadingSpinner";
-import UploadLearningItemPdfForm from "./UploadPdf";
+import UploadPdfForm from "./UploadPdf";
 import PdfViewer from "./ViewPdf";
 import { putLearningItem, putLesson, uploadLearningItemPdf } from "../features/class/classSlice";
+import SuggestInputBarAdmin from "./input/suggestInputBarAdmin";
 
 const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
     const { exam } = useSelector((state) => state.exams);
@@ -14,6 +15,7 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
     const navigate = useNavigate();
     const [itemData, setItemData] = useState(activeItem?.item || {});
     const [loadingExam, setLoadingExam] = useState(false);
+    const { codes } = useSelector((state) => state.codes);
 
     const findExam = async () => {
         if (itemData.url) {
@@ -23,8 +25,8 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
         }
     };
 
-    const handleUpload = ({ learningItemId, pdfFile }) => {
-        dispatch(uploadLearningItemPdf({ learningItemId, pdfFile }));
+    const handleUpload = ({ id, pdfFile }) => {
+        dispatch(uploadLearningItemPdf({ learningItemId: id, pdfFile }));
     }
 
     const handleDeleteItem = () => {
@@ -60,8 +62,9 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
         } else if (activeItem?.type === "lesson") {
             const data = {
                 day: itemData.day,
-                description: itemData.description,
+                description: itemData.description ? itemData.description : null,
                 name: itemData.name,
+                chapter: itemData.chapter ? itemData.chapter : null,
             }
             dispatch(putLesson({ lessonId: itemData.id, data }));
         }
@@ -76,7 +79,11 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
             dispatch(fetchPublicExamById(activeItem.item.url));
         }
         if (activeItem?.item) {
-            setItemData(activeItem.item);
+            const item = activeItem.item;
+            setItemData({
+                ...item,
+                chapter: item.chapter ?? null
+            });
         }
     }, [dispatch, activeItem]);
 
@@ -141,7 +148,7 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
                                         onChange={(e) => handleChange("createdAt", e.target.value)}
                                     />
                                 </div>
-                                <UploadLearningItemPdfForm learningItemId={itemData.id} onSubmit={handleUpload} />
+                                <UploadPdfForm id={itemData.id} onSubmit={handleUpload} />
 
                                 <PdfViewer url={itemData.url} />
 
@@ -205,7 +212,13 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
                                     {
                                         loadingExam ? (
                                             <div className="w-full h-20 flex justify-center items-center">
-                                                <LoadingSpinner color="border-black" />
+                                                <LoadingSpinner
+                                                    type="dots"
+                                                    color="border-blue-600"
+                                                    size="4rem"
+                                                    showText={true}
+                                                    text="Đang tải thông tin đề thi..."
+                                                />
                                             </div>
                                         )
                                             : (
@@ -271,11 +284,26 @@ const ViewDetail = ({ activeItem, deleteLesson, deleteLearningItem }) => {
                             />
                         </div>
                         <div className="flex flex-row gap-2 items-center w-full justify-between">
+                            <div>Chuơng
+                                <span className="text-gray-400 text-sm font-['Be_Vietnam_Pro']"
+                                > - {(itemData.chapter !== null) ? `${itemData.chapter}` : "Không có"}</span>
+                            </div>
+                            <div className="relative w-1/2">
+                                <SuggestInputBarAdmin
+                                    key={itemData.id} // 👈 Thêm dòng này!
+                                    options={codes['chapter'] ? codes['chapter'].filter((c) => c.code.length === 4) : []}
+                                    selectedOption={itemData.chapter ?? null} // dùng toán tử nullish để an toàn
+                                    onChange={(value) => handleChange("chapter", value)}
+                                    placeholder="Chọn chương"
+                                />
+                            </div>
+                        </div>
+                        <div className="flex flex-row gap-2 items-center w-full justify-between">
                             <div>Mô tả</div>
                             <textarea
                                 value={itemData.description || ''}
                                 onChange={(e) => handleChange("description", e.target.value)}
-                                className="w-3/4 bg-[#f9fafb] border border-gray-200 p-4 rounded-md text-gray-700 text-sm font-['Be_Vietnam_Pro']"
+                                className="w-3/4 bg-[#f9fafb] border border-gray-200 p-2 rounded-md resize-none text-gray-700 text-sm font-['Be_Vietnam_Pro']"
                             />
                         </div>
                         <div className="flex flex-row gap-2 items-center w-full justify-between">

@@ -29,7 +29,7 @@ export default {
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
-        defaultValue: Sequelize.NOW, // ✅ Thêm dòng này để tự động lấy thời gian hiện tại
+        defaultValue: Sequelize.NOW, // Thêm dòng này để tự động lấy thời gian hiện tại
       },
     }, { timestamps: false })
   },

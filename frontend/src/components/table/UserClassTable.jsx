@@ -16,7 +16,7 @@ const UserClassTable = ({ classId }) => {
     const { codes } = useSelector(state => state.codes);
 
     useEffect(() => {
-        dispatch(fetchCodesByType("waitStatus"));
+        dispatch(fetchCodesByType("wait status"));
     }, [dispatch]);
 
     const handleApprove =  (userId) => {
@@ -116,7 +116,7 @@ const UserClassTable = ({ classId }) => {
                                                 Phê duyệt
                                             </button>
                                         ) : (
-                                            codes['waitStatus']?.find((code) => code.code === user.studentClassStatus)?.description || "Chưa cập nhật"
+                                            codes['wait status']?.find((code) => code.code === user.studentClassStatus)?.description || "Chưa cập nhật"
                                         )
                                     }
                                 </td>

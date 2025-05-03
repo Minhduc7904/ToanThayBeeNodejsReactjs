@@ -9,6 +9,11 @@ export default {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
+      class_code: {
+        allowNull: false,
+        type: Sequelize.STRING(20),
+        unique: true
+      },
       name: {
         allowNull: false,
         type: Sequelize.STRING
@@ -41,6 +46,10 @@ export default {
           key: 'id'
         },
         onDelete: 'SET NULL',
+      },
+      studentCount: {
+        type: Sequelize.INTEGER,
+        defaultValue: 0
       },
       lessonCount: {
         type: Sequelize.INTEGER,

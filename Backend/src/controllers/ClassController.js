@@ -8,35 +8,18 @@ const { sequelize } = db;
 
 
 export const getPublicClass = async (req, res) => {
-    const search = req.query.search || ''
-    const page = parseInt(req.query.page, 10) || 1
-    const limit = parseInt(req.query.limit, 10) || 10
-    const offset = (page - 1) * limit
-
-    const whereClause = {
-        public: true,
-        ...(search.trim() && {
-            [Op.or]: [
-                { name: { [Op.like]: `%${search}%` } },
-                { description: { [Op.like]: `%${search}%` } },
-                { status: { [Op.like]: `%${search}%` } },
-            ],
-        }),
-    }
-
-    const { rows: classes, count: total } = await Class.findAndCountAll({
-        where: whereClause,
-        limit,
-        offset,
+    const classes = await Class.findAll({
+        where: {
+            status: 'LHD',
+            public: true,
+        },
         order: [['createdAt', 'DESC']],
     })
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách lớp thành công!',
+        message: 'Lấy danh sách lớp thành công!',
         data: classes,
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
-        totalItems: total,
+        totalItems: classes.length,
     })
 }
 
@@ -65,7 +48,7 @@ export const getAllClass = async (req, res) => {
     })
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách lớp thành công!',
+        message: 'Lấy danh sách lớp thành công!',
         data: classes,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
@@ -95,18 +78,18 @@ export const getDetailClassByAdmin = async (req, res) => {
 
         if (!classItem) {
             return res.status(404).json({
-                message: `❌ Không tìm thấy lớp với ID: ${id}!`
+                message: `Không tìm thấy lớp với ID: ${id}!`
             });
         }
 
         return res.status(200).json({
-            message: '✅ Lấy thông tin lớp thành công!',
+            message: 'Lấy thông tin lớp thành công!',
             data: classItem
         });
     } catch (error) {
-        console.error("❌ Lỗi khi lấy chi tiết lớp:", error);
+        console.error("Lỗi khi lấy chi tiết lớp:", error);
         return res.status(500).json({
-            message: "❌ Lỗi server",
+            message: "Lỗi server",
             error: error.message
         });
     }
@@ -136,7 +119,7 @@ export const getDetailClassByUser = async (req, res) => {
 
         if (!classItem) {
             return res.status(404).json({
-                message: `❌ Không tìm thấy lớp với mã: ${classCode}!`
+                message: `Không tìm thấy lớp với mã: ${classCode}!`
             });
         }
 
@@ -147,14 +130,14 @@ export const getDetailClassByUser = async (req, res) => {
         const status = statusData?.status || db.StudentClassStatus.NOT_JOINED;
 
         return res.status(200).json({
-            message: '✅ Lấy thông tin lớp thành công!',
+            message: 'Lấy thông tin lớp thành công!',
             data: classItem,
             studentClassStatus: status
         });
     } catch (error) {
-        console.error("❌ Lỗi khi lấy chi tiết lớp:", error);
+        console.error("Lỗi khi lấy chi tiết lớp:", error);
         return res.status(500).json({
-            message: "❌ Lỗi server",
+            message: "Lỗi server",
             error: error.message
         });
     }
@@ -194,13 +177,30 @@ export const getClassByUser = async (req, res) => {
     );
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách lớp theo người dùng thành công!',
+        message: 'Lấy danh sách lớp theo người dùng thành công!',
         data: formattedClasses,
         totalItems: formattedClasses.length,
     });
 };
 
+export const getOverviewClass = async (req, res) => {
+    const { id } = req.user
 
+    const classes = await db.StudentClassStatus.findAll({
+        where: { studentId: id, status: 'JS' },
+        include: [
+            {
+                model: db.Class,
+                as: 'class',
+            },
+        ],
+    });
+
+    res.status(200).json({
+        message: "Lấy lớp học hôm nay thành công",
+        data: classes,
+    });
+}
 
 export const getDetailLessonLearningItemByClassId = async (req, res) => {
     const { classCode } = req.params;
@@ -239,7 +239,7 @@ export const getDetailLessonLearningItemByClassId = async (req, res) => {
 
     if (!foundClass) {
         return res.status(404).json({
-            message: '❌ Không tìm thấy lớp học với classId đã cung cấp!',
+            message: 'Không tìm thấy lớp học với classId đã cung cấp!',
             data: null,
         });
     }
@@ -270,7 +270,7 @@ export const getDetailLessonLearningItemByClassId = async (req, res) => {
     }
 
     return res.status(200).json({
-        message: '✅ Lấy thông tin lớp, bài học, mục học tập và trạng thái người dùng thành công!',
+        message: 'Lấy thông tin lớp, bài học, mục học tập và trạng thái người dùng thành công!',
         data: {
             ...foundClass.toJSON(),
             joinedStudentCount: studentCount,
@@ -294,15 +294,25 @@ export const getFullLessonLearningItemByClassCode = async (req, res) => {
                         {
                             model: db.LearningItem,
                             as: 'learningItems',
+                            include: [
+                                {
+                                    model: db.StudentStudyStatus,
+                                    as: 'studyStatuses',
+                                    where: { studentId: userId },
+                                    attributes: ['isDone', 'studyTime'],
+                                    required: false
+                                }
+                            ]
                         }
                     ]
                 }
             ]
         });
 
+
         if (!foundClass) {
             return res.status(404).json({
-                message: '❌ Không tìm thấy lớp học với classCode đã cung cấp!',
+                message: 'Không tìm thấy lớp học với classCode đã cung cấp!',
                 data: null,
             });
         }
@@ -321,19 +331,17 @@ export const getFullLessonLearningItemByClassCode = async (req, res) => {
 
         if (userStatus !== 'JS') {
             return res.status(403).json({
-                message: '❌ Bạn không thể xem nội dung này vì chưa tham gia lớp học!',
+                message: 'Bạn không thể xem nội dung này vì chưa tham gia lớp học!',
                 data: null,
             });
         }
 
-        // Sắp xếp bài học theo ngày (day)
         foundClass.lessons = foundClass.lessons.sort((a, b) => {
-            // So sánh ngày theo thứ tự giảm dần (DESC)
             return new Date(a.day) - new Date(b.day);
         });
 
         return res.status(200).json({
-            message: '✅ Lấy thông tin lớp, bài học, mục học tập và trạng thái người dùng thành công!',
+            message: 'Lấy thông tin lớp, bài học, mục học tập và trạng thái người dùng thành công!',
             data: {
                 ...foundClass.toJSON(),
                 userStatus
@@ -342,7 +350,7 @@ export const getFullLessonLearningItemByClassCode = async (req, res) => {
 
     } catch (error) {
         return res.status(500).json({
-            message: '❌ Lỗi khi lấy thông tin lớp học.',
+            message: 'Lỗi khi lấy thông tin lớp học.',
             error: error.message,
         });
     }
@@ -370,13 +378,13 @@ export const getFullLessonByClassID = async (req, res) => {
 
     if (!foundClass) {
         return res.status(404).json({
-            message: '❌ Không tìm thấy lớp học với classId đã cung cấp!',
+            message: 'Không tìm thấy lớp học với classId đã cung cấp!',
             data: null,
         });
     }
 
     return res.status(200).json({
-        message: '✅ Lấy thông tin lớp, bài học, mục học tập và trạng thái người dùng thành công!',
+        message: 'Lấy thông tin lớp, bài học, mục học tập và trạng thái người dùng thành công!',
         data: {
             ...foundClass.toJSON(),
         },
@@ -403,7 +411,7 @@ export const postClass = async (req, res) => {
             newClass,
         });
     } catch (error) {
-        console.error("❌ Tạo lớp thất bại:", error);
+        console.error("Tạo lớp thất bại:", error);
         return res.status(500).json({ message: 'Lỗi tạo lớp học', error: error.message });
     }
 };
@@ -442,7 +450,7 @@ export const deleteClass = async (req, res) => {
     // 0. Tìm lớp học
     const classItem = await Class.findByPk(id)
     if (!classItem) {
-        return res.status(404).json({ message: '❌ Lớp học không tồn tại' })
+        return res.status(404).json({ message: 'Lớp học không tồn tại' })
     }
 
     // 1. Tìm Slide gắn với Class (dựa vào classItem.slideId)
@@ -468,7 +476,7 @@ export const deleteClass = async (req, res) => {
     // 6. Xóa Class
     await Class.destroy({ where: { id } })
 
-    return res.status(200).json({ message: '✅ Xóa lớp học thành công' })
+    return res.status(200).json({ message: 'Xóa lớp học thành công' })
 
 }
 
@@ -486,7 +494,7 @@ export const putSlideImagesForClass = async (req, res) => {
         const classItem = await db.Class.findByPk(classId, { transaction });
         if (!classItem) {
             await transaction.rollback();
-            return res.status(404).json({ message: '❌ Lớp không tồn tại.' });
+            return res.status(404).json({ message: 'Lớp không tồn tại.' });
         }
 
         let slide;
@@ -499,7 +507,7 @@ export const putSlideImagesForClass = async (req, res) => {
 
             if (!slide) {
                 await transaction.rollback();
-                return res.status(404).json({ message: '❌ Slide không tồn tại.' });
+                return res.status(404).json({ message: 'Slide không tồn tại.' });
             }
 
             const oldImages = slide.slideImages || [];
@@ -536,9 +544,9 @@ export const putSlideImagesForClass = async (req, res) => {
         }
 
         await transaction.commit();
-        return res.status(200).json({ message: '✅ Cập nhật slide thành công.' });
+        return res.status(200).json({ message: 'Cập nhật slide thành công.' });
     } catch (error) {
-        console.error("❌ Lỗi khi cập nhật slide:", error);
+        console.error("Lỗi khi cập nhật slide:", error);
 
         // Xóa ảnh đã upload thành công
         if (uploadedUrls.length > 0) {
@@ -546,7 +554,7 @@ export const putSlideImagesForClass = async (req, res) => {
         }
 
         await transaction.rollback();
-        return res.status(500).json({ message: '❌ Lỗi server.', error: error.message });
+        return res.status(500).json({ message: 'Lỗi server.', error: error.message });
     }
 };
 
@@ -561,19 +569,19 @@ export const joinClass = async (req, res) => {
     const transaction = await db.sequelize.transaction();
 
     try {
-        // ✅ 1. Tìm lớp theo mã lớp
+        // 1. Tìm lớp theo mã lớp
         const classInfo = await db.Class.findOne({
             where: { class_code: classCode },
             transaction
         });
 
-        // ❌ Không tìm thấy hoặc lớp không công khai
+        // Không tìm thấy hoặc lớp không công khai
         if (!classInfo || !classInfo.public) {
             await transaction.rollback();
             return res.status(400).json({ message: "Không thể tham gia lớp học này!" });
         }
 
-        // ✅ 2. Thêm học sinh vào bảng StudentClassStatus
+        // 2. Thêm học sinh vào bảng StudentClassStatus
         const insert = await db.StudentClassStatus.create({
             studentId: userId,
             classId: classInfo.id,
@@ -585,20 +593,20 @@ export const joinClass = async (req, res) => {
             return res.status(500).json({ message: "Tham gia lớp học không thành công!" });
         }
 
-        // ✅ 3. Cập nhật sĩ số
+        // 3. Cập nhật sĩ số
         await db.Class.update(
             { studentCount: db.sequelize.literal('studentCount + 1') },
             { where: { id: classInfo.id }, transaction }
         );
 
-        // ✅ 4. Commit transaction
+        // 4. Commit transaction
         await transaction.commit();
 
         return res.status(200).json({ message: "Tham gia lớp học thành công!" });
 
     } catch (error) {
         await transaction.rollback();
-        console.error("❌ Lỗi khi tham gia lớp học:", error);
+        console.error("Lỗi khi tham gia lớp học:", error);
         return res.status(500).json({ message: "Lỗi server khi tham gia lớp học!" });
     }
 };

@@ -75,7 +75,13 @@ const UserDetail = ({ userId }) => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <LoadingSpinner color="border-black" size="5rem" />
+                <LoadingSpinner
+                    type="dots"
+                    color="border-blue-600"
+                    size="4rem"
+                    showText={true}
+                    text="Đang tải thông tin người dùng..."
+                />
             </div>
         );
     }
@@ -195,11 +201,11 @@ const UserDetail = ({ userId }) => {
                         <DetailTr
                             title="Trường học"
                             value={studentData?.highSchool}
-                            valueText={codes["highSchool"]?.find((item) => item.code === studentData?.highSchool)?.description ? codes["highSchool"]?.find((item) => item.code === studentData?.highSchool)?.description : studentData?.highSchool ? studentData?.highSchool : "Chưa cập nhật"}
-                            type={5}
-                            options={Array.isArray(codes["highSchool"]) ? codes["highSchool"] : []}
-                            onChange={(option) => setStudentData({ ...studentData, highSchool: option })}
+                            valueText={studentData?.highSchool ? studentData?.highSchool : "Chưa cập nhật"}
+                            type={1}
                             required={true}
+                            placeholder={"Nhập Trường học"}
+                            onChange={(e) => setStudentData({ ...studentData, highSchool: e.target.value })}
                         />
                         <DetailTr
                             title="Trạng thái"

@@ -6,10 +6,10 @@ const Choice = ({ route, text }) => {
     return (
         <Link
             to={route}
-            className={`w-[15rem] h-11 pl-9 rounded-lg flex-col justify-center items-center gap-[7px] inline-flex`}
+            className={`w-[15rem] pl-9 rounded-lg flex-col justify-center items-start inline-flex`}
         >
-            <div className="self-stretch p-3 justify-center items-center gap-4 inline-flex">
-                <div className={`grow shrink basis-0 text-sm font-medium font-bevietnam leading-none text-[#253f61] ${location.pathname.includes(route) ? 'underline' : ''}`}>{ text }</div>
+            <div className="p-2 justify-center text-start gap-4 inline-flex">
+                <div className={`flex justify-center text-start text-sm font-medium font-bevietnam text-[#253f61] ${location.pathname.includes(route) ? 'underline' : ''}`}>{ text }</div>
             </div>
         </Link>
     )

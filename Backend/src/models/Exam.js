@@ -9,18 +9,20 @@ export default (sequelize, DataTypes) => {
      */
     static associate(models) {
       Exam.belongsToMany(models.Question, {
-        through: 'ExamQuestions',       
-        foreignKey: 'examId',             
-        otherKey: 'questionId',           
-        as: 'questions',                  
+        through: 'ExamQuestions',
+        foreignKey: 'examId',
+        otherKey: 'questionId',
+        as: 'questions',
       })
-      Exam.associate = (models) => {
-        Exam.hasMany(models.StudentExamAttempt, {
-          foreignKey: "examId",
-          as: "attempts"
-        });
-      };
-      
+      Exam.hasMany(models.StudentExamAttempt, {
+        foreignKey: "examId",
+        as: "attempts"
+      });
+      Exam.hasMany(models.StudentExamStatus, {
+        foreignKey: "examId",
+        as: "statuses"
+      });
+
     }
   }
   Exam.init({
@@ -37,6 +39,9 @@ export default (sequelize, DataTypes) => {
     public: DataTypes.BOOLEAN,
     attemptLimit: DataTypes.INTEGER,
     isCheatingCheckEnabled: DataTypes.BOOLEAN,
+    solutionPdfUrl: DataTypes.TEXT,
+    seeCorrectAnswer: DataTypes.BOOLEAN,
+    acceptDoExam: DataTypes.BOOLEAN,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

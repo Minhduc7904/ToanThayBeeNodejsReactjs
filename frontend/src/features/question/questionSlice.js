@@ -31,15 +31,14 @@ export const fetchPublicQuestionsByExamId = createAsyncThunk(
     "questions/fetchPublicQuestionsByExamId",
     async (id, { dispatch }) => {
         return await apiHandler(dispatch, questionApi.getPublicExamQuestionsAPI, { id }, (data) => {
-            dispatch(setExam(data.exam));
-        }, true, false);
+        }, false, false);
     }
 );
 
 export const fetchQuestionById = createAsyncThunk(
     "questions/fetchQuestionById",
     async (id, { dispatch }) => {
-        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id, () => { }, true, false);
+        return await apiHandler(dispatch, questionApi.getQuestionByIdAPI, id, () => { }, false, false);
     }
 );
 

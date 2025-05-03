@@ -5,6 +5,7 @@ import { setSortOrder } from "../../features/filter/filterSlice";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import { useNavigate } from "react-router-dom";
 import { resetFilters } from "../../features/filter/filterSlice";
+import ConfirmDeleteModal from "../modal/ConfirmDeleteModal";
 
 const ClassTable = () => {
     const dispatch = useDispatch();
@@ -13,20 +14,28 @@ const ClassTable = () => {
     const { loading } = useSelector(state => state.states);
     const navigate = useNavigate();
     const [deleteMode, setDeleteMode] = useState(false);
+    const [isOpenConfirmDeleteModal, setIsOpenConfirmDeleteModal] = useState(false);
+    const [id, setId] = useState(null);
 
 
     const handleClick = (classId) => {
         if (deleteMode) {
-            dispatch(deleteClass({ classId }))
-                .unwrap()
-                .then(() => {
-                    dispatch(fetchClasses({ search, currentPage, limit, sortOrder }))
-                })
+            setIsOpenConfirmDeleteModal(true);
+            setId(classId);
         } else {
             navigate(`/admin/class-management/${classId}`)
         }
-
     }
+
+        const confirmDeleteModal = () => {
+            if (id === null) return;
+            dispatch(deleteClass({classId: id}))
+                .unwrap()
+                .then(() => {
+                    dispatch(fetchClasses({ search, currentPage, limit, sortOrder })).unwrap()
+                    setIsOpenConfirmDeleteModal(false);
+                });
+        };
 
     const [didInit, setDidInit] = useState(false); // 👉 Thêm cờ kiểm soát mount đầu tiên
 
@@ -51,6 +60,11 @@ const ClassTable = () => {
 
     return (
         <div className="flex flex-col gap-4 min-h-0 text-sm">
+            <ConfirmDeleteModal
+                isOpen={isOpenConfirmDeleteModal}
+                onClose={() => setIsOpenConfirmDeleteModal(false)}
+                onConfirm={confirmDeleteModal}
+            />
             <div className="flex justify-start items-center">
                 {totalItems > 0 ? (
                     <div className="flex justify-between w-full items-center">

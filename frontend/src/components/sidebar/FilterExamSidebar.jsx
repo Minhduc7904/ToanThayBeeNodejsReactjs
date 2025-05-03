@@ -5,45 +5,69 @@ import { fetchCodesByType } from "../../features/code/codeSlice";
 import { useDispatch, useSelector } from "react-redux";
 import LoadingSpinner from "../loading/LoadingSpinner";
 import { fetchPublicExams } from "../../features/exam/examSlice";
-import { resetFilters } from "../../features/filter/filterSlice";
+import { resetFilters, setSelectedGrade, setSelectedChapters, setSelectedExamTypes, setIsSearch } from "../../features/filter/filterSlice";
 
-const FilterExamSidebar = ({ isMobile = false, onClose = ()=>{} }) => {
+const FilterExamSidebar = ({ isMobile = false, onClose = () => { } }) => {
     const [isShowClass, setIsShowClass] = useState(true);
     const [isShowExam, setIsShowExam] = useState(true);
     const [isShowChapter, setIsShowChapter] = useState(true);
     const { codes } = useSelector((state) => state.codes);
-    const { limit, currentPage, sortOrder } = useSelector((state) => state.filter);
+    const { limit, currentPage, sortOrder, isSearch, selectedGrade, selectedChapters, selectedExamTypes } = useSelector((state) => state.filter);
     const dispatch = useDispatch();
-    const [selectedGrade, setSelectedGrade] = useState(null); // chỉ 1 lớp được chọn
-    const [selectedChapters, setSelectedChapters] = useState([]);
-    const [selectedExamTypes, setSelectedExamTypes] = useState([]);
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState("");
+    const [didInit, setDidInit] = useState(false); // 👉 Thêm cờ kiểm soát mount đầu tiên
 
     useEffect(() => {
-        dispatch(fetchPublicExams({ currentPage, limit, sortOrder, typeOfExam: selectedExamTypes, class: selectedGrade, chapter: selectedChapters, search }));
-    }, [dispatch, currentPage]);
+        if (!didInit) {
+            dispatch(resetFilters());
+            setDidInit(true);
+        }
+    }, [dispatch, didInit]);
+    
+    const fetchExams = (override = {}) => {
+        dispatch(fetchPublicExams({
+            page: currentPage,
+            limit: 10,
+            sortOrder,
+            typeOfExam: override.typeOfExam ?? selectedExamTypes,
+            class: override.class === null ? override.class : selectedGrade,
+            chapter: override.chapter ?? selectedChapters,
+            search
+        }));
+    }
+
+    useEffect(() => {
+        if (didInit) fetchExams()
+    }, [dispatch, currentPage, didInit]);
+
+    useEffect(() => {
+        if (selectedChapters.length === 0 && selectedGrade === null && selectedExamTypes.length === 0 && search === "") {
+            dispatch(setIsSearch(false));
+
+        }
+    }, [dispatch, selectedChapters, selectedGrade, selectedExamTypes, search]);
 
     const handleClick = () => {
-        resetFilters();
         setLoading(true);
-        dispatch(fetchPublicExams({ currentPage, limit, sortOrder, typeOfExam: selectedExamTypes, class: selectedGrade, chapter: selectedChapters, search }))
+        dispatch(fetchPublicExams({ page: currentPage, limit: 10, sortOrder, typeOfExam: selectedExamTypes, class: selectedGrade, chapter: selectedChapters, search }))
             .then(() => {
                 setLoading(false);
                 onClose();
-            })  
-        }
+            })
+        dispatch(setIsSearch(true));
+    }
 
-    const toggleItem = (codeList, setCodeList) => (code) => (isChecked) => {
-        setCodeList((prev) =>
-            isChecked
-                ? [...prev, code]
-                : prev.filter((item) => item !== code)
-        );
+    const toggleItem = (codeList, dispatchSetAction) => (code) => (isChecked) => {
+        const newList = isChecked
+            ? [...codeList, code]
+            : codeList.filter((item) => item !== code);
+
+        dispatch(dispatchSetAction(newList));
     };
 
     const handleSelectGrade = (gradeCode) => (isChecked) => {
-        setSelectedGrade(isChecked ? gradeCode : null);
+        dispatch(setSelectedGrade(isChecked ? gradeCode : null))
         setSelectedChapters([]); // reset selected chapters when grade changes
     };
 
@@ -62,7 +86,18 @@ const FilterExamSidebar = ({ isMobile = false, onClose = ()=>{} }) => {
                 setValue={setSearch}
                 loading={loading}
             />
-            <div className="text-blue-600 text-sm font-medium">Tất cả đề</div>
+            <p
+                onClick={() => {
+                    dispatch(setIsSearch(false));
+                    setSearch("")
+                    dispatch(setSelectedGrade(null));
+                    dispatch(setSelectedChapters([]));
+                    dispatch(setSelectedExamTypes([]));
+                    fetchExams(
+                        { class: null, chapter: [], typeOfExam: [] } // reset filters
+                    );
+                }}
+                className="text-blue-600 text-sm w-fit font-medium cursor-pointer">Tất cả đề</p>
 
             <FilterGroup title="Lớp" isOpen={isShowClass} setIsOpen={setIsShowClass}>
                 {codes?.['grade']?.map((code) => (
@@ -81,7 +116,7 @@ const FilterExamSidebar = ({ isMobile = false, onClose = ()=>{} }) => {
 
                 {selectedGrade && (
                     codes?.['chapter']
-                        ?.filter((code) => code.code.startsWith(selectedGrade))
+                        ?.filter((code) => code.code.startsWith(selectedGrade) && code.code.length === 4)
                         ?.map((code) => (
                             <TickSideBar
                                 title={code.description}
@@ -117,7 +152,7 @@ const FilterExamSidebar = ({ isMobile = false, onClose = ()=>{} }) => {
 
     if (!isMobile) {
         return (
-            <div className="hidden lg:block sticky top-4 h-[calc(100vh-2rem)] w-full bg-white flex-shrink-0 overflow-y-auto hide-scrollbar rounded-xl shadow-sm">
+            <div className="hidden lg:block sticky top-4 h-full w-full bg-white flex-shrink-0 overflow-y-auto hide-scrollbar rounded-xl shadow-sm">
                 {sidebarContent}
 
             </div>
@@ -150,7 +185,7 @@ const FilterGroup = ({ title, isOpen, setIsOpen, children }) => (
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
             </svg>
         </button>
-        <div className={`transition-all duration-300 overflow-hidden ${isOpen ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"} flex flex-col gap-2 pl-2`}>
+        <div className={`transition-all duration-300 overflow-hidden ${isOpen ? "opacity-100" : "max-h-0 opacity-0"} flex flex-col gap-2 pl-2`}>
             {children}
         </div>
         <div className="mt-4 h-[1px] w-full bg-neutral-200" />

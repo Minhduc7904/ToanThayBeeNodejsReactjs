@@ -44,7 +44,6 @@ export const registerUser = async (req, res) => {
     const newUser = await db.User.create({
         ...req.body,
         username,
-        userType: UserType.STUDENT,
         status: UserStatus.ACTIVE,
         password: hashedPassword
     })
@@ -103,19 +102,17 @@ export const login = async (req, res) => {
     await db.User.update({ currentToken: token }, { where: { id: user.id } });
 
     // Set token vào HttpOnly cookie
+    res.header('Access-Control-Allow-Origin', req.headers.origin || '*');
+    res.header('Access-Control-Allow-Credentials', 'true');
+
+    // Set cookie và trả về response
     res.cookie('token', token, {
         httpOnly: true,
-        secure: true, // ✅ Chỉ true khi deploy
-        sameSite: 'None', // ✅ None để cho phép cross-origin
-        maxAge: 30 * 24 * 60 * 60 * 1000, // 30 ngày
+        secure: true,
+        sameSite: 'none',
+        path: '/',
+        maxAge: 24 * 60 * 60 * 1000
     });
-
-    // res.cookie('token', token, {
-    //     httpOnly: true,
-    //     secure: true,              // BẮT BUỘC nếu frontend chạy qua ngrok (HTTPS)
-    //     sameSite: 'None',          // Cho phép cross-origin
-    //     maxAge: 2592000000,
-    // });
 
     return res.status(200).json({
         message: 'Đăng nhập thành công',
@@ -138,7 +135,7 @@ export const checkLogin = async (req, res) => {
         // Tìm user trong database
         const user = await db.User.findOne({
             where: { id: decoded.id },
-            attributes: ['id', 'lastName', 'firstName', 'email', 'userType', 'currentToken'], // Lấy các thông tin cần thiết
+            attributes: ['id', 'lastName', 'firstName', 'phone', 'userType', 'currentToken', 'highSchool', 'class', 'gender', 'birthDate', 'avatarUrl'], // Lấy các thông tin cần thiết
         });
 
         if (!user) {
@@ -155,8 +152,13 @@ export const checkLogin = async (req, res) => {
                 id: user.id,
                 lastName: user.lastName,
                 firstName: user.firstName,
-                email: user.email,
-                userType: user.userType, // Trả về userType
+                userType: user.userType,
+                highSchool: user.highSchool,
+                class: user.class,
+                phone: user.phone,
+                gender: user.gender,
+                birthDate: user.birthDate,
+                avatarUrl: user.avatarUrl,
             },
         });
     } catch (error) {
@@ -316,7 +318,7 @@ export const getUserById = async (req, res) => {
     return res.status(200).json({
         message: 'Chi tiết người dùng',
         user: new UserResponse(userDetail)
-        // userDetail 
+        // userDetail
     })
 }
 
@@ -382,7 +384,7 @@ export const getUsersByClass = async (req, res) => {
     const sortOrder = req.query.sortOrder || 'ASC'
 
     if (!classId) {
-        return res.status(400).json({ message: '❌ Thiếu classId!' })
+        return res.status(400).json({ message: 'Thiếu classId!' })
     }
 
     const whereClause = search.trim() ? {
@@ -413,7 +415,7 @@ export const getUsersByClass = async (req, res) => {
     const total = formattedUsers.length
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách người dùng trong lớp thành công!',
+        message: 'Lấy danh sách người dùng trong lớp thành công!',
         data: formattedUsers,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
@@ -430,7 +432,7 @@ export const updateAvatar = async (req, res) => {
 
         if (!user) {
             await transaction.rollback()
-            return res.status(404).json({ message: '❌ Người dùng không tồn tại' })
+            return res.status(404).json({ message: 'Người dùng không tồn tại' })
         }
 
         const oldAvatarUrl = user.avatarUrl
@@ -438,13 +440,13 @@ export const updateAvatar = async (req, res) => {
 
         if (!newAvatarFile) {
             await transaction.rollback()
-            return res.status(400).json({ message: '❌ Vui lòng chọn ảnh để tải lên.' })
+            return res.status(400).json({ message: 'Vui lòng chọn ảnh để tải lên.' })
         }
         const newAvartarUrl = await uploadImage(newAvatarFile)
 
         if (!newAvartarUrl) {
             await transaction.rollback()
-            return res.status(500).json({ message: '❌ Lỗi khi tải ảnh mới lên.' })
+            return res.status(500).json({ message: 'Lỗi khi tải ảnh mới lên.' })
         }
 
         const [updated] = await db.User.update(
@@ -455,15 +457,15 @@ export const updateAvatar = async (req, res) => {
         if (!updated) {
             await cleanupUploadedFiles([newAvartarUrl])
             await transaction.rollback()
-            return res.status(500).json({ message: '❌ Lỗi khi cập nhật avatar.' })
+            return res.status(500).json({ message: 'Lỗi khi cập nhật avatar.' })
         }
 
         if (oldAvatarUrl) {
             try {
                 await cleanupUploadedFiles([oldAvatarUrl])
-                console.log(`✅ Đã xóa ảnh cũ: ${oldAvatarUrl}`)
+                console.log(`Đã xóa ảnh cũ: ${oldAvatarUrl}`)
             } catch (err) {
-                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldAvatarUrl}`, err)
+                console.error(`Lỗi khi xóa ảnh cũ: ${oldAvatarUrl}`, err)
                 await cleanupUploadedFiles([newAvartarUrl])
                 await transaction.rollback()
                 return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message })
@@ -473,14 +475,40 @@ export const updateAvatar = async (req, res) => {
         await transaction.commit()
 
         return res.status(200).json({
-            message: '✅ Cập nhật avartar thành công.',
+            message: 'Cập nhật avartar thành công.',
             oldAvatarUrl,
             newAvartarUrl,
         })
 
     } catch (error) {
-        console.error('❌ Lỗi khi cập nhật avartar:', error)
+        console.error('Lỗi khi cập nhật avartar:', error)
         await transaction.rollback()
         return res.status(500).json({ message: 'Lỗi server.', error: error.message })
     }
 }
+
+export const getUserMe = async (req, res) => {
+    try {
+        // Lấy token từ cookie và header
+        const token = req.cookies.token || null;
+
+        const authHeader = req.headers.authorization || '';
+        const headerToken = authHeader.startsWith('Bearer ') ? authHeader.split(' ')[1] : null;
+
+        // Xác định nguồn token
+        let tokenSource = 'none';
+        if (token) tokenSource = 'cookie';
+        else if (headerToken) tokenSource = 'header';
+
+        return res.status(200).json({
+            message: 'Thông tin xác thực',
+            hasTokenInCookie: !!token,
+            hasTokenInHeader: !!headerToken,
+            tokenSource
+        });
+    } catch (error) {
+        console.error('Lỗi khi kiểm tra token:', error);
+        return res.status(500).json({ message: 'Lỗi server.', error: error.message });
+    }
+};
+

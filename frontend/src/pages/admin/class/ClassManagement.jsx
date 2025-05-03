@@ -17,7 +17,7 @@ const ClassManagement = () => {
             <AdminModal isOpen={isAddView} headerText={'Tạo lớp mới'} onClose={() => dispatch(setIsAddView(false))}>
                 <AddClassModal onClose={() => dispatch(setIsAddView(false))} />
             </AdminModal>
-            <div className="text-[#090a0a] text-[32px] font-bold font-['Be Vietnam Pro'] leading-9">
+            <div className="text-[#090a0a] text-[32px] font-bold font-bevietnam leading-9">
                 Danh sách lớp học
             </div>
             <FunctionBarAdmin />

@@ -9,7 +9,7 @@ export const getLessonById = async (req, res) => {
         })
     }
     return res.status(200).json({
-        message: '✅ Lấy thông tin buổi học thành công!',
+        message: 'Lấy thông tin buổi học thành công!',
         data: lesson
     })
 }
@@ -30,7 +30,7 @@ export const getLessonByClassId = async (req, res) => {
     })
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách buổi học thành công!',
+        message: 'Lấy danh sách buổi học thành công!',
         data: lessons,
     })
 }
@@ -56,20 +56,20 @@ export const insertLesson = async (req, res) => {
         );
 
         if (!classUpdated[0]) {
-            throw new Error("❌ Không tìm thấy lớp để cập nhật lessonCount.");
+            throw new Error("Không tìm thấy lớp để cập nhật lessonCount.");
         }
 
         await t.commit();
 
         return res.status(201).json({
-            message: "✅ Tạo buổi học mới thành công và cập nhật lessonCount!",
+            message: "Tạo buổi học mới thành công và cập nhật lessonCount!",
             data: newLesson,
         });
     } catch (error) {
         await t.rollback();
 
         return res.status(500).json({
-            message: "❌ Lỗi khi tạo buổi học hoặc cập nhật lessonCount.",
+            message: "Lỗi khi tạo buổi học hoặc cập nhật lessonCount.",
             error: error.message,
         });
     }
@@ -86,7 +86,7 @@ export const changeLesson = async (req, res) => {
     }
     await lesson.update(req.body)
     return res.status(200).json({
-        message: '✅ Cập nhật thông tin buổi học thành công!',
+        message: 'Cập nhật thông tin buổi học thành công!',
     })
 }
 
@@ -104,7 +104,7 @@ export const deleteLesson = async (req, res) => {
         });
 
         if (!lessonToDelete) {
-            throw new Error("❌ Không tìm thấy buổi học để xóa.");
+            throw new Error("Không tìm thấy buổi học để xóa.");
         }
 
         // Xóa buổi học
@@ -120,21 +120,21 @@ export const deleteLesson = async (req, res) => {
         );
 
         if (!classUpdated[0]) {
-            throw new Error("❌ Không tìm thấy lớp để cập nhật lessonCount.");
+            throw new Error("Không tìm thấy lớp để cập nhật lessonCount.");
         }
 
         // Commit transaction
         await t.commit();
 
         return res.status(200).json({
-            message: "✅ Xóa buổi học thành công và cập nhật lessonCount!",
+            message: "Xóa buổi học thành công và cập nhật lessonCount!",
         });
     } catch (error) {
         // Rollback transaction nếu có lỗi
         await t.rollback();
 
         return res.status(500).json({
-            message: "❌ Lỗi khi xóa buổi học hoặc cập nhật lessonCount.",
+            message: "Lỗi khi xóa buổi học hoặc cập nhật lessonCount.",
             error: error.message,
         });
     }

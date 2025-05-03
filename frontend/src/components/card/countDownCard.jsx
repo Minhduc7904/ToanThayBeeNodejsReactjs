@@ -25,33 +25,32 @@ const CountDownCard = ({ targetTime, title }) => {
     }, [targetTime]);
 
     return (
-        <div className="w-48 p-3 gap-1 text-sm bg-gradient-to-br from-purple-500 to-pink-400 text-white rounded-2xl shadow-lg flex flex-col items-center transition-all">
-            <p className="text-center text-sm font-semibold font-['Be_Vietnam_Pro']">
+        <div className="w-44 sm:w-48 p-2 sm:p-3 gap-1 sm:gap-2 text-xs sm:text-sm bg-gradient-to-br from-purple-500 to-pink-400 text-white rounded-2xl shadow-lg flex flex-col items-center transition-all">
+            <p className="text-center font-semibold font-['Be_Vietnam_Pro']">
                 {title}
             </p>
 
             {timeLeft ? (
-                <div className="grid grid-cols-4 gap-2 w-full text-center">
+                <div className="grid grid-cols-4 gap-1 sm:gap-2 w-full text-center">
                     <TimeBox label="Ngày" value={timeLeft.days} />
                     <TimeBox label="Giờ" value={timeLeft.hours} />
                     <TimeBox label="Phút" value={timeLeft.minutes} />
                     <TimeBox label="Giây" value={timeLeft.seconds} />
                 </div>
             ) : (
-                <div className="text-red-100 font-medium text-sm">Hết giờ!</div>
+                <div className="text-red-100 font-medium">Hết giờ!</div>
             )}
         </div>
     );
 };
 
 const TimeBox = ({ label, value }) => (
-    <div className="text-sm flex flex-col items-center bg-white/80 text-purple-700 rounded-lg py-1 px-2 shadow-inner">
-        <span className="text-sm font-bold font-mono">
+    <div className="flex flex-col items-center bg-white/80 text-purple-700 rounded-lg py-1 px-1.5 sm:px-2 shadow-inner">
+        <span className="text-sm font-bold font-mono leading-tight">
             {String(value).padStart(2, "0")}
         </span>
         <span className="text-[10px] font-medium">{label}</span>
     </div>
 );
-
 
 export default CountDownCard;

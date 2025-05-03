@@ -1,0 +1,178 @@
+/* Custom styles for PDF printing */
+
+@media print {
+  /* Hide elements that shouldn't be printed */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure proper content flow without forced page breaks */
+  .avoid-page-break {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Section headers should stay with their content */
+  .print-section > div:first-child {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    margin-top: 2mm; /* Minimal space between sections */
+  }
+
+  /* Ensure first section doesn't have extra space at top */
+  .first-section > div:first-child {
+    margin-top: 0 !important;
+  }
+
+  /* Keep header and first section together */
+  .no-break-header {
+    display: inline-block;
+    width: 100%;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Minimal space between sections */
+  .print-section {
+    /* margin-bottom: 2mm; */
+  }
+
+  /* Removed automatic page breaks */
+
+  /* Container for printed content */
+  .print-container {
+    width: 100%;
+    position: relative;
+  }
+
+  /* Section styling */
+  .print-section {
+    /* margin-bottom: 10mm; */
+  }
+
+  /* First section styling */
+  .first-section {
+    /* No page break controls */
+  }
+
+  /* Force first section to stay with header */
+  .no-break-header {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    display: inline-block;
+    width: 100%;
+  }
+
+  /* Keep section headers with their content */
+  .print-section > div:first-child {
+    break-after: avoid !important;
+    page-break-after: avoid !important;
+    margin-bottom: 5mm;
+  }
+
+  /* Ensure section headers don't get orphaned */
+  .print-section > div:first-child + div {
+    break-before: avoid !important;
+    page-break-before: avoid !important;
+  }
+
+  /* Question styling */
+  .print-question {
+    margin-bottom: 1mm;
+    padding-bottom: 0;
+    position: relative;
+  }
+
+  /* Question content can break across pages if needed */
+  .question-content {
+    margin-bottom: 0.5mm;
+  }
+
+  /* Media and statements should stay together */
+  .question-media-and-statements {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Minimal space between questions */
+  .print-question + .print-question {
+    margin-top: 1mm;
+  }
+
+  /* Ensure questions with images don't break across pages */
+  .print-question img {
+    max-height: 150mm;
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+  }
+
+  /* Footer styling */
+  .print-footer {
+    position: fixed;
+    bottom: 5mm;
+    left: 0;
+    right: 0;
+    width: 100%;
+    font-size: 10px;
+    color: gray;
+    padding-top: 3mm;
+    border-top: 1px solid #eee;
+    background-color: white;
+    z-index: 1000;
+  }
+
+  /* Page number styling */
+  .pageNumber:before {
+    content: counter(page);
+  }
+
+  .totalPages:before {
+    content: counter(pages);
+  }
+
+  /* Ensure content doesn't overlap with footer */
+  .print-footer-spacer {
+    height: 15mm;
+    width: 100%;
+  }
+
+  /* Improve text readability */
+  p, div, h1, h2, h3, h4, h5, h6 {
+    orphans: 4;
+    widows: 4;
+  }
+
+  /* Ensure text doesn't get cut off at page breaks */
+  .print-question p, .print-question div {
+    margin-bottom: 0;
+    orphans: 4;
+    widows: 4;
+  }
+
+  /* Ensure proper text rendering */
+  body {
+    text-rendering: optimizeLegibility;
+  }
+
+  /* Prevent text from being cut off at page breaks */
+  .print-question p {
+    margin-bottom: 2mm;
+  }
+
+  /* Ensure images don't break across pages */
+  img {
+    break-inside: avoid !important;
+    page-break-inside: avoid !important;
+    max-height: 150mm;
+  }
+
+  /* Add minimal space after images */
+  img + p, img + div {
+    margin-top: 0.5mm;
+  }
+
+  /* Add minimal space before images */
+  p + img, div + img {
+    margin-top: 0.5mm;
+  }
+}

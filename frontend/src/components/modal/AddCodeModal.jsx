@@ -21,9 +21,11 @@ const AddCodeModal = ({ onClose }) => {
         { code: "difficulty", description: "Độ khó" },
         { code: "question type", description: "Loại câu hỏi" },
         { code: "highSchool", description: "Trường" },
-        { code: "waitStatus", description: "Trạng thái chờ" },
-        { code: "logType" , description: "Loại log" },
+        { code: "wait status", description: "Trạng thái chờ" },
+        { code: "cheat type" , description: "Loại log" },
         { code: "classStatus", description: "Trạng thái lớp" },
+        { code: "article type", description: "Loại bài viết" },
+        { code: "duration", description: "Thời gian" },
     ]
 
     const { loading } = useSelector(state => state.states);
@@ -53,7 +55,7 @@ const AddCodeModal = ({ onClose }) => {
         >
             <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Mã <span className="text-red-500"> *</span>
                     </div>
                     <input
@@ -66,7 +68,7 @@ const AddCodeModal = ({ onClose }) => {
                     />
                 </div>
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Kiểu <span className="text-red-500"> *</span>
                     </div>
                     <DropMenuBarAdmin
@@ -81,7 +83,7 @@ const AddCodeModal = ({ onClose }) => {
             </div>
             <div className="self-stretch px-1 inline-flex justify-start items-start gap-10">
                 <div className="inline-flex flex-1 flex-col justify-start items-start gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Mô tả
                     </div>
                     <textarea

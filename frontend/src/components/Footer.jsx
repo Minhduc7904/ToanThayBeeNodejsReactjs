@@ -125,7 +125,7 @@ const Footer = () => {
 
 
                 <p className="text-xs text-right font-medium">
-                    © 2018 - 2025 Toán Thầy Bee. Tự hào là nền tảng luyện thi toán hàng đầu Việt Nam.
+                    © 2018 - {new Date().getFullYear()} Toán Thầy Bee. Tự hào là nền tảng luyện thi toán hàng đầu Việt Nam.
                 </p>
 
                 <p className="text-xs text-right max-w-[20rem] font-medium text-gray-300">

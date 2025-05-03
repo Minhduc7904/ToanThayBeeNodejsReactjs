@@ -44,7 +44,14 @@ const InputSearch = ({ onDebouncedChange, placeholder = "Nhập id câu hỏi", 
 
                 {/* Loading spinner (phải) */}
                 <div className="absolute inset-y-0 left-3 flex items-center">
-                    {loading && <LoadingSpinner size="1.25rem" color="border-gray-400" />}
+                    {loading && (
+                        <LoadingSpinner
+                            type="border"
+                            color="border-gray-500"
+                            size="1.25rem"
+                            thickness="border-2"
+                        />
+                    )}
                 </div>
             </div>
         </div>

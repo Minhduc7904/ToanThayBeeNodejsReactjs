@@ -1,0 +1,85 @@
+/* Hiệu ứng mũi tên thứ hạng */
+@keyframes rankUp {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+@keyframes rankDown {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  50% {
+    transform: scale(1.3);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+}
+
+.rank-up {
+  animation: rankUp 1.5s ease;
+  color: #10b981 !important; /* Màu xanh lá */
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(16, 185, 129, 0.3);
+}
+
+.rank-down {
+  animation: rankDown 1.5s ease;
+  color: #ef4444 !important; /* Màu đỏ */
+  font-weight: bold;
+  text-shadow: 0 0 3px rgba(239, 68, 68, 0.3);
+}
+
+.rank-change {
+  display: inline-flex;
+  align-items: center;
+  font-weight: bold;
+  margin-left: 8px;
+  padding: 2px 6px;
+  border-radius: 4px;
+  transition: all 0.3s ease;
+}
+
+.rank-up.rank-change {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.rank-down.rank-change {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.rank-icon {
+  margin-right: 4px;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.7;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.7;
+  }
+}
+
+/* Hiệu ứng highlight cho dòng mới cập nhật */
+.row-updated {
+  transition: background-color 1.5s ease;
+  background-color: rgba(59, 130, 246, 0.1);
+}

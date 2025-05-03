@@ -39,10 +39,10 @@ const QuestionDetail = ({ selectedQuestionId }) => {
         if (Array.isArray(codes["chapter"])) {
             if (question.class && question.class.trim() !== "") {
                 setOptionChapter(
-                    codes["chapter"].filter((code) => code.code.startsWith(question.class))
+                    codes["chapter"].filter((code) => code.code.startsWith(question.class) && code.code.length === 5)
                 );
             } else {
-                setOptionChapter(codes["chapter"]);
+                setOptionChapter(codes["chapter"].filter((code) => code.code.length === 5));
             }
         } else {
             setOptionChapter([]);
@@ -77,6 +77,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
         if (!check) return;
         const questionData = {
             content: processQuestion.content,
+            correctAnswer: processQuestion.correctAnswer,
             difficulty: processQuestion.difficulty,
             chapter: processQuestion.chapter,
             class: processQuestion.class,
@@ -102,7 +103,13 @@ const QuestionDetail = ({ selectedQuestionId }) => {
     if (loading) {
         return (
             <div className="flex items-center justify-center h-screen">
-                <LoadingSpinner color="border-black" size="5rem" />
+                <LoadingSpinner
+                    type="dots"
+                    color="border-blue-600"
+                    size="4rem"
+                    showText={true}
+                    text="Đang tải thông tin câu hỏi..."
+                />
             </div>
         );
     }
@@ -112,7 +119,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
             <>
                 <p className="text-center text-gray-500">Không tìm thấy câu hỏi.</p>
                 <button
-                    onClick={() => navigate(-1)}
+                    onClick={() => navigate("/admin/question-management")}
                     className="px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700"
                 >
                     ← Quay lại danh sách
@@ -125,7 +132,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
     return (
         <div className="flex flex-col gap-4">
             <div className="flex gap-2 items-center">
-                <button onClick={() => navigate("/admin/question-management")} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
+                <button onClick={() => navigate(-1)} className="flex items-center justify-center w-10 h-10 hover:bg-[#F6FAFD] rounded-lg">
                     <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" viewBox="0 0 32 32" fill="none">
                         <path d="M12.6667 8.66675L5.50292 15.8289C5.38989 15.94 5.33337 16.0856 5.33337 16.2312M12.6667 23.3334L5.50292 16.6335C5.38989 16.5224 5.33337 16.3768 5.33337 16.2312M5.33337 16.2312H26.6667" stroke="#131214" strokeWidth="1.5" strokeLinecap="round" />
                     </svg>
@@ -138,7 +145,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
             <div className="flex flex-col gap-[1.25rem] w-full">
                 <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                     <div className="flex-1 flex flex-col gap-[0.25rem]">
-                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                             Câu hỏi <span className="text-red-500"> *</span>
                         </label>
                         <textarea
@@ -149,7 +156,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                         />
                     </div>
                     <div className="flex-1 flex flex-col gap-[0.25rem]">
-                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                        <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                             Xem trước Latex
                         </label>
                         <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">
@@ -166,7 +173,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                         <div className="flex w-full h-2 border-b border-[#E7E7ED]"></div>
                         <div className="flex w-full h-[40rem] gap-[1.25rem] items-stretch">
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Mệnh đề <span className="text-red-500"> *</span>
                                 </label>
 
@@ -181,7 +188,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                                 ))}
                             </div>
                             <div className="flex-1 flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Xem trước Latex
                                 </label>
                                 {question.statements.map((statement, index) => (
@@ -191,7 +198,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                                 ))}
                             </div>
                             <div className=" flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Đáp án <span className="text-red-500"> *</span>
                                 </label>
                                 {question.statements.map((statement, index) => (
@@ -204,7 +211,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                             </div>
                             {question.typeOfQuestion === "DS" && (
                                 <div className="flex flex-col gap-[0.25rem]">
-                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                         Độ khó
                                     </label>
                                     {question.statements.map((statement, index) => (
@@ -219,7 +226,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                                 </div>
                             )}
                             <div className=" flex flex-col gap-[0.25rem]">
-                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                                <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                                     Hình ảnh
                                 </label>
                                 {question.statements.map((statement, index) => (
@@ -236,7 +243,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
 
             <div className="flex w-full h-[12rem] gap-[1.25rem] items-stretch">
                 <div className="flex-1 flex flex-col gap-[0.25rem]">
-                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                         Lời giải
                     </label>
                     <textarea
@@ -247,7 +254,7 @@ const QuestionDetail = ({ selectedQuestionId }) => {
                     />
                 </div>
                 <div className="flex-1 flex flex-col gap-[0.25rem]">
-                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-['Be Vietnam Pro']">
+                    <label className="text-[#090a0a] font-bold text-[1.5rem] font-bevietnam">
                         Xem trước Latex
                     </label>
                     <div className="w-full flex-1 border border-[#707070] rounded-[0.5rem] p-[0.5rem] overflow-y-auto hide-scrollbar break-all">

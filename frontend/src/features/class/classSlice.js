@@ -14,6 +14,13 @@ export const fetchClasses = createAsyncThunk(
     }
 );
 
+export const fetchClassesPublic = createAsyncThunk(
+    "classes/fetchClassesPublic",
+    async (_, { dispatch }) => {
+        return await apiHandler(dispatch, ClassApi.getClassPublicAPI, null, () => { }, false, false);
+    }
+);
+
 export const fetchClassById = createAsyncThunk(
     "classes/fetchClassById",
     async (id, { dispatch }) => {
@@ -27,14 +34,21 @@ export const fetchClassesByUser = createAsyncThunk(
         return await apiHandler(dispatch, ClassApi.getClassByUserAPI, null, (data) => {
             dispatch(setCurrentPage(1));
             dispatch(setTotalItems(data.totalItems));
-        }, true, false);
+        }, false, false);
     }
 );
 
 export const fetchLessonLearningItemInClass = createAsyncThunk(
     "classes/fetchLessonLearningItemInClass",
     async (classCode, { dispatch }) => {
-        return await apiHandler(dispatch, ClassApi.getLessonLearningItemInClassAPI, classCode, () => { }, true, false);
+        return await apiHandler(dispatch, ClassApi.getLessonLearningItemInClassAPI, classCode, () => { }, false, false);
+    }
+);
+
+export const fetchClassesOverview = createAsyncThunk(
+    "classes/fetchClassesOverview",
+    async (_, { dispatch }) => {
+        return await apiHandler(dispatch, ClassApi.getClassOverviewAPI, null, () => { }, false, false);
     }
 );
 
@@ -48,7 +62,7 @@ export const joinClass = createAsyncThunk(
 export const getDataForLearning = createAsyncThunk(
     "classes/getDataForLearning",
     async (classCode, { dispatch }) => {
-        return await apiHandler(dispatch, ClassApi.getDataForLearningAPI, classCode, () => { }, true, false);
+        return await apiHandler(dispatch, ClassApi.getDataForLearningAPI, classCode, () => { }, false, false);
     }
 );
 
@@ -75,15 +89,15 @@ export const postClass = createAsyncThunk(
 
 export const putClass = createAsyncThunk(
     "classes/putClass",
-    async ({data, id} , { dispatch }) => {
-        return await apiHandler(dispatch, ClassApi.putClassAPI, {data, id}, () => { }, true, false);
+    async ({ data, id }, { dispatch }) => {
+        return await apiHandler(dispatch, ClassApi.putClassAPI, { data, id }, () => { }, true, false);
     }
 );
 
 export const acceptStudentClass = createAsyncThunk(
     "classes/acceptStudentClass",
-    async ({classId, studentId}, { dispatch }) => {
-        return await apiHandler(dispatch, ClassApi.acceptStudentClassAPI, {classId, studentId}, () => { }, true, false);
+    async ({ classId, studentId }, { dispatch }) => {
+        return await apiHandler(dispatch, ClassApi.acceptStudentClassAPI, { classId, studentId }, () => { }, true, false);
     }
 );
 
@@ -129,10 +143,24 @@ export const deleteLearningItem = createAsyncThunk(
     }
 );
 
+export const markLearningItem = createAsyncThunk(
+    "classes/markLearningItem",
+    async (data, { dispatch }) => {
+        return await apiHandler(dispatch, ClassApi.markLearningItemAPI, data, () => { }, false, false);
+    }
+);
+
 export const postLearningItem = createAsyncThunk(
     "classes/postLearningItem",
     async (data, { dispatch }) => {
         return await apiHandler(dispatch, ClassApi.postLearningItemAPI, data, () => { }, true, false);
+    }
+);
+
+export const getUncompletedLearningItem = createAsyncThunk(
+    "classes/getUncompletedClass",
+    async (_, { dispatch }) => {
+        return await apiHandler(dispatch, ClassApi.getUncompletedLearningItemAPI, null, () => { }, false, false);
     }
 );
 
@@ -148,6 +176,9 @@ const classSlice = createSlice({
     initialState: {
         classes: [],
         classDetail: null,
+        learningItems: [],
+        loadingClass: false,
+        loadingLearningItem: false,
     },
     reducers: {
         setClass: (state, action) => {
@@ -174,6 +205,17 @@ const classSlice = createSlice({
             .addCase(fetchClassesByUser.fulfilled, (state, action) => {
                 state.classes = action.payload.data;
             })
+            .addCase(fetchClassesOverview.pending, (state) => {
+                state.classes = [];
+                state.loadingClass = true;
+            })
+            .addCase(fetchClassesOverview.fulfilled, (state, action) => {
+                state.classes = action.payload.data;
+                state.loadingClass = false;
+            })
+            .addCase(fetchClassesOverview.rejected, (state) => {
+                state.loadingClass = false;
+            })
             .addCase(fetchLessonLearningItemInClass.pending, (state) => {
                 state.classDetail = null;
             })
@@ -196,6 +238,35 @@ const classSlice = createSlice({
             })
             .addCase(getFullLessonLearningItemByClassId.fulfilled, (state, action) => {
                 state.classDetail = action.payload.data;
+            })
+            .addCase(markLearningItem.fulfilled, (state, action) => {
+                const { learningItemId, isDone, studyTime } = action.payload.data;
+
+                for (const lesson of state.classDetail?.lessons || []) {
+                    const learningItem = lesson.learningItems?.find(item => item.id === learningItemId);
+                    if (learningItem) {
+                        learningItem.studyStatuses[0].isDone = isDone;
+                        learningItem.studyStatuses[0].studyTime = studyTime;
+                        break;
+                    }
+                }
+            })
+            .addCase(getUncompletedLearningItem.pending, (state) => {
+                state.learningItems = [];
+                state.loadingLearningItem = true;
+            })
+            .addCase(getUncompletedLearningItem.fulfilled, (state, action) => {
+                state.learningItems = action.payload.data;
+                state.loadingLearningItem = false;
+            })
+            .addCase(getUncompletedLearningItem.rejected, (state) => {
+                state.loadingLearningItem = false;
+            })
+            .addCase(fetchClassesPublic.pending, (state) => {
+                state.classes = [];
+            })
+            .addCase(fetchClassesPublic.fulfilled, (state, action) => {
+                state.classes = action.payload.data;
             })
     },
 });

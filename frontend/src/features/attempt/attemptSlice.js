@@ -1,7 +1,7 @@
 
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import { apiHandler } from "../../utils/apiHandler";
-import { getAttemptsByExamIdApi, getAttemptByStudentIdApi, getAttemptByExamIdAdminApi } from "../../services/attemptApi";
+import { getAttemptsByExamIdApi, getAttemptByStudentIdApi, getAttemptByUser, getAttemptByExamIdAdminApi } from "../../services/attemptApi";
 import { setExam } from "../exam/examSlice";
 import { setCurrentPage, setLimit, setTotalItems } from "../filter/filterSlice";
 
@@ -13,7 +13,17 @@ export const fetchAttemptsByExamId = createAsyncThunk(
             dispatch(setTotalItems(data.totalItems));
             dispatch(setLimit(data.limit));
             dispatch(setExam(data.exam));
-        }, true, false);
+        }, false, false);
+    }
+);
+
+export const fetchAttemptsByUser = createAsyncThunk(
+    "attempts/fetchAttemptsByUser",
+    async (data, { dispatch }) => {
+        return await apiHandler(dispatch, getAttemptByUser, data, (data) => {
+            dispatch(setCurrentPage(data.data.currentPage));
+            dispatch(setTotalItems(data.data.totalItems));
+        }, false, false);
     }
 );
 
@@ -24,7 +34,7 @@ export const fetchAttemptByStudentId = createAsyncThunk(
             dispatch(setExam(data.exam));
             dispatch(setCurrentPage(1));
             dispatch(setLimit(10));
-        }, true, false);
+        }, false, false);
     }
 );
 
@@ -44,6 +54,10 @@ const attemptSlice = createSlice({
     name: "attempts",
     initialState: {
         attempts: [],
+        bestAttempt: null,
+        userRank: null,
+        userAttemptCount: null,
+        loadingAttempt: false,
     },
     reducers: {
         setAttempts: (state, action) => {
@@ -54,11 +68,30 @@ const attemptSlice = createSlice({
         builder
             .addCase(fetchAttemptsByExamId.pending, (state) => {
                 state.attempts = [];
+                state.bestAttempt = null;
+                state.userRank = null;
+                state.userAttemptCount = null;
             })
             .addCase(fetchAttemptsByExamId.fulfilled, (state, action) => {
                 if (action.payload) {
                     state.attempts = action.payload.attempts;
+                    state.bestAttempt = action.payload.userBestAttempt;
+                    state.userRank = action.payload.userRank;
+                    state.userAttemptCount = action.payload.userAttemptCount;
                 }
+            })
+            .addCase(fetchAttemptsByUser.pending, (state) => {
+                state.attempts = [];
+                state.loadingAttempt = true;
+            })
+            .addCase(fetchAttemptsByUser.fulfilled, (state, action) => {
+                if (action.payload) {
+                    state.attempts = action.payload.data.data;
+                }
+                state.loadingAttempt = false;
+            })
+            .addCase(fetchAttemptsByUser.rejected, (state) => {
+                state.loadingAttempt = false;
             })
             .addCase(fetchAttemptByStudentId.pending, (state) => {
                 state.attempts = [];

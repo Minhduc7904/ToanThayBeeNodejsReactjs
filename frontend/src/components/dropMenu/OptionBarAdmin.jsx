@@ -11,11 +11,18 @@ const DropMenuBarAdmin = ({ options, placeholder = "Chọn một mục", selecte
         setIsOpen(false); // Đóng dropdown sau khi chọn
     };
 
+    // Update placeholder text when selectedOption or options change
     useEffect(() => {
-        if (selectedOption || selectedOption === false) {
-            setP(options.find((option) => option.code === selectedOption)?.description);
+        if ((selectedOption || selectedOption === false) && options && options.length > 0) {
+            const selectedItem = options.find((option) => option.code === selectedOption);
+            if (selectedItem) {
+                setP(selectedItem.description);
+            }
         }
+    }, [selectedOption, options]);
 
+    // Handle click outside to close dropdown
+    useEffect(() => {
         const handleClickOutside = (event) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
                 setIsOpen(false);

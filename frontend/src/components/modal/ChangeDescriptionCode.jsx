@@ -23,7 +23,7 @@ const ChangeDescriptionCode = ({ code, onClose }) => {
             <div className="bg-white rounded-lg shadow-lg p-6 w-[400px]">
 
                 <div className="flex flex-col gap-2">
-                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-['Be Vietnam Pro'] leading-loose">
+                    <div className="justify-center text-[#090a0a] text-2xl font-bold font-bevietnam leading-loose">
                         Mô tả
                     </div>
                     <textarea

@@ -9,6 +9,14 @@ export const getAttemptsByExamIdApi = async ({ examId, currentPage }) => {
     return response.data;
 }
 
+export const getAttemptByUser = async ({currentPage = 1}) => {
+    return await api.get(`/v1/user/attempt`, {
+        params: {
+            page: currentPage,
+        }
+    });
+}
+
 export const getAttemptByStudentIdApi = async ({ examId }) => {
     return await api.get(`/v1/user/attempt/exam/${examId}/history`);
 }

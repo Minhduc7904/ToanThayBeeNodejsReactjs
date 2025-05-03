@@ -6,7 +6,7 @@ import cors from 'cors';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import { AppRoute } from './routes/AppRoute.js';
-import db from './models/index.js'; // ✅ ĐÚNG
+import db from './models/index.js'; // ĐÚNG
 import os from 'os';
 import path from 'path';
 import { submitExam } from './controllers/ExamController.js';
@@ -19,16 +19,37 @@ const server = http.createServer(app); // gộp socket + express
 const port = process.env.PORT || 3000;
 // const hostname= '192.168.0.106'
 const frontendUrl = process.env.FRONTEND_URL || 'https://toanthaybee.edu.vn';
-const ngrokUrl = process.env.NGROK_URL || 'https://4e04-14-191-32-178.ngrok-free.app';
+const ngrokUrl = process.env.NGROK_URL
 
 // Cấu hình middleware
 app.use("/images", express.static(path.join(path.resolve(), "public")));
 app.use(cookieParser());
-app.use(cors({
-    origin: [frontendUrl, "https://toanthaybee.edu.vn", "http://localhost:8081", "http://192.168.147.164:8081", "https://toanthaybee.edu.vn", 'http://localhost:4000', ngrokUrl],
-    // origin: "*",
+const allowedOrigins = [
+    frontendUrl,
+    'https://toanthaybee.edu.vn',
+    ngrokUrl
+].filter(Boolean); // loại bỏ undefined nếu có
+
+const corsOptions = {
+    origin: function (origin, callback) {
+        if (!origin || allowedOrigins.includes(origin)) {
+            callback(null, true);
+        } else {
+            callback(new Error('Not allowed by CORS: ' + origin));
+        }
+    },
     credentials: true,
-}));
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin', 'Accept'],
+    exposedHeaders: ['Content-Range', 'X-Content-Range', 'Authorization'],
+    maxAge: 600, // Cache CORS preflight requests for 10 minutes
+    preflightContinue: false,
+    optionsSuccessStatus: 204
+};
+
+// Thêm middleware CORS trước các routes
+app.use(cors(corsOptions));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -63,10 +84,20 @@ AppRoute(app);
 // -------------------------
 const io = new Server(server, {
     cors: {
-        origin: [frontendUrl, ngrokUrl, "https://toan-thay-bee-frontend-reactjs-d5fo.vercel.app", "http://localhost:8081", 'http://localhost:4000'],
-        // origin: "*",
+        origin: function (origin, callback) {
+            if (!origin || allowedOrigins.includes(origin)) {
+                callback(null, true);
+            } else {
+                callback(new Error('Not allowed by CORS: ' + origin));
+            }
+        },
         credentials: true,
-    }
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS', 'PATCH'],
+        allowedHeaders: ['Content-Type', 'Authorization', 'X-Requested-With', 'Origin', 'Accept']
+    },
+    transports: ['websocket', 'polling'], // Thêm polling làm fallback
+    pingTimeout: 60000, // Tăng timeout để tránh ngắt kết nối
+    pingInterval: 25000
 });
 const prefixTN = ["A", "B", "C", "D"];
 io.on("connection", (socket) => {
@@ -101,7 +132,7 @@ io.on("connection", (socket) => {
                 });
             }
 
-            // ✅ Nếu có bài chưa hoàn thành thì tiếp tục bài cũ
+            // Nếu có bài chưa hoàn thành thì tiếp tục bài cũ
             let currentAttempt = unfinishedAttempt;
 
             if (!currentAttempt) {
@@ -134,7 +165,7 @@ io.on("connection", (socket) => {
             });
 
         } catch (err) {
-            console.log("❌ Lỗi khi tham gia bài thi:", err);
+            console.log("Lỗi khi tham gia bài thi:", err);
             console.error("join_exam error:", err);
             socket.emit("exam_error", { message: "Lỗi khi bắt đầu bài thi." });
         }
@@ -144,7 +175,7 @@ io.on("connection", (socket) => {
         await submitExam(socket, attemptId);
     })
 
-    socket.on("select_answer", async ({ attemptId, questionId, answerContent, studentId, type, statementId, examId, name }) => {
+    socket.on("select_answer", async ({ attemptId, questionId, answerContent, studentId, type, examId, name }) => {
         try {
             const existing = await db.Answer.findOne({ where: { attemptId, questionId } });
             let answer = '';
@@ -152,19 +183,19 @@ io.on("connection", (socket) => {
 
             if (type === "TN") {
                 const statement = await db.Statement.findByPk(answerContent);
-                answer = prefixTN[statement.order - 1] 
+                answer = prefixTN[statement.order - 1]
                 isCorrect = statement?.isCorrect || false;
             } else if (type === "DS") {
                 if (!Array.isArray(answerContent)) {
                     throw new Error("Answer content phải là mảng các statement");
                 }
-            
+
                 const statementIds = answerContent.map(item => item.statementId);
                 const statements = await db.Statement.findAll({
                     where: { id: statementIds },
                     attributes: ['id', 'order', 'isCorrect']
                 });
-            
+
                 const enrichedAnswerContent = answerContent.map(item => {
                     const stmt = statements.find(s => s.id === item.statementId);
                     return {
@@ -173,17 +204,17 @@ io.on("connection", (socket) => {
                         isCorrect: stmt?.isCorrect
                     };
                 }).sort((a, b) => a.order - b.order);
-            
+
                 answer = '';
                 let allCorrect = true;
-            
+
                 for (const item of enrichedAnswerContent) {
                     answer += item.answer ? 'Đ ' : 'S ';
                     if (item.isCorrect !== item.answer) {
                         allCorrect = false;
                     }
                 }
-            
+
                 isCorrect = allCorrect;
             } else if (type === "TLN") {
                 const question = await db.Question.findByPk(questionId);
@@ -210,38 +241,155 @@ io.on("connection", (socket) => {
                 });
             }
 
-           
-            console.log('', examId)
-            if (type === "DS" && answerContent.length !== 4) {
-                return;
-            }
 
-            io.to(`exam-admin-${examId}`).emit("admin_student_answer", {
-                studentId,
-                attemptId,
-                questionId,
-                answerContent: answer,
-                isCorrect,
-                type,
-                name,
-                timestamp: new Date().toISOString(),
-            });
+            const isDSFullyAnswered = type === "DS" && Array.isArray(answerContent) && answerContent.length >= 4;
+
+            if (type !== "DS" || isDSFullyAnswered) {
+                io.to(`exam-admin-${examId}`).emit("admin_student_answer", {
+                    studentId,
+                    attemptId,
+                    questionId,
+                    answerContent: answer,
+                    isCorrect,
+                    type,
+                    name,
+                    timestamp: new Date().toISOString(),
+                });
+            }
             socket.emit("answer_saved", {
                 questionId,
                 answerContent,
                 attemptId,
             });
-
             console.log("Đã gửi đáp án cho admin:", studentId, questionId, answerContent, isCorrect);
 
         } catch (err) {
-            console.error("❌ Lỗi khi ghi đáp án:", err);
+            console.error("Lỗi khi ghi đáp án:", err);
             socket.emit("answer_error", { message: "Không thể lưu đáp án", questionId });
+            return;
+        }
+
+    });
+
+
+
+    socket.on("calculate_score", async ({ attemptId, answers, examId, student }) => {
+        try {
+            const t = await db.sequelize.transaction();
+
+            // Lấy attempt hiện tại
+            const attempt = await db.StudentExamAttempt.findByPk(attemptId, { transaction: t });
+            if (!attempt) {
+                await t.rollback();
+                return socket.emit("score_calculation_error", { message: "Không tìm thấy lượt làm bài." });
+            }
+
+            // Lấy tất cả questionIds và statementIds cần thiết
+            const questionIds = [];
+            const tnStatementIds = [];
+            const dsStatementIdsMap = {};
+
+            for (const answer of answers) {
+                const { questionId, typeOfQuestion, answerContent } = answer;
+                questionIds.push(questionId);
+
+                if (typeOfQuestion === 'TN' && answerContent) {
+                    tnStatementIds.push(answerContent);
+                } else if (typeOfQuestion === 'DS' && answerContent) {
+                    const answersDS = typeof answerContent === 'string' ?
+                        JSON.parse(answerContent) : answerContent;
+
+                    if (Array.isArray(answersDS)) {
+                        dsStatementIdsMap[questionId] = answersDS.map(a => a.statementId);
+                    }
+                }
+            }
+
+            // Lấy tất cả câu hỏi trong một lần truy vấn
+            const questions = await db.Question.findAll({
+                where: { id: questionIds },
+                transaction: t
+            });
+
+            // Tạo map câu hỏi để truy cập nhanh
+            const questionMap = {};
+            questions.forEach(q => {
+                questionMap[q.id] = q;
+            });
+
+            // Lấy tất cả statements cho câu hỏi trắc nghiệm
+            const allStatementIds = [...tnStatementIds, ...Object.values(dsStatementIdsMap).flat()];
+            const statements = await db.Statement.findAll({
+                where: { id: allStatementIds },
+                transaction: t
+            });
+
+            // Tạo map statements để truy cập nhanh
+            const statementMap = {};
+            statements.forEach(s => {
+                statementMap[s.id] = s;
+            });
+
+            // Tính điểm
+            let totalScore = 0;
+
+            for (const answer of answers) {
+                const { questionId, typeOfQuestion, answerContent } = answer;
+                const question = questionMap[questionId];
+                if (!question) continue;
+
+                if (typeOfQuestion === 'TN') {
+                    const statement = statementMap[answerContent];
+                    if (statement && statement.isCorrect) {
+                        totalScore += 0.25;
+                    }
+                } else if (typeOfQuestion === 'TLN') {
+                    const formattedAnswer = answerContent.trim().replace(',', '.');
+                    if (question.correctAnswer === formattedAnswer) {
+                        totalScore += 0.5;
+                    }
+                } else if (typeOfQuestion === 'DS') {
+                    let count = 0;
+                    if (!answerContent || (Array.isArray(answerContent) && answerContent.length === 0)) continue;
+
+                    const answersDS = typeof answerContent === 'string' ?
+                        JSON.parse(answerContent) : answerContent;
+
+                    for (const answerDS of answersDS || []) {
+                        const statement = statementMap[answerDS.statementId];
+                        if (statement && statement.isCorrect === answerDS.answer) {
+                            count++;
+                        }
+                    }
+
+                    // Tính điểm dựa vào số lượng đúng
+                    if (count === 1) totalScore += 0.1;
+                    else if (count === 2) totalScore += 0.25;
+                    else if (count === 3) totalScore += 0.5;
+                    else if (count >= 4) totalScore += 1.0;
+                }
+            }
+
+            // Cập nhật điểm vào attempt (không cập nhật endTime)
+            attempt.score = parseFloat(totalScore.toFixed(2));
+            await attempt.save({ transaction: t });
+
+            io.to(`exam-admin-${examId}`).emit("admin_score_calculated", {
+                attempt,
+                student
+            });
+
+            console.log("Đã tính điểm:", attemptId, attempt.score);
+
+            await t.commit();
+
+        } catch (err) {
+            console.error("Lỗi khi tính điểm:", err);
+            socket.emit("score_calculation_error", { message: "Không thể tính điểm", error: err.message });
         }
     });
 
     const recentCheatLogs = new Map();
-
     socket.on("user_log", async (data) => {
         const { action, code, attemptId, examId, name } = data;
         if (!attemptId) return;
@@ -305,7 +453,7 @@ io.on("connection", (socket) => {
     });
 
     socket.on("disconnect", () => {
-        console.log("❌ Client disconnected:", socket.id);
+        console.log("Client disconnected:", socket.id);
     });
 });
 

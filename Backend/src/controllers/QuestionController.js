@@ -65,7 +65,7 @@ export const getQuestionById = async (req, res) => {
     })
 
     if (!questionDetail) {
-        return res.status(404).json({ message: '❌ Câu hỏi không tồn tại' })
+        return res.status(404).json({ message: 'Câu hỏi không tồn tại' })
     }
 
     return res.status(200).json({
@@ -78,7 +78,7 @@ export const getQuestionByExamId = async (req, res) => {
     const { examId } = req.params
 
     if (!examId) {
-        return res.status(400).json({ message: "❌ examId không hợp lệ!" })
+        return res.status(400).json({ message: "examId không hợp lệ!" })
     }
 
     const exam = await db.Exam.findByPk(examId, {
@@ -100,11 +100,11 @@ export const getQuestionByExamId = async (req, res) => {
     })
 
     if (!exam) {
-        return res.status(404).json({ message: "❌ Không tìm thấy đề thi!" })
+        return res.status(404).json({ message: "Không tìm thấy đề thi!" })
     }
 
     return res.status(200).json({
-        message: "✅ Lấy danh sách câu hỏi thành công!",
+        message: "Lấy danh sách câu hỏi thành công!",
         data: exam.questions,
     })
 }
@@ -119,7 +119,7 @@ export const postQuestion = async (req, res) => {
         const statementImages = req.files?.statementImages || []
 
         if (!questionData) {
-            return res.status(400).json({ message: "❌ Dữ liệu câu hỏi không hợp lệ!" })
+            return res.status(400).json({ message: "Dữ liệu câu hỏi không hợp lệ!" })
         }
 
         const questionImageUrl = await uploadImage(questionImage)
@@ -169,7 +169,7 @@ export const postQuestion = async (req, res) => {
             if (!exam) {
                 await transaction.rollback()
                 await cleanupUploadedFiles(uploadedFiles)
-                return res.status(404).json({ message: "❌ Đề thi không tồn tại!" })
+                return res.status(404).json({ message: "Đề thi không tồn tại!" })
             }
 
             const added = await db.ExamQuestions.create(
@@ -180,7 +180,7 @@ export const postQuestion = async (req, res) => {
             if (!added) {
                 await transaction.rollback()
                 await cleanupUploadedFiles(uploadedFiles)
-                return res.status(500).json({ message: "❌ Lỗi khi thêm câu hỏi vào đề thi!" })
+                return res.status(500).json({ message: "Lỗi khi thêm câu hỏi vào đề thi!" })
             }
         }
 
@@ -212,7 +212,7 @@ export const putQuestion = async (req, res) => {
 
         if (!existingQuestion) {
             await transaction.rollback();
-            return res.status(404).json({ message: "❌ Câu hỏi không tồn tại!" });
+            return res.status(404).json({ message: "Câu hỏi không tồn tại!" });
         }
 
         // Lọc bỏ các trường không được cập nhật
@@ -242,7 +242,7 @@ export const putQuestion = async (req, res) => {
 
         if (!updated) {
             await transaction.rollback();
-            return res.status(500).json({ message: "❌ Lỗi khi cập nhật câu hỏi!" });
+            return res.status(500).json({ message: "Lỗi khi cập nhật câu hỏi!" });
         }
 
         // Cập nhật danh sách mệnh đề (Không cập nhật imageUrl của statement)
@@ -276,12 +276,12 @@ export const putQuestion = async (req, res) => {
         });
 
         return res.status(200).json({
-            message: "✅ Cập nhật câu hỏi và mệnh đề thành công!",
+            message: "Cập nhật câu hỏi và mệnh đề thành công!",
             data: updatedQuestion,
         });
     } catch (error) {
         await transaction.rollback();
-        console.error("❌ Lỗi khi cập nhật câu hỏi:", error);
+        console.error("Lỗi khi cập nhật câu hỏi:", error);
         return res.status(500).json({ message: "Lỗi server!", error: error.message });
     }
 };
@@ -296,7 +296,7 @@ export const putQuestionImage = async (req, res) => {
 
         if (!question) {
             await transaction.rollback()
-            return res.status(404).json({ message: '❌ Câu hỏi không tồn tại.' })
+            return res.status(404).json({ message: 'Câu hỏi không tồn tại.' })
         }
 
         const oldImageUrl = question.imageUrl
@@ -314,15 +314,15 @@ export const putQuestionImage = async (req, res) => {
         if (!updated) {
             await cleanupUploadedFiles([newImageUrl])
             await transaction.rollback()
-            return res.status(500).json({ message: '❌ Lỗi khi cập nhật ảnh câu hỏi.' })
+            return res.status(500).json({ message: 'Lỗi khi cập nhật ảnh câu hỏi.' })
         }
 
         if (oldImageUrl) {
             try {
                 await cleanupUploadedFiles([oldImageUrl])
-                console.log(`✅ Đã xóa ảnh cũ: ${oldImageUrl}`)
+                console.log(`Đã xóa ảnh cũ: ${oldImageUrl}`)
             } catch (err) {
-                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
+                console.error(`Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
                 await cleanupUploadedFiles([newImageUrl])
                 await transaction.rollback()
                 return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message })
@@ -332,7 +332,7 @@ export const putQuestionImage = async (req, res) => {
         await transaction.commit()
 
         return res.status(200).json({
-            message: '✅ Cập nhật ảnh câu hỏi thành công.',
+            message: 'Cập nhật ảnh câu hỏi thành công.',
             oldImageUrl,
             newImageUrl,
         })
@@ -353,7 +353,7 @@ export const putQuestionSolutionImage = async (req, res) => {
 
         if (!question) {
             await transaction.rollback()
-            return res.status(404).json({ message: '❌ Câu hỏi không tồn tại.' })
+            return res.status(404).json({ message: 'Câu hỏi không tồn tại.' })
         }
 
         const oldImageUrl = question.solutionImageUrl
@@ -371,15 +371,15 @@ export const putQuestionSolutionImage = async (req, res) => {
         if (!updated) {
             await cleanupUploadedFiles([newImageUrl])
             await transaction.rollback()
-            return res.status(500).json({ message: '❌ Lỗi khi cập nhật ảnh câu hỏi.' })
+            return res.status(500).json({ message: 'Lỗi khi cập nhật ảnh câu hỏi.' })
         }
 
         if (oldImageUrl) {
             try {
                 await cleanupUploadedFiles([oldImageUrl])
-                console.log(`✅ Đã xóa ảnh cũ: ${oldImageUrl}`)
+                console.log(`Đã xóa ảnh cũ: ${oldImageUrl}`)
             } catch (err) {
-                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
+                console.error(`Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
                 await cleanupUploadedFiles([newImageUrl])
                 await transaction.rollback()
                 return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message })
@@ -389,13 +389,13 @@ export const putQuestionSolutionImage = async (req, res) => {
         await transaction.commit()
 
         return res.status(200).json({
-            message: '✅ Cập nhật ảnh câu hỏi lời giải thành công.',
+            message: 'Cập nhật ảnh câu hỏi lời giải thành công.',
             oldImageUrl,
             newImageUrl,
         })
 
     } catch (error) {
-        console.error('❌ Lỗi khi cập nhật ảnh câu hỏi:', error)
+        console.error('Lỗi khi cập nhật ảnh câu hỏi:', error)
         await transaction.rollback()
         return res.status(500).json({ message: 'Lỗi server.', error: error.message })
     }
@@ -422,7 +422,7 @@ export const deleteQuestionImage = async (req, res) => {
         const question = await db.Question.findByPk(id, { transaction })
         if (!question) {
             await transaction.rollback()
-            return res.status(404).json({ message: '❌ Câu hỏi không tồn tại.' })
+            return res.status(404).json({ message: 'Câu hỏi không tồn tại.' })
         }
         const oldImageUrl = question.imageUrl
         const [updated] = await db.Question.update(
@@ -431,15 +431,15 @@ export const deleteQuestionImage = async (req, res) => {
         )
         if (!updated) {
             await transaction.rollback()
-            return res.status(500).json({ message: '❌ Lỗi khi xóa ảnh câu hỏi.' })
+            return res.status(500).json({ message: 'Lỗi khi xóa ảnh câu hỏi.' })
         }
 
         if (oldImageUrl) {
             try {
                 await cleanupUploadedFiles([oldImageUrl])
-                console.log(`✅ Đã xóa ảnh cũ: ${oldImageUrl}`)
+                console.log(`Đã xóa ảnh cũ: ${oldImageUrl}`)
             } catch (err) {
-                console.error(`❌ Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
+                console.error(`Lỗi khi xóa ảnh cũ: ${oldImageUrl}`, err)
                 await transaction.rollback()
                 return res.status(500).json({ message: 'Lỗi khi xóa ảnh cũ.', error: err.message })
             }
@@ -447,11 +447,11 @@ export const deleteQuestionImage = async (req, res) => {
 
         await transaction.commit()
         return res.status(200).json({
-            message: '✅ Xóa ảnh câu hỏi thành công.',
+            message: 'Xóa ảnh câu hỏi thành công.',
             oldImageUrl
         })
     } catch (error) {
-        console.error('❌ Lỗi khi xóa ảnh câu hỏi:', error)
+        console.error('Lỗi khi xóa ảnh câu hỏi:', error)
         await transaction.rollback()
         return res.status(500).json({ message: 'Lỗi server.', error: error.message })
     }

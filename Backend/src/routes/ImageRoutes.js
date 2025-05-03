@@ -11,36 +11,25 @@ import * as ImageController from '../controllers/ImageController.js'
 
 const router = express.Router()
 
-router.post('/v1/images/upload-single', 
-    upload.single('image'),
-    handleMulterError,
-    asyncHandler(ImageController.uploadImage)
-)
-
-router.post('/v1/images/upload-multiple', 
-    upload.array('images', 5),
-    handleMulterError,
-    asyncHandler(ImageController.uploadImages)
-)
-
 router.post('/v1/images/google/upload-single',
     uploadGoogleImageMiddleware.single('image'),
     handleMulterError,
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(ImageController.uploadImageToFirebase)
 )
 
-router.post('/v1/images/google/upload-multiple',
-    uploadGoogleImageMiddleware.array('images', 5),
-    handleMulterError,
-    asyncHandler(ImageController.uploadMultipleImagesToFirebase)
-)
-
 router.delete('/v1/images/delete',
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     ImageController.deleteImage
 )
 
-router.get('/v1/images/:filename', 
-    asyncHandler(ImageController.viewImage)
+router.get('/v1/images/:folder', 
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
+    asyncHandler(ImageController.getAllImages)
+)
+
+router.post('/v1/images/folders', 
+    asyncHandler(ImageController.getAllImagesFolders)
 )
 
 export default router

@@ -39,7 +39,7 @@ export const getQuestionReport = async (req, res) => {
     })
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách báo cáo câu hỏi thành công!',
+        message: 'Lấy danh sách báo cáo câu hỏi thành công!',
         data: reports,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
@@ -56,10 +56,10 @@ export const getQuestionReportById = async (req, res) => {
     })
 
     if (!report) {
-        return res.status(404).json({ message: "❌ Không tìm thấy báo cáo" })
+        return res.status(404).json({ message: "Không tìm thấy báo cáo" })
     }
     return res.status(200).json({
-        message: "✅ Lấy chi tiết báo cáo câu hỏi thành công!",
+        message: "Lấy chi tiết báo cáo câu hỏi thành công!",
         data: report,
     })
 }
@@ -69,13 +69,13 @@ export const postQuestionReport = async (req, res) => {
 
     const question = await db.Question.findByPk(data.questionId)
     if (!question) {
-        return res.status(400).json({ message: "❌ Câu hỏi không tồn tại" })
+        return res.status(400).json({ message: "Câu hỏi không tồn tại" })
     }
 
     const newReport = await QuestionReport.create(data)
 
     return res.status(201).json({
-        message: "✅ Tạo báo cáo câu hỏi thành công!",
+        message: "Tạo báo cáo câu hỏi thành công!",
         newReport,
     })
 }
@@ -84,12 +84,12 @@ export const deleteQuestionReport = async (req, res) => {
     const report = await QuestionReport.findByPk(req.params.id)
 
     if (!report) {
-        return res.status(404).json({ message: "❌ Không tìm thấy báo cáo" })
+        return res.status(404).json({ message: "Không tìm thấy báo cáo" })
     }
 
     await report.destroy()
 
     return res.status(200).json({
-        message: "✅ Xóa báo cáo câu hỏi thành công!"
+        message: "Xóa báo cáo câu hỏi thành công!"
     })
 }

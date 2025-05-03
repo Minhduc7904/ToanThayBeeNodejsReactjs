@@ -51,7 +51,7 @@ const FunctionBarAdmin = () => {
 
     const iconAdd = (
         <div data-svg-wrapper className="relative">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M12 4L12 20M20 12L4 12" stroke="#202325" strokeWidth="1.5" strokeLinecap="round" />
             </svg>
         </div>
@@ -59,7 +59,7 @@ const FunctionBarAdmin = () => {
 
     const iconFilter = (
         <div data-svg-wrapper className="relative">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M4.5 7H19.5M7 12H17M10 17H14" stroke="#202325" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         </div>
@@ -67,17 +67,17 @@ const FunctionBarAdmin = () => {
 
     const iconExport = (
         <div data-svg-wrapper className="relative">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
                 <path d="M20 14.6667V17C20 18.6569 18.6569 20 17 20H7C5.34315 20 4.00001 18.6569 4.00001 17L4 14.6667M7.55556 10.2222L12 14.6667M12 14.6667L16.4444 10.2222M12 14.6667V4" stroke="#202325" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
             </svg>
         </div>
     )
 
     return (
-        <div className="flex justify-between items-center h-[4.25rem] border-b border-[#E7E7ED] pb-4">
+        <div className="flex justify-between items-center border-b border-[#E7E7ED] pb-4">
             <div className="flex gap-[0.875rem] h-full items-center">
                 <div className="flex items-center h-full gap-[0.5rem]">
-                    <div className="w-[15rem] h-full relative">
+                    <div className="w-[15rem] h-full relative ">
                         <svg
                             xmlns="http://www.w3.org/2000/svg"
                             width="16"
@@ -98,35 +98,29 @@ const FunctionBarAdmin = () => {
                             placeholder="Search"
                             value={inputValue}
                             onChange={(e) => setInputValue(e.target.value)}
-                            className="w-full h-full pl-[2.5rem] pr-[1rem] border border-[#CDCFD0] rounded-[3.25rem] text-[#090a0a] text-[0.875rem] font-['Be Vietnam Pro']"
+                            className="w-full h-full pl-[2.5rem] pr-[1rem] border py-[0.5rem] border-[#CDCFD0] rounded-[2rem] text-[#090a0a] text-[0.875rem] font-bevietnam"
                         />
                     </div>
                     <ButtonFunctionBarAdmin icon={iconAdd} text={'Thêm mới'} onClick={() => dispatch(setIsAddView(true))} />
-                    <ButtonFunctionBarAdmin icon={iconFilter} text={'Bộ lọc'} onClick={() => dispatch(setIsFilterView(true))} />
 
                 </div>
-                <div data-svg-wrapper className="relative">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="2" height="" viewBox="0 0 2 38" fill="none">
-                        <path d="M1 1L1 37" stroke="#CDCFD0" strokeLinecap="round" />
-                    </svg>
-                </div>
-                <ButtonFunctionBarAdmin icon={iconExport} text={'Xuất file'} />
+                
 
             </div>
             <div className="flex items-center h-full gap-[1.25rem]">
 
                 <div
                     className="flex items-center h-full gap-[0.625rem]">
-                    <p className="text-[#303437] text-sm font-['Be Vietnam Pro'] text-center font-normal">
+                    <p className="text-[#303437] text-sm font-bevietnam text-center font-normal">
                         Số dòng
                     </p>
                     <div className="relative h-full">
                         {/* Button mở dropdown */}
                         <button
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className="relative flex gap-[0.5rem] h-full justify-center items-center py-[0.125rem] px-[0.75rem] border border-[#CDCFD0] rounded-[0.5rem] bg-white z-10"
+                            className="relative  py-[0.5rem] flex gap-[0.5rem] h-full justify-center items-center px-[0.75rem] border border-[#CDCFD0] rounded bg-white z-10"
                         >
-                            <p className="text-[#303437] text-sm font-['Be Vietnam Pro'] text-center font-normal">
+                            <p className="text-[#303437] text-sm font-bevietnam text-center font-normal">
                                 {limit}
                             </p>
                             <div data-svg-wrapper className="relative">
@@ -138,7 +132,7 @@ const FunctionBarAdmin = () => {
 
                         {/* Dropdown hiển thị chồng lên button */}
                         {isDropdownOpen && (
-                            <div className="absolute top-0 left-0 w-full bg-white border border-[#CDCFD0] rounded-[0.5rem] shadow-md z-20"  ref={dropdownRef}>
+                            <div className="absolute top-0 left-0 w-full bg-white border border-[#CDCFD0] rounded shadow-md z-20"  ref={dropdownRef}>
                                 {options.map((option) => (
                                     <p
                                         key={option}
@@ -156,14 +150,14 @@ const FunctionBarAdmin = () => {
                 </div>
 
                 <div className="flex items-center h-full gap-[0.625rem]">
-                    <p className="text-[#303437] text-sm font-['Be Vietnam Pro'] text-center font-normal">
+                    <p className="text-[#303437] text-sm font-bevietnam text-center font-normal">
                         Trang
                     </p>
                     <div className="relative h-full">
                         <button
                             onClick={() => setIsDropdownOpenPage(!isDropdownOpenPage)}
-                            className="flex gap-[0.5rem] h-full justify-center items-center py-[0.5rem] px-[0.75rem] border border-[#CDCFD0] rounded-[0.5rem]">
-                            <p className="text-[#303437] text-sm font-['Be Vietnam Pro'] text-center font-normal">
+                            className="flex gap-[0.5rem] h-full justify-center items-center py-[0.5rem] px-[0.75rem] border border-[#CDCFD0] rounded">
+                            <p className="text-[#303437] text-sm font-bevietnam text-center font-normal">
                                 {currentPage}
                             </p>
                             <div data-svg-wrapper className="relative">
@@ -174,7 +168,7 @@ const FunctionBarAdmin = () => {
                         </button>
 
                         {isDropdownOpenPage && (
-                            <div className="absolute top-full mt-[0.5rem] w-full bg-white border border-[#CDCFD0] rounded-[0.5rem] shadow-md z-20 
+                            <div className="absolute top-full mt-[0.5rem] w-full bg-white border border-[#CDCFD0] rounded shadow-md z-20 
                     max-h-[200px] overflow-y-auto hide-scrollbar" ref={dropdownRef}>
                                 {optionsPage.map((option) => (
                                     <p
@@ -190,7 +184,7 @@ const FunctionBarAdmin = () => {
 
 
                     </div>
-                    <p className="text-[#303437] text-sm font-['Be Vietnam Pro'] text-center font-normal">
+                    <p className="text-[#303437] text-sm font-bevietnam text-center font-normal">
                         trên {totalPages}
                     </p>
                 </div>

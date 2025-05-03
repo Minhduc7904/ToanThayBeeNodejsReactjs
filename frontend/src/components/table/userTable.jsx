@@ -30,7 +30,13 @@ const UserList = () => {
 
     if (loading) return (
         <div className="flex items-center justify-center h-screen">
-            <LoadingSpinner color="border-black" size="5rem" />
+            <LoadingSpinner
+                type="dots"
+                color="border-blue-600"
+                size="4rem"
+                showText={true}
+                text="Đang tải danh sách người dùng..."
+            />
         </div>
     )
 

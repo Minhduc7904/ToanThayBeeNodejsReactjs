@@ -8,7 +8,7 @@ const AdminModal = ({ isOpen, onClose, children, headerText }) => {
             <div className="bg-white shadow-lg relative flex flex-col rounded-xl h-[80vh] w-[80vw]">
                 {/* Header */}
                 <div className="flex justify-between items-center p-6 bg-[#253F61] rounded-t-xl">
-                    <div className="text-white text-xl font-medium font-['Be Vietnam Pro']">
+                    <div className="text-white text-xl font-medium font-bevietnam">
                         {headerText}
                     </div>
                     <button

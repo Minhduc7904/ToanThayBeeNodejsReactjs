@@ -104,10 +104,10 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className = ''
                     <div className="inline-flex flex-col justify-between items-center">
                         {question && (
                             <>
-                                <div className="text-center text-[#202325] text-sm font-medium font-['Be Vietnam Pro'] leading-tight">
+                                <div className="text-center text-[#202325] text-sm font-medium font-bevietnam leading-tight">
                                     Chọn ảnh từ máy của bạn hoặc dán bằng Ctrl + V
                                 </div>
-                                <div className="text-center text-[#979c9e] text-sm font-normal font-['Be Vietnam Pro'] leading-tight">
+                                <div className="text-center text-[#979c9e] text-sm font-normal font-bevietnam leading-tight">
                                     Định dạng JPEG, PNG,... <br />
                                     tối đa 5MB
                                 </div>
@@ -119,7 +119,7 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className = ''
                         onClick={handleUploadClick}
                         className="px-4 py-2 rounded-[48px] outline-1 outline-offset-[-1px] outline-[#cdcfd0] inline-flex justify-center items-center border border-[#cdcfd0] bg-[#f9f9f9] cursor-pointer hover:bg-[#f0f0f0]"
                     >
-                        <div className="text-center text-[#404446] text-sm font-medium font-['Be Vietnam Pro'] leading-tight">
+                        <div className="text-center text-[#404446] text-sm font-medium font-bevietnam leading-tight">
                             Tải ảnh lên
                         </div>
                     </button>
@@ -140,7 +140,7 @@ const ImageUpload = ({ image, setImage, question = true, inputId, className = ''
                             className="max-w-full max-h-32 object-contain rounded"
                         />
                     ) : (
-                        <div className="text-center text-[#404446] text-sm font-medium font-['Be Vietnam Pro'] leading-tight">
+                        <div className="text-center text-[#404446] text-sm font-medium font-bevietnam leading-tight">
                             {preview}
                         </div>
                     )}

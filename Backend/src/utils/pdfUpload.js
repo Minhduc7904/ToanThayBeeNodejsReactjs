@@ -16,12 +16,12 @@ import config from '../config/firebaseConfig.js'
  */
 export async function uploadPdfToFirebase(req) {
     if (!req.file) {
-        throw new Error('❌ No file provided. Please select a PDF to upload.')
+        throw new Error('No file provided. Please select a PDF to upload.')
     }
 
     // Kiểm tra đúng định dạng PDF
     if (req.file.mimetype !== 'application/pdf') {
-        throw new Error('❌ Invalid file type. Only PDF files are allowed.')
+        throw new Error('Invalid file type. Only PDF files are allowed.')
     }
 
     try {
@@ -34,11 +34,11 @@ export async function uploadPdfToFirebase(req) {
         })
 
         const downloadURL = await getDownloadURL(snapshot.ref)
-        console.log(`✅ PDF uploaded successfully: ${downloadURL}`)
+        console.log(`PDF uploaded successfully: ${downloadURL}`)
 
         return { file: downloadURL.trim() }
     } catch (error) {
-        console.error('❌ Error uploading PDF to Firebase:', error)
+        console.error('Error uploading PDF to Firebase:', error)
         throw new Error('Failed to upload PDF.')
     }
 }
@@ -65,7 +65,7 @@ export async function deletePdfFromFirebase(fileUrl) {
         // Thử xóa file
         await deleteObject(fileRef);
 
-        console.log('✅ PDF deleted successfully:', filePath);
+        console.log('PDF deleted successfully:', filePath);
         return { success: true };
     } catch (error) {
         // Kiểm tra lỗi có phải là lỗi không tìm thấy file
@@ -74,7 +74,7 @@ export async function deletePdfFromFirebase(fileUrl) {
             return { success: true };  // Không phải lỗi, vẫn coi là thành công
         }
 
-        console.error('❌ Error deleting PDF from Firebase:', error);
+        console.error('Error deleting PDF from Firebase:', error);
         throw new Error('Failed to delete PDF.');
     }
 }

@@ -29,7 +29,12 @@ const answerSlice = createSlice({
     },
     reducers: {
         setAnswers: (state, action) => {
-            state.answers = action.payload;
+            const index = state.answers.findIndex(a => a.questionId === action.payload.questionId);
+            if (index !== -1) {
+                state.answers[index] = action.payload;
+            } else {
+                state.answers.push(action.payload);
+            }
         },
     },
     extraReducers: (builder) => {

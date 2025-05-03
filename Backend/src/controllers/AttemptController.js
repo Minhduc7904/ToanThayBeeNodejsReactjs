@@ -1,54 +1,90 @@
-import { Op } from 'sequelize'
 import db from "../models/index.js"
 
-export const getAttempts = async (req, res) => {
-    const search = req.query.search || ''
-    const page = parseInt(req.query.page, 10) || 1
-    const limit = parseInt(req.query.limit, 10) || 10
-    const offset = (page - 1) * limit
+const { Op, literal, QueryTypes } = db.Sequelize;
 
-    const whereClause = {
-        ...(search.trim() && {
-            [Op.or]: [
-                { studentId: { [Op.like]: `%${search}%` } },
-                { examId: { [Op.like]: `%${search}%` } },
-                { startTime: { [Op.like]: `%${search}%` } },
-                { endTime: { [Op.like]: `%${search}%` } },
-                { score: { [Op.like]: `%${search}%` } },
-            ],
-        }),
-    }
+export const getAttemptsByUser = async (req, res) => {
+    const { id } = req.user;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = 10;
+    const offset = (page - 1) * limit;
 
-    const { rows: attempts, count: total } = await db.StudentExamAttempt.findAndCountAll({
-        where: whereClause,
-        limit,
+    // Raw SQL để count tổng số bản ghi sau khi lọc
+    const countResult = await db.sequelize.query(
+        `
+        SELECT COUNT(*) as total
+        FROM \`studentExamAttempt\` AS s
+        INNER JOIN \`exam\` AS e ON s.\`examId\` = e.\`id\`
+        WHERE s.\`studentId\` = :studentId
+        AND s.\`endTime\` IS NOT NULL
+        AND s.\`score\` IS NOT NULL
+        AND e.\`seeCorrectAnswer\` = true
+        `,
+        {
+            replacements: { studentId: id },
+            type: QueryTypes.SELECT,
+        }
+    );
+
+    const count = parseInt(countResult[0].total, 10);
+
+    // Truy vấn dữ liệu sau khi lọc, có phân trang
+    const attempts = await db.StudentExamAttempt.findAll({
+        where: {
+            studentId: id,
+            endTime: { [Op.ne]: null },
+            score: { [Op.ne]: null },
+        },
+        include: [
+            {
+                model: db.Exam,
+                as: "exam",
+                attributes: ["name", "seeCorrectAnswer"],
+                where: { seeCorrectAnswer: true }, // lọc ngay trong include
+            },
+        ],
+        order: [["endTime", "DESC"]],
         offset,
-        order: [['createdAt', 'DESC']],
-    })
+        limit,
+    });
+
+    const attemptsWithDuration = attempts.map((attempt) => {
+        const start = new Date(attempt.startTime);
+        const end = new Date(attempt.endTime);
+        const durationMs = end - start;
+
+        return {
+            ...attempt.toJSON(),
+            duration: `${Math.floor(durationMs / 1000 / 60)} phút ${Math.floor((durationMs / 1000) % 60)} giây`,
+        };
+    });
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách lượt làm bài thành công!',
-        data: attempts,
-        currentPage: page,
-        totalPages: Math.ceil(total / limit),
-        totalItems: total,
-    })
+        message: "Lấy danh sách lượt làm bài thành công!",
+        data: {
+            data: attemptsWithDuration,
+            currentPage: page,
+            totalPages: Math.ceil(count / limit),
+            totalItems: count,
+            limit,
+        },
+    });
+};
 
-}
 
 export const getAttemptById = async (req, res) => {
     const { id } = req.params
     const attempt = await db.StudentExamAttempt.findByPk(id)
 
     if (!attempt) {
-        return res.status(404).json({ message: '❌ Không tìm thấy lượt làm bài.' })
+        return res.status(404).json({ message: 'Không tìm thấy lượt làm bài.' })
     }
 
-    return res.status(200).json({ message: '✅ Lấy chi tiết lượt làm bài thành công!', data: attempt })
+    return res.status(200).json({ message: 'Lấy chi tiết lượt làm bài thành công!', data: attempt })
 }
 
 export const getAttemptByExamId = async (req, res) => {
     const { examId } = req.params;
+    const { id } = req.user;
     const page = parseInt(req.query.page, 10) || 1;
     const limit = 20;
     const offset = (page - 1) * limit;
@@ -56,11 +92,15 @@ export const getAttemptByExamId = async (req, res) => {
     // Kiểm tra đề thi
     const exam = await db.Exam.findByPk(examId);
     if (!exam) {
-        return res.status(404).json({ message: '❌ Không tìm thấy đề thi!' });
+        return res.status(404).json({ message: 'Không tìm thấy đề thi!' });
     }
 
     if (!exam.public) {
         return res.status(403).json({ message: '🚫 Đề thi này hiện không được công khai!' });
+    }
+
+    if (!exam.seeCorrectAnswer) {
+        return res.status(403).json({ message: '🚫 Đề thi này hiện không cho phép xem đáp án!' });
     }
 
     // Lấy danh sách attempts theo điểm cao ↓ (sẽ lọc + sắp lại theo thời gian sau)
@@ -101,11 +141,28 @@ export const getAttemptByExamId = async (req, res) => {
             return a.durationMs - b.durationMs;
         });
 
+    // Tìm rank của người dùng hiện tại
+    let userRank = null;
+    let userBestAttempt = null;
+
+    // Tìm lượt làm bài tốt nhất của người dùng hiện tại
+    const userAttempts = attemptsWithDuration.filter(attempt => attempt.studentId === id);
+    const userAttemptCount = userAttempts.length;
+    if (userAttempts.length > 0) {
+        // Lấy lượt làm bài có điểm cao nhất của người dùng
+        userBestAttempt = userAttempts[0]; // Đã được sắp xếp theo điểm cao nhất rồi
+
+        // Tìm rank của người dùng trong danh sách
+        userRank = attemptsWithDuration.findIndex(attempt =>
+            attempt.id === userBestAttempt.id
+        ) + 1; // +1 vì index bắt đầu từ 0
+    }
+
     // Phân trang sau khi sort
     const paginated = attemptsWithDuration.slice(offset, offset + limit);
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách lượt làm bài theo mã đề thành công!',
+        message: 'Lấy danh sách lượt làm bài theo mã đề thành công!',
         data: {
             attempts: paginated,
             currentPage: page,
@@ -113,8 +170,14 @@ export const getAttemptByExamId = async (req, res) => {
             totalItems: attemptsWithDuration.length,
             exam: {
                 name: exam.name,
+                attemptLimit: exam.attemptLimit,
+                seeCorrectAnswer: exam.seeCorrectAnswer,
             },
             limit,
+            userAttemptCount,
+            userRank, // Thêm rank của người dùng vào response
+            userBestAttempt, // Thêm thông tin lượt làm bài tốt nhất của người dùng
+
         },
     });
 };
@@ -128,7 +191,7 @@ export const getAttemptsForAdminByExamId = async (req, res) => {
 
     const exam = await db.Exam.findByPk(examId);
     if (!exam) {
-        return res.status(404).json({ message: "❌ Không tìm thấy đề thi!" });
+        return res.status(404).json({ message: "Không tìm thấy đề thi!" });
     }
 
     const whereClause = {
@@ -176,18 +239,26 @@ export const getAttemptsForAdminByExamId = async (req, res) => {
     const attemptsWithDuration = rows.map((attempt) => {
         const start = new Date(attempt.startTime);
         const end = new Date(attempt.endTime);
+        console.log("end", end);
+        if (!end || new Date(end).getTime() === 0) {
+            return {
+                ...attempt.toJSON(),
+                durationMs: null,
+                duration: null,
+                durationInSeconds: null,
+            };
+        }
+
         const durationMs = end - start;
 
         return {
             ...attempt.toJSON(),
-            durationMs,
             duration: `${Math.floor(durationMs / 1000 / 60)} phút ${Math.floor((durationMs / 1000) % 60)} giây`,
-            durationInSeconds: Math.floor(durationMs / 1000),
         };
     });
 
     return res.status(200).json({
-        message: "✅ Lấy danh sách lượt làm bài (admin) thành công!",
+        message: "Lấy danh sách lượt làm bài (admin) thành công!",
         data: {
             data: attemptsWithDuration,
             currentPage: page,
@@ -210,10 +281,13 @@ export const getAttemptByStudentId = async (req, res) => {
     // 📌 Kiểm tra đề thi
     const exam = await db.Exam.findByPk(examId);
     if (!exam) {
-        return res.status(404).json({ message: '❌ Không tìm thấy đề thi!' });
+        return res.status(404).json({ message: 'Không tìm thấy đề thi!' });
     }
     if (!exam.public) {
         return res.status(403).json({ message: '🚫 Đề thi này hiện không được công khai!' });
+    }
+    if (exam.seeCorrectAnswer === false) {
+        return res.status(403).json({ message: '🚫 Đề thi này hiện không cho phép xem đáp án!' });
     }
 
     // 📌 Lấy danh sách lượt làm bài
@@ -245,10 +319,11 @@ export const getAttemptByStudentId = async (req, res) => {
     });
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách lượt làm bài theo mã sinh viên thành công!',
+        message: 'Lấy danh sách lượt làm bài theo mã sinh viên thành công!',
         data: formattedAttempts,
         exam: {
             name: exam.name,
+            seeCorrectAnswer: exam.seeCorrectAnswer,
         },
     });
 };
@@ -264,7 +339,7 @@ export const postAttempt = async (req, res) => {
         endTime: null,
         score: null,
     })
-    return res.status(201).json({ message: '✅ Thêm lượt làm bài thành công!', data: newAttempt })
+    return res.status(201).json({ message: 'Thêm lượt làm bài thành công!', data: newAttempt })
 }
 
 export const putAttempt = async (req, res) => {
@@ -276,10 +351,10 @@ export const deleteAttempt = async (req, res) => {
     const attempt = await db.StudentExamAttempt.findByPk(id)
 
     if (!attempt) {
-        return res.status(404).json({ message: '❌ Không tìm thấy lượt làm bài để xóa.' })
+        return res.status(404).json({ message: 'Không tìm thấy lượt làm bài để xóa.' })
     }
 
     await attempt.destroy()
 
-    return res.status(200).json({ message: '✅ Xóa lượt làm bài thành công!' })
+    return res.status(200).json({ message: 'Xóa lượt làm bài thành công!' })
 }

@@ -9,6 +9,9 @@ import { fetchExamById, putExam, putImageExam, setExam } from "../../features/ex
 import { useNavigate } from "react-router-dom";
 import { fetchCodesByType } from "../../features/code/codeSlice";
 import DetailTr from "./DetailTr";
+import PdfViewer from "../ViewPdf";
+import { uploadSolutionPdf } from "../../features/exam/examSlice";
+import UploadPdfForm from "../UploadPdf";
 
 const ExamDetail = ({ selectedExamId }) => {
     const dispatch = useDispatch();
@@ -17,6 +20,10 @@ const ExamDetail = ({ selectedExamId }) => {
     const { codes } = useSelector((state) => state.codes);
     const { loading } = useSelector(state => state.states);
     const [optionChapter, setOptionChapter] = useState([]);
+
+    const handleUpload = ({ id, pdfFile }) => {
+        dispatch(uploadSolutionPdf({ examId: id, pdfFile }))
+    }
 
     useEffect(() => {
         dispatch(fetchExamById(selectedExamId))
@@ -33,10 +40,10 @@ const ExamDetail = ({ selectedExamId }) => {
         if (Array.isArray(codes["chapter"])) {
             if (exam?.class && exam?.class.trim() !== "") {
                 setOptionChapter(
-                    codes["chapter"].filter((code) => code.code.startsWith(exam?.class))
+                    codes["chapter"].filter((code) => code.code.startsWith(exam?.class) && code.code.length === 4)
                 );
             } else {
-                setOptionChapter(codes["chapter"]);
+                setOptionChapter(codes["chapter"].filter((code) => code.code.length === 4));
             }
         } else {
             setOptionChapter([]);
@@ -127,7 +134,13 @@ const ExamDetail = ({ selectedExamId }) => {
             </div>
             {loading ? (
                 <div className="flex items-center justify-center h-screen">
-                    <LoadingSpinner color="border-black" size="5rem" />
+                    <LoadingSpinner
+                        type="dots"
+                        color="border-blue-600"
+                        size="4rem"
+                        showText={true}
+                        text="Đang tải thông tin đề thi..."
+                    />
                 </div>
             ) : (
                 <>
@@ -191,7 +204,18 @@ const ExamDetail = ({ selectedExamId }) => {
                                     placeholder={"Nhập mô tả"}
                                     onChange={(e) => dispatch(setExam({ ...exam, description: e.target.value }))}
                                 />
-
+                                <DetailTr
+                                    title="Cho phép làm bài"
+                                    value={exam?.acceptDoExam}
+                                    type={3}
+                                    required={true}
+                                    options={[
+                                        { code: true, description: "Có" },
+                                        { code: false, description: "Không" },
+                                    ]}
+                                    onChange={(option) => dispatch(setExam({ ...exam, acceptDoExam: option }))}
+                                    valueText={exam?.acceptDoExam ? "Có" : "Không"}
+                                />
                                 <DetailTr
                                     title="Số lần làm bài"
                                     value={exam?.attemptLimit}
@@ -212,18 +236,29 @@ const ExamDetail = ({ selectedExamId }) => {
                                     onChange={(option) => dispatch(setExam({ ...exam, isCheatingCheckEnabled: option }))}
                                     valueText={exam?.isCheatingCheckEnabled ? "Có" : "Không"}
                                 />
-
+                                <DetailTr
+                                    title="Xem đáp án"
+                                    value={exam?.seeCorrectAnswer}
+                                    type={3}
+                                    required={true}
+                                    options={[
+                                        { code: true, description: "Có" },
+                                        { code: false, description: "Không" },
+                                    ]}
+                                    onChange={(option) => dispatch(setExam({ ...exam, seeCorrectAnswer: option }))}
+                                    valueText={exam?.seeCorrectAnswer ? "Có" : "Không"}
+                                />  
                                 <DetailTr
                                     title="Thời gian"
                                     value={exam?.testDuration}
                                     valueText={exam?.testDuration ? exam?.testDuration : "Vô thời hạn"}
                                     type={3}
                                     options={[
-                                        { code: "30", description: "30 phút" },
-                                        { code: "45", description: "45 phút" },
-                                        { code: "60", description: "60 phút" },
-                                        { code: "90", description: "90 phút" },
-                                        { code: "120", description: "120 phút" },
+                                        { code: 30, description: "30 phút" },
+                                        { code: 45, description: "45 phút" },
+                                        { code: 60, description: "60 phút" },
+                                        { code: 90, description: "90 phút" },
+                                        { code: 120, description: "120 phút" },
                                         { code: null, description: "Vô thời hạn" },
                                     ]}
                                     onChange={(option) => dispatch(setExam({ ...exam, testDuration: option }))}
@@ -244,6 +279,22 @@ const ExamDetail = ({ selectedExamId }) => {
                                     placeholder={"Nhập URL lời giải"}
                                     onChange={(e) => dispatch(setExam({ ...exam, solutionUrl: e.target.value }))}
                                 />
+                                <tr className="border border-[#E7E7ED]">
+                                    <td className="p-3 flex justify-between items-center">
+                                        <label className="text-[#202325] text-md font-bold">
+                                            File lời giải
+                                        </label>
+                                    </td>
+                                    <td className="p-3 text-[#72777a] text-md">
+                                        <UploadPdfForm
+                                            id={exam?.id}
+                                            onSubmit={handleUpload}
+                                        />
+                                        {exam?.solutionPdfUrl && (
+                                            <PdfViewer url={exam?.solutionPdfUrl} />
+                                        )}
+                                    </td>
+                                </tr>
 
                                 <tr className="border border-[#E7E7ED]">
                                     <td className="p-3 flex justify-between items-center">
@@ -259,14 +310,18 @@ const ExamDetail = ({ selectedExamId }) => {
                                 <DetailTr
                                     title="Công khai"
                                     value={exam?.public}
-                                    type={3}
+                                    type={5}
                                     required={true}
-                                    options={[
-                                        { code: true, description: "Công khai" },
-                                        { code: false, description: "Không công khai" },
-                                    ]}
-                                    onChange={(option) => dispatch(setExam({ ...exam, public: option }))}
-                                    valueText={exam?.public ? "Công khai" : "Không công khai"}
+                                    onChange={(checked) => dispatch(setExam({ ...exam, public: checked }))}
+                                    valueText={exam?.public ? "Có" : "Không"}
+                                />
+                                <DetailTr
+                                    title="Đề thi trên lớp"
+                                    value={exam?.isClassroomExam}
+                                    type={5}
+                                    required={false}
+                                    onChange={(checked) => dispatch(setExam({ ...exam, isClassroomExam: checked }))}
+                                    valueText={exam?.isClassroomExam ? "Có" : "Không"}
                                 />
                                 <DetailTr
                                     title="Ngày tạo"

@@ -9,6 +9,10 @@ const initialState = {
     sortOrder: "desc", // Sắp xếp tăng dần hoặc giảm dần
     isAddView: false,
     isFilterView: false,
+    selectedGrade: null,
+    selectedChapters: [],
+    selectedExamTypes: [],
+    isSearch: false,
 };
 
 const filterSlice = createSlice({
@@ -52,10 +56,26 @@ const filterSlice = createSlice({
             state.isFilterView = action.payload;
         },
 
+        setSelectedGrade: (state, action) => {
+            state.selectedGrade = action.payload;
+        },
+
+        setSelectedChapters: (state, action) => {
+            state.selectedChapters = action.payload;
+        },
+
+        setSelectedExamTypes: (state, action) => {
+            state.selectedExamTypes = action.payload;
+        },
+
+        setIsSearch: (state, action) => {
+            state.isSearch = action.payload;
+        },
+
         // ✅ Reset toàn bộ bộ lọc về trạng thái ban đầu
         resetFilters: () => initialState,
     },
 });
 
-export const { setCurrentPage, setTotalPages, setTotalItems, setLimit, setSearch, setSortOrder, setIsAddView, setIsFilterView, resetFilters } = filterSlice.actions;
+export const { setCurrentPage, setTotalPages, setTotalItems, setLimit, setSearch, setSortOrder, setIsAddView, setIsFilterView, resetFilters, setSelectedChapters, setSelectedExamTypes, setSelectedGrade, setIsSearch } = filterSlice.actions;
 export default filterSlice.reducer;

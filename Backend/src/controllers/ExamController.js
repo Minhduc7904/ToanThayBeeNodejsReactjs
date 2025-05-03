@@ -1,7 +1,8 @@
 import db from "../models/index.js"
 import UserType from "../constants/UserType.js"
 import { uploadImage, cleanupUploadedFiles } from "../utils/imageUpload.js"
-import { Op, or } from "sequelize";
+import { Op, or, where } from "sequelize";
+import { uploadPdfToFirebase, deletePdfFromFirebase } from "../utils/pdfUpload.js"
 
 export const getExam = async (req, res) => {
     const search = req.query.search || ''
@@ -45,20 +46,38 @@ export const getExam = async (req, res) => {
     })
 }
 
+export const getNewestExam = async (req, res) => {
+    try {
+        const exam = await db.Exam.findAll({
+            where: { public: true }, // 👈 đúng chỗ này
+            order: [['createdAt', 'DESC']], // Sắp xếp theo ngày tạo mới nhất
+            limit: 3
+        });
+
+        res.status(200).json({
+            message: 'Danh sách đề mới nhất',
+            data: exam
+        });
+    } catch (error) {
+        console.error('Lỗi khi lấy đề mới:', error);
+        res.status(500).json({ message: 'Lỗi server khi lấy đề mới nhất' });
+    }
+};
+
+
 export const getExamPublic = async (req, res) => {
     const userId = req.user.id;
     const search = req.query.search || '';
-    const page = parseInt(req.query.page, 10) || 1;
-    const limit = parseInt(req.query.limit, 10) || 10;
+    const page = Math.max(1, parseInt(req.query.page, 10) || 1);
+    const limit = Math.max(1, parseInt(req.query.limit, 10) || 10);
     const offset = (page - 1) * limit;
     const sortOrder = req.query.sortOrder || 'DESC';
-
-    // ✅ Parse danh sách và class duy nhất
+    // Parse danh sách và class duy nhất
     const typeOfExamList = req.query.typeOfExam ? req.query.typeOfExam : [];
     const chapterList = req.query.chapter ? req.query.chapter : [];
     const classValue = req.query.class || null; // Chỉ 1 giá trị
 
-    // ✅ Mảng các điều kiện OR
+    // Mảng các điều kiện OR
     const orConditions = [];
 
     if (search.trim() !== '') {
@@ -88,7 +107,7 @@ export const getExamPublic = async (req, res) => {
         });
     }
 
-    // ✅ Điều kiện chính
+    // Điều kiện chính
     let whereClause = {
         public: true
     };
@@ -104,7 +123,7 @@ export const getExamPublic = async (req, res) => {
         };
     }
 
-    // ✅ Truy vấn danh sách đề
+    // Truy vấn danh sách đề
     const [examList, total] = await Promise.all([
         db.Exam.findAll({
             where: whereClause,
@@ -146,7 +165,8 @@ export const getExamPublic = async (req, res) => {
         data: examListWithStatus,
         currentPage: page,
         totalPages: Math.ceil(total / limit),
-        totalItems: total
+        totalItems: total,
+        limit
     });
 };
 
@@ -195,7 +215,6 @@ export const submitExam = async (socket, attemptId) => {
         });
 
         // 👉 Tính điểm
-        const groupedDS = {};
         let totalScore = 0;
 
         for (const answer of answers) {
@@ -230,7 +249,7 @@ export const submitExam = async (socket, attemptId) => {
         attempt.score = parseFloat(totalScore.toFixed(2));
         await attempt.save({ transaction: t });
 
-        await t.commit(); // ✅ Commit nếu mọi thứ ổn
+        await t.commit(); // Commit nếu mọi thứ ổn
 
         socket.emit("exam_submitted", {
             message: "Nộp bài thành công!",
@@ -247,8 +266,8 @@ export const submitExam = async (socket, attemptId) => {
         });
 
     } catch (err) {
-        await t.rollback(); // ❌ Rollback nếu có lỗi
-        console.error("❌ Lỗi submit_exam:", err);
+        await t.rollback(); // Rollback nếu có lỗi
+        console.error("Lỗi submit_exam:", err);
         socket.emit("submit_error", { message: "Nộp bài thất bại, vui lòng thử lại." });
     }
 };
@@ -303,7 +322,7 @@ export const getQuestionByExamId = async (req, res) => {
     const { examId } = req.params;
 
     if (!examId) {
-        return res.status(400).json({ message: "❌ examId không hợp lệ!" });
+        return res.status(400).json({ message: "examId không hợp lệ!" });
     }
 
     const sortOrder = req.query.sortOrder || "desc";
@@ -333,7 +352,7 @@ export const getQuestionByExamId = async (req, res) => {
         });
 
         if (!exam) {
-            return res.status(404).json({ message: "❌ Không tìm thấy đề thi!" });
+            return res.status(404).json({ message: "Không tìm thấy đề thi!" });
         }
 
         // Lọc câu hỏi
@@ -375,7 +394,7 @@ export const getQuestionByExamId = async (req, res) => {
         const paginatedQuestions = filteredQuestions.slice(offset, offset + limit);
 
         return res.status(200).json({
-            message: "✅ Lấy danh sách câu hỏi thành công!",
+            message: "Lấy danh sách câu hỏi thành công!",
             data: paginatedQuestions,
             currentPage: page,
             totalPages: Math.ceil(total / limit),
@@ -383,7 +402,7 @@ export const getQuestionByExamId = async (req, res) => {
             exam,
         });
     } catch (error) {
-        console.error("❌ Lỗi khi lấy câu hỏi theo examId:", error);
+        console.error("Lỗi khi lấy câu hỏi theo examId:", error);
         return res.status(500).json({ message: "Lỗi server", error: error.message });
     }
 };
@@ -394,12 +413,12 @@ export const getPublicQuestionByExamId = async (req, res) => {
     const { examId } = req.params;
 
     if (!examId) {
-        return res.status(400).json({ message: "❌ examId không hợp lệ!" });
+        return res.status(400).json({ message: "examId không hợp lệ!" });
     }
 
     const exam = await db.Exam.findOne({
         where: { id: examId, public: true },
-        attributes: ['name', 'testDuration', 'class', 'solutionUrl', 'isCheatingCheckEnabled', 'attemptLimit'],
+        attributes: ['name', 'testDuration', 'class', 'solutionUrl', 'isCheatingCheckEnabled', 'attemptLimit', 'seeCorrectAnswer', 'acceptDoExam'],
         include: [
             {
                 model: db.Question,
@@ -418,7 +437,7 @@ export const getPublicQuestionByExamId = async (req, res) => {
     });
 
     if (!exam) {
-        return res.status(404).json({ message: "❌ Không tìm thấy đề thi công khai!" });
+        return res.status(404).json({ message: "Không tìm thấy đề thi công khai!" });
     }
 
     // Sắp xếp câu hỏi theo order trong bảng ExamQuestions
@@ -436,16 +455,8 @@ export const getPublicQuestionByExamId = async (req, res) => {
     });
 
     return res.status(200).json({
-        message: "✅ Lấy danh sách câu hỏi rút gọn thành công!",
+        message: "Lấy danh sách câu hỏi rút gọn thành công!",
         questions: exam.questions,
-        exam: {
-            name: exam.name,
-            testDuration: exam.testDuration,
-            class: exam.class,
-            solutionUrl: exam.solutionUrl,
-            isCheatingCheckEnabled: exam.isCheatingCheckEnabled,
-            attemptLimit: exam.attemptLimit,
-        }
     });
 
 };
@@ -474,10 +485,11 @@ export const postExam = async (req, res) => {
         const questionImages = req.files?.questionImages || []
         const statementImages = req.files?.statementImages || []
 
-
+        console.log("examData", examData)
+        console.log("questions", questions)
 
         if (!examData || !Array.isArray(questions) || !questions.length) {
-            return res.status(400).json({ message: "❌ Dữ liệu đề hoặc câu hỏi không hợp lệ!" })
+            return res.status(400).json({ message: "Dữ liệu đề hoặc câu hỏi không hợp lệ!" })
         }
 
         const examImageUrl = await uploadImage(examImage)
@@ -554,13 +566,13 @@ export const postExam = async (req, res) => {
         await transaction.commit()
 
         return res.status(201).json({
-            message: "✅ Thêm đề thi thành công!",
+            message: "Thêm đề thi thành công!",
             exam: newExam,
             questions: createdQuestions,
         })
 
     } catch (error) {
-        console.error('❌ Lỗi khi thêm đề thi:', error)
+        console.error('Lỗi khi thêm đề thi:', error)
         await cleanupUploadedFiles(uploadedFiles)
         await transaction.rollback()
 
@@ -668,12 +680,66 @@ export const saveExamForUser = async (req, res) => {
     return res.status(200).json({
         message: 'Thành công.',
         data: {
-            examId, 
+            examId,
             isSave: status.isSave
         }
     });
 }
 
+export const getSavedExams = async (req, res) => {
+    const { id } = req.user
+
+    const savedExams = await db.StudentExamStatus.findAll({
+        where: { studentId: id, isSave: true },
+        include: [
+            {
+                model: db.Exam,
+                as: "exam",
+                attributes: ["id", "name", "typeOfExam", "class", "imageUrl", "chapter", "testDuration", "public", "createdAt", "updatedAt"]
+            }
+        ]
+    })
+
+    return res.status(200).json({
+        message: "Lấy danh sách đề thi đã lưu thành công",
+        data: savedExams
+    })
+}
+
+export const uploadSolutionPdf = async (req, res) => {
+    const { id } = req.params
+    const transaction = await db.sequelize.transaction()
+    let uploadedFile
+    const exam = await db.Exam.findByPk(id)
+    if (!exam) {
+        return res.status(404).json({ message: "Đề thi không tồn tại" })
+    }
+
+    try {
+        if (exam.solutionPdfUrl) {
+            await deletePdfFromFirebase(exam.solutionPdfUrl)
+        }
+        console.log("exam.solutionPdfUrl", exam.solutionPdfUrl)
+        if (req.file) {
+            uploadedFile = await uploadPdfToFirebase(req)
+            await exam.update({ solutionPdfUrl: uploadedFile.file }, { transaction })
+        } else {
+            await exam.update({ solutionPdfUrl: null }, { transaction })
+        }
+        await transaction.commit()
+        return res.status(200).json({
+            message: "Cập nhật file PDF thành công!",
+            data: exam.solutionPdfUrl
+        })
+    } catch (error) {
+        console.error("Lỗi khi cập nhật file PDF:", error)
+        await transaction.rollback()
+        if (uploadedFile) {
+            await deletePdfFromFirebase(uploadedFile.file)
+        }
+        return res.status(500).json({ message: "Lỗi khi cập nhật file PDF", error: error.message })
+    }
+}
 
 export const deleteExam = async (req, res) => {
     const { id } = req.params
@@ -686,4 +752,231 @@ export const deleteExam = async (req, res) => {
     }
 
     return res.status(200).json({ message: "Xóa đề thi thành công" })
+}
+
+export const getRelatedExams = async (req, res) => {
+    const { examId } = req.params;
+    const limit = 5;
+
+    // Find the source exam
+    const sourceExam = await db.Exam.findByPk(examId);
+
+    if (!sourceExam) {
+        return res.status(404).json({
+            message: "Không tìm thấy đề thi gốc"
+        });
+    }
+
+    // Create query to find related exams
+    const whereClause = {
+        id: { [Op.ne]: examId },      // Không phải đề hiện tại
+        public: true,                 // Chỉ lấy đề công khai
+        [Op.or]: [
+            { class: sourceExam.class },
+            { typeOfExam: sourceExam.typeOfExam },
+            ...(sourceExam.chapter ? [{ chapter: sourceExam.chapter }] : [])
+        ]
+    };
+
+    // Add chapter condition if it exists
+    if (sourceExam.chapter) {
+        whereClause[Op.or].push({ chapter: sourceExam.chapter });
+    }
+
+    // Find related exams
+    // Find related exams
+    let relatedExams = await db.Exam.findAll({
+        where: whereClause,
+        limit: limit,
+        order: [['createdAt', 'DESC']]
+    });
+
+    const relatedIds = relatedExams.map(e => e.id);
+
+    // Nếu chưa đủ -> lấy thêm đề mới nhất để bù
+    if (relatedExams.length < limit) {
+        const remaining = limit - relatedExams.length;
+
+        const additionalExams = await db.Exam.findAll({
+            where: {
+                id: { [Op.notIn]: [examId, ...relatedIds] },
+                public: true
+            },
+            order: [['createdAt', 'DESC']],
+            limit: remaining
+        });
+
+        relatedExams = [...relatedExams, ...additionalExams];
+    }
+
+
+    // If user is logged in, get their status for these exams
+    const userId = req.user?.id;
+    let examStatusMap = {};
+
+    if (userId && relatedExams.length > 0) {
+        const examIds = relatedExams.map(exam => exam.id);
+
+        const statuses = await db.StudentExamStatus.findAll({
+            where: {
+                studentId: userId,
+                examId: { [Op.in]: examIds }
+            }
+        });
+
+        statuses.forEach(status => {
+            examStatusMap[status.examId] = {
+                isDone: status.isDone,
+                isSave: status.isSave
+            };
+        });
+    }
+
+    // Add status to each exam if user is logged in
+    const formattedExams = relatedExams.map(exam => {
+        const examData = exam.toJSON();
+        if (userId) {
+            const status = examStatusMap[exam.id] || { isDone: false, isSave: false };
+            return {
+                ...examData,
+                isDone: status.isDone,
+                isSave: status.isSave
+            };
+        }
+        return examData;
+    });
+
+    return res.status(200).json({
+        message: "Danh sách đề thi liên quan",
+        data: formattedExams,
+        total: formattedExams.length
+    });
+}
+
+// API endpoint for exam submission
+export const submitExamAPI = async (req, res) => {
+    const transaction = await db.sequelize.transaction();
+    try {
+        const { attemptId } = req.body;
+        const userId = req.user.id; // Get user ID from JWT token
+
+        console.log("📝 Nộp bài qua API:", attemptId, "bởi user:", userId);
+
+        // Validate input
+        if (!attemptId) {
+            return res.status(400).json({ message: "Thiếu thông tin attemptId" });
+        }
+
+        // Find the attempt
+        const attempt = await db.StudentExamAttempt.findByPk(attemptId, { transaction });
+
+        if (!attempt) {
+            await transaction.rollback();
+            return res.status(404).json({ message: "Không tìm thấy lượt làm bài" });
+        }
+
+        // Verify that the attempt belongs to the current user
+        if (attempt.studentId !== userId) {
+            await transaction.rollback();
+            return res.status(403).json({ message: "Bạn không có quyền nộp bài thi này" });
+        }
+
+        // Check if the exam has already been submitted
+        if (attempt.endTime) {
+            await transaction.rollback();
+            return res.status(400).json({ message: "Bài thi đã được nộp trước đó" });
+        }
+
+        // Set the end time
+        attempt.endTime = new Date();
+
+        // Update or create the exam status
+        const status = await db.StudentExamStatus.findOne({
+            where: { studentId: attempt.studentId, examId: attempt.examId },
+            transaction
+        });
+
+        if (status) {
+            status.isDone = true;
+            await status.save({ transaction });
+        } else {
+            await db.StudentExamStatus.create({
+                studentId: attempt.studentId,
+                examId: attempt.examId,
+                isDone: true
+            }, { transaction });
+        }
+
+        // Get all answers with their question types
+        const answers = await db.Answer.findAll({
+            where: { attemptId },
+            include: {
+                model: db.Question,
+                attributes: ['id', 'typeOfQuestion']
+            },
+            transaction
+        });
+
+        // Calculate the score
+        let totalScore = 0;
+
+        for (const answer of answers) {
+            const { typeOfQuestion } = answer.Question;
+            const isCorrect = answer.result === true;
+
+            if (typeOfQuestion === 'TN' && isCorrect) {
+                totalScore += 0.25;
+            } else if (typeOfQuestion === 'TLN' && isCorrect) {
+                totalScore += 0.5;
+            } else if (typeOfQuestion === 'DS') {
+                let count = 0;
+                if (!answer.answerContent || answer.answerContent == []) continue;
+                const answersDS = JSON.parse(answer.answerContent); // [{statementId, answer: true/false}]
+
+                for (const answerDS of answersDS || []) {
+                    const statement = await db.Statement.findByPk(answerDS.statementId);
+                    if (statement && statement.isCorrect === answerDS.answer) {
+                        count++;
+                    }
+                }
+
+                // Tính điểm dựa vào số lượng đúng
+                if (count === 1) totalScore += 0.1;
+                else if (count === 2) totalScore += 0.25;
+                else if (count === 3) totalScore += 0.5;
+                else if (count >= 4) totalScore += 1.0;
+            }
+        }
+
+        // Update the score
+        attempt.score = parseFloat(totalScore.toFixed(2));
+        await attempt.save({ transaction });
+
+        // Commit the transaction
+        await transaction.commit();
+
+        // Return the result
+        return res.status(200).json({
+            message: "Nộp bài thành công!",
+            timestamp: new Date(),
+            attemptId,
+            score: attempt.score,
+            answers: answers.map(a => ({
+                id: a.id,
+                questionId: a.questionId,
+                answerContent: a.answerContent,
+                result: a.result,
+                typeOfQuestion: a.Question?.typeOfQuestion || null,
+            }))
+        });
+
+    } catch (error) {
+        // Rollback the transaction in case of error
+        await transaction.rollback();
+        console.error("Lỗi khi nộp bài thi:", error);
+        return res.status(500).json({
+            message: "Nộp bài thất bại, vui lòng thử lại",
+            error: error.message
+        });
+    }
 }

@@ -64,7 +64,7 @@ export const postSlide = async (req, res) => {
 
         for (let imageUrl of images) {
             if (!checkLocalImageExists(imageUrl)) {
-                return res.status(400).json({ message: `❌ Ảnh '${imageUrl}' không tồn tại trên server!` })
+                return res.status(400).json({ message: `Ảnh '${imageUrl}' không tồn tại trên server!` })
             }
         }
 
@@ -83,13 +83,13 @@ export const postSlide = async (req, res) => {
         await transaction.commit()
 
         return res.status(201).json({
-            message: "✅ Thêm slide thành công!",
+            message: "Thêm slide thành công!",
             slide: newSlide,
             images: slideImages
         })
     } catch (error) {
         await transaction.rollback()
-        console.error("❌ Lỗi khi thêm slide:", error)
+        console.error("Lỗi khi thêm slide:", error)
         return res.status(500).json({ message: "Lỗi server", error: error.message })
     }
 }

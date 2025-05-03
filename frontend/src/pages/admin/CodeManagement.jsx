@@ -37,7 +37,7 @@ const CodeManagement = () => {
                 <AddCodeModal onClose={() => dispatch(setIsAddView(false))} fetchCodes={fetchAllCodes} />
             </AdminModal>
 
-            <div className="text-[#090a0a] text-[32px] font-bold font-['Be Vietnam Pro'] leading-9">
+            <div className="text-[#090a0a] text-[32px] font-bold font-bevietnam leading-9">
                 Danh sách mã
             </div>
             <FunctionBarAdmin />

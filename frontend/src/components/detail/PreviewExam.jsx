@@ -7,6 +7,7 @@ import { useReactToPrint } from 'react-to-print';
 import header from "../../assets/images/Screenshot 2025-03-18 010039.jpg";
 import { BeeMathLogo } from "../logo/BeeMathLogo";
 import QRCodeComponent from "../QrCode";
+import "../../styles/print-styles.css";
 
 const PreviewExam = ({ questions, exam }) => {
     const prefixStatementTN = ['A.', 'B.', 'C.', 'D.', 'E.', 'F.', 'G.', 'H.', 'I.', 'J.'];
@@ -21,19 +22,83 @@ const PreviewExam = ({ questions, exam }) => {
     const handlePrint = useReactToPrint({
         contentRef: examRef,
         documentTitle: exam?.name || "De Thi",
+        onBeforeGetContent: () => {
+            // Any preparation before printing
+            document.body.classList.add('printing');
+        },
+        onAfterPrint: () => {
+            // Cleanup after printing
+            document.body.classList.remove('printing');
+        },
+        pageStyle: `
+            @page {
+                size: A4;
+                margin: 15mm 10mm 20mm 10mm;
+                counter-increment: page;
+                @bottom-left {
+                    content: "Toán thầy Bee 0333726202 100 Bạch Mai, Hai Bà Trưng, Hà Nội";
+                    font-size: 10px;
+                    color: gray;
+                }
+
+                @bottom-right {
+                    content: counter(page) " / " counter(pages);
+                    font-size: 10px;
+                    color: gray;
+                }
+            }
+            @media print {
+                body {
+                    -webkit-print-color-adjust: exact !important;
+                    color-adjust: exact !important;
+                    counter-reset: page;
+                }
+                /* Ensure content doesn't overlap */
+                p, div, h1, h2, h3, h4, h5, h6 {
+                    orphans: 3;
+                    widows: 3;
+                }
+                /* Keep section headers with content */
+                .print-section > div:first-child {
+                    break-after: avoid !important;
+                    page-break-after: avoid !important;
+                }
+                /* Minimal space between sections */
+                .print-section {
+                    margin-bottom: 2mm;
+                    padding-top: 0.5mm;
+                }
+                /* First section doesn't need top padding */
+                .first-section {
+                    padding-top: 0 !important;
+                }
+                .pageNumber:before {
+                    content: counter(page);
+                }
+                .totalPages:before {
+                    content: counter(pages);
+                }
+            }
+        `,
     });
 
     if (loading) {
         return (
             <div className="flex items-center justify-center h-full w-full">
-                <LoadingSpinner color="border-black" size="5rem" />
+                <LoadingSpinner
+                    type="dots"
+                    color="border-blue-600"
+                    size="4rem"
+                    showText={true}
+                    text="Đang tải thông tin đề thi..."
+                />
             </div>
         )
     }
 
     return (
         <div className="flex flex-col gap-4 overflow-y-auto hide-scrollbar">
-            <div className="flex w-full items-center">
+            <div className="flex w-full items-center no-print">
                 <button
                     onClick={handlePrint}
                     className="bg-blue-500 text-white px-4 py-2 rounded flex items-center gap-2 hover:bg-blue-600"
@@ -46,13 +111,13 @@ const PreviewExam = ({ questions, exam }) => {
             </div>
 
 
-            <div ref={examRef} className="flex flex-col gap-4 bg-white">
+            <div ref={examRef} className="flex flex-col gap-4 bg-white print-container">
                 <div className="flex h-[12rem] justify-center flex-col w-full border border-black">
                     <div className="flex h-full items-center border-b border-black">
                         {/* Cột trái */}
                         <div className="flex flex-col justify-center items-center w-[25%] border-r border-black p-5 h-full">
-                            <div className="text-sm font-bold font-['Be Vietnam Pro'] text-center">Lớp toán thầy Bee</div>
-                            <div className="text-[0.75rem] font-['Be Vietnam Pro'] text-center">GV. Ong Khắc Ngọc</div>
+                            <div className="text-sm font-bold font-bevietnam text-center truncate">Lớp toán thầy Bee</div>
+                            <div className="text-[0.75rem] font-bevietnam text-center truncate">GV. Ong Khắc Ngọc</div>
                             <BeeMathLogo className="w-10 h-10 mt-2" />
                         </div>
 
@@ -86,126 +151,149 @@ const PreviewExam = ({ questions, exam }) => {
                         </div>
                     </div>
                 </div>
-                <div className="flex w-full flex-wrap flex-col h-auto">
-                    <div className="text-xl font-bold">Phần I - Trắc nghiệm</div>
-                    <div className="flex flex-col">
-                        {questions.map((question) => {
-                            if (question.typeOfQuestion === "TN") {
-                                return (
-                                    <div key={question.id} className="flex flex-col avoid-page-break">
-                                        <p className="text-sm font-bold">Câu {indexTN++}:</p>
-                                        <LatexRenderer text={question.content} className="text-sm" />
-                                        {question.imageUrl && (
-                                            <div className="flex flex-col items-center justify-center w-full h-[12rem] p-5">
-                                                <img
-                                                    src={question.imageUrl}
-                                                    alt="question"
-                                                    className="object-contain w-full h-full"
-                                                />
-                                            </div>
-                                        )}
-                                        <div className={`grid ${question.statements.some(s => s.content.length > 30) ? "grid-cols-2" : "grid-cols-4"} gap-4`}>
-                                            {question.statements.map((statement, index) => (
-                                                <div key={statement._id} className="flex flex-1 flex-col w-full">
-                                                    <div className="flex flex-1 gap-2 w-full">
-                                                        <p className="text-sm font-bold">{prefixStatementTN[index]}</p>
-                                                        <LatexRenderer text={statement.content} className="break-words w-full text-sm" />
-                                                    </div>
-                                                    {statement.imageUrl && (
-                                                        <div className="flex flex-col items-center justify-center w-full h-[10rem]">
+                <div className="no-break-header" style={{ breakInside: 'avoid', pageBreakInside: 'avoid' }}>
+                    <div className="flex w-full flex-wrap flex-col h-auto print-section first-section" style={{ breakBefore: 'avoid', pageBreakBefore: 'avoid' }}>
+                        <div className="">
+                            <div className="text-xl font-bold">Phần I - Trắc nghiệm</div>
+                            <div className="flex flex-col">
+                                {questions.map((question) => {
+                                    if (question.typeOfQuestion === "TN") {
+                                        return (
+                                            <div key={question.id} className="flex flex-col print-question">
+                                                {/* Phần nội dung câu hỏi - không tự động sang trang */}
+                                                <div className="question-content">
+                                                    <p className="text-sm font-bold">Câu {indexTN++}:</p>
+                                                    <LatexRenderer text={question.content} className="text-sm" />
+                                                </div>
+
+                                                {/* Phần hình ảnh và mệnh đề - có thể sang trang khi cần */}
+                                                <div className="question-media-and-statements avoid-page-break">
+                                                    {question.imageUrl && (
+                                                        <div className="flex flex-col items-center justify-center w-full h-[12rem] p-5">
                                                             <img
-                                                                src={statement.imageUrl}
-                                                                alt="statement"
+                                                                src={question.imageUrl}
+                                                                alt="question"
                                                                 className="object-contain w-full h-full"
                                                             />
                                                         </div>
                                                     )}
-                                                </div>
-                                            ))}
-                                        </div>
-
-                                    </div>
-                                );
-                            }
-                            return null;
-                        })}
-                    </div>
-                </div>
-                <div className="flex w-full flex-wrap flex-col h-auto page-break">
-                    <div className="text-xl font-bold">Phần II - Đúng sai</div>
-                    <div className="flex flex-col">
-                        {questions.map((question) => {
-                            if (question.typeOfQuestion === "DS") {
-                                return (
-                                    <div key={question._id} className="flex flex-col avoid-page-break">
-                                        <div className="text-sm font-bold">Câu {indexDS++}:</div>
-                                        <LatexRenderer text={question.content} className="text-sm" />
-                                        {question.imageUrl && (
-                                            <div className="flex items-center justify-center w-full h-[12rem] p-5">
-                                                <img
-
-                                                    src={question.imageUrl}
-                                                    alt="question"
-                                                    className="object-contain w-full h-full"
-                                                />
-                                            </div>
-                                        )}
-                                        <div className="flex flex-col gap-4">
-                                            {question.statements.map((statement, index) => (
-                                                <div key={statement._id} className="flex flex-1 flex-col">
-                                                    <div className="flex flex-1 items-center gap-2">
-                                                        <p className="text-sm font-bold">{prefixStatementDS[index]}</p>
-                                                        <LatexRenderer text={statement.content} className="text-sm" />
+                                                    <div className={`grid ${question.statements.some(s => s.content.length > 30) ? "grid-cols-2" : "grid-cols-4"} gap-1`}>
+                                                        {question.statements.map((statement, index) => (
+                                                            <div key={statement._id} className="flex flex-1 flex-col w-full">
+                                                                <div className="flex flex-1 gap-2 w-full">
+                                                                    <p className="text-sm font-bold">{prefixStatementTN[index]}</p>
+                                                                    <LatexRenderer text={statement.content} className="break-words w-full text-sm" />
+                                                                </div>
+                                                                {statement.imageUrl && (
+                                                                    <div className="flex flex-col items-center justify-center w-full h-[10rem]">
+                                                                        <img
+                                                                            src={statement.imageUrl}
+                                                                            alt="statement"
+                                                                            className="object-contain w-full h-full"
+                                                                        />
+                                                                    </div>
+                                                                )}
+                                                            </div>
+                                                        ))}
                                                     </div>
-                                                    {statement.imageUrl && (
-                                                        <div className="flex justify-start h-[10rem]">
-                                                            <img
-                                                                src={statement.imageUrl}
-                                                                alt="statement"
-                                                                className="object-contain w-full h-full"
-                                                            />
-                                                        </div>
-                                                    )}
                                                 </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                );
-                            }
-                            return null;
-                        })}
-                    </div>
-
-                </div>
-                <div className="flex w-full flex-wrap flex-col h-auto page-break">
-                    <div className="text-xl font-bold">Phần III - Trả lời ngắn</div>
-                    <div className="flex flex-col">
-                        {questions.map((question) => {
-                            if (question.typeOfQuestion === "TLN") {
-                                return (
-                                    <div key={question._id} className="flex flex-col avoid-page-break">
-                                        <div className="text-sm font-bold">Câu {indexTLN++}:</div>
-                                        <LatexRenderer text={question.content} className="text-sm" />
-                                        {question.imageUrl &&
-                                            <div className="flex items-center justify-center w-full h-[12rem] p-5">
-                                                <img
-
-                                                    src={question.imageUrl}
-                                                    alt="question"
-                                                    className="object-contain w-full h-full"
-                                                />
                                             </div>
-                                        }
-                                    </div>
-                                );
-                            }
-                            return null;
-                        })}
+                                        );
+                                    }
+                                    return null;
+                                })}
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div className="print-footer text-right">
-                    Toán thầy Bee 0312345678 100 Bạch Mai, Hai Bà Trưng, Hà Nội
+                <div className="flex w-full flex-wrap flex-col h-auto print-section">
+                    <div className="">
+                        <div className="text-xl font-bold">Phần II - Đúng sai</div>
+                        <div className="flex flex-col">
+                            {questions.map((question) => {
+                                if (question.typeOfQuestion === "DS") {
+                                    return (
+                                        <div key={question._id} className="flex flex-col print-question">
+                                            {/* Phần nội dung câu hỏi - không tự động sang trang */}
+                                            <div className="question-content">
+                                                <div className="text-sm font-bold">Câu {indexDS++}:</div>
+                                                <LatexRenderer text={question.content} className="text-sm" />
+                                            </div>
+
+                                            {/* Phần hình ảnh và mệnh đề - có thể sang trang khi cần */}
+                                            <div className="question-media-and-statements avoid-page-break">
+                                                {question.imageUrl && (
+                                                    <div className="flex items-center justify-center w-full h-[12rem] p-5">
+                                                        <img
+                                                            src={question.imageUrl}
+                                                            alt="question"
+                                                            className="object-contain w-full h-full"
+                                                        />
+                                                    </div>
+                                                )}
+                                                <div className="flex flex-col gap-1">
+                                                    {question.statements.map((statement, index) => (
+                                                        <div key={statement._id} className="flex flex-1 flex-col">
+                                                            <div className="flex flex-1 items-center gap-2">
+                                                                <p className="text-sm font-bold">{prefixStatementDS[index]}</p>
+                                                                <LatexRenderer text={statement.content} className="text-sm" />
+                                                            </div>
+                                                            {statement.imageUrl && (
+                                                                <div className="flex justify-start h-[10rem]">
+                                                                    <img
+                                                                        src={statement.imageUrl}
+                                                                        alt="statement"
+                                                                        className="object-contain w-full h-full"
+                                                                    />
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                    </div>
                 </div>
+                <div className="flex w-full flex-wrap flex-col h-auto print-section">
+                    <div className="">
+                        <div className="text-xl font-bold">Phần III - Trả lời ngắn</div>
+                        <div className="flex flex-col">
+                            {questions.map((question) => {
+                                if (question.typeOfQuestion === "TLN") {
+                                    return (
+                                        <div key={question._id} className="flex flex-col print-question">
+                                            {/* Phần nội dung câu hỏi - không tự động sang trang */}
+                                            <div className="question-content">
+                                                <div className="text-sm font-bold">Câu {indexTLN++}:</div>
+                                                <LatexRenderer text={question.content} className="text-sm" />
+                                            </div>
+
+                                            {/* Phần hình ảnh - có thể sang trang khi cần */}
+                                            <div className="question-media-and-statements avoid-page-break">
+                                                {question.imageUrl &&
+                                                    <div className="flex items-center justify-center w-full h-[12rem] p-5">
+                                                        <img
+                                                            src={question.imageUrl}
+                                                            alt="question"
+                                                            className="object-contain w-full h-full"
+                                                        />
+                                                    </div>
+                                                }
+                                            </div>
+                                        </div>
+                                    );
+                                }
+                                return null;
+                            })}
+                        </div>
+                    </div>
+                </div>
+
             </div>
 
         </div>

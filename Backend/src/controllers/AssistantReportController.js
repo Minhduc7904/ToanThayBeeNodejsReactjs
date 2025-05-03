@@ -25,12 +25,12 @@ export const getAssistantReport = async (req, res) => {
             {
                 model: db.User,
                 as: 'user',
-                attributes: ['id', 'lastName', 'firstName'], // ✅ Lấy tên người dùng
+                attributes: ['id', 'lastName', 'firstName'], // Lấy tên người dùng
             },
             {
                 model: db.User,
                 as: 'assistant',
-                attributes: ['id', 'lastName', 'firstName'], // ✅ Lấy tên trợ lý
+                attributes: ['id', 'lastName', 'firstName'], // Lấy tên trợ lý
             },
         ],
         limit,
@@ -39,7 +39,7 @@ export const getAssistantReport = async (req, res) => {
     })
 
     return res.status(200).json({
-        message: '✅ Lấy danh sách báo cáo thành công!',
+        message: 'Lấy danh sách báo cáo thành công!',
         data: reports,
         currentPage: page,
         totalPages: Math.ceil(total / limit),

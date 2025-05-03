@@ -35,7 +35,7 @@ const config = {
     port: process.env.DB_DEV_PORT,
     dialect: "mysql",
     dialectOptions: {
-      socketPath: process.env.DB_DEV_HOST, // ✅ thay vì host
+      socketPath: process.env.DB_DEV_HOST, // thay vì host
     },
     pool: {
       max: parseInt(process.env.DB_POOL_MAX, 10) || 20,

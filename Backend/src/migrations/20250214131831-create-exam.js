@@ -61,6 +61,9 @@ export default {
       solutionUrl: {
         type: Sequelize.TEXT
       },
+      solutionPdfUrl: {
+        type: Sequelize.TEXT
+      },
       imageUrl: {
         type: Sequelize.TEXT
       },
@@ -68,6 +71,21 @@ export default {
         allowNull: false,
         type: Sequelize.BOOLEAN,
         defaultValue: false
+      },
+      seeCorrectAnswer: {
+        allowNull: false,
+        type: Sequelize.BOOLEAN,
+        defaultValue: true
+      },
+      attemptLimit: {
+        type: Sequelize.INTEGER,
+        allowNull: true,
+        defaultValue: 1,
+      },
+      isCheatingCheckEnabled: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false,
       },
       createdAt: {
         allowNull: false,

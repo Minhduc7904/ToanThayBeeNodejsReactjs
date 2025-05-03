@@ -1,5 +1,4 @@
 // src/layouts/AuthLayout.jsx
-import '../styles/AuthLayout.css';
 import { BeeMathLogo } from '../components/logo/BeeMathLogo';
 import backgroundImage from '../assets/images/anh-nen1.jpg'; // Import ảnh từ src/assets
 import ParticlesBackground from '../components/ParticlesBackground';
@@ -15,7 +14,7 @@ const AuthLayout = ({ children }) => {
             }}
         >
             <ParticlesBackground />
-            <BeeMathLogo className="absolute top-6 left-6 w-[3rem] h-[3rem]" />
+            <BeeMathLogo className="absolute top-6 left-6 lg:w-[2rem] lg:h-[2rem] lg:block hidden" />
 
             {children}
         </div>

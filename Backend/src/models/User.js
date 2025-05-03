@@ -12,10 +12,14 @@ export default (sequelize, DataTypes) => {
         foreignKey: 'studentId',
         as: 'classStatuses',
       })
+      User.hasMany(models.StudentStudyStatus, {
+        foreignKey: 'studentId',
+        as: 'studyStatuses'
+      });
       User.hasMany(models.AssistantReport, { foreignKey: 'userId', as: 'reports' })
       User.hasMany(models.AssistantReport, { foreignKey: 'assistantId', as: 'assistantReports' })
       User.hasMany(models.StudentExamAttempt, { foreignKey: 'studentId' });
-
+      User.hasMany(models.StudentExamStatus, { foreignKey: 'studentId' });
     }
   }
   User.init({

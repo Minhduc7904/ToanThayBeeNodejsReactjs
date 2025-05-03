@@ -24,6 +24,7 @@ export default (sequelize, DataTypes) => {
     learningItemCount: DataTypes.INTEGER,
     day: DataTypes.DATE,
     classId: DataTypes.INTEGER,
+    chapter: DataTypes.STRING,
     createdAt: DataTypes.DATE,
     updatedAt: DataTypes.DATE
   }, {

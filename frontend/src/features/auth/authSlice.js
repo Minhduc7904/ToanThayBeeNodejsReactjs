@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { loginAPI, registerAPI, logoutAPI, checkLoginAPI } from "../../services/authApi.js";
+import { loginAPI, registerAPI, logoutAPI, checkLoginAPI, updateAvatarAPI, updateUserAPI, getUserMeAPI } from "../../services/authApi.js";
 import { setErrorMessage, setSuccessMessage } from "../state/stateApiSlice.js"; // Import action setErrorMessage từ errorSlice
+import { apiHandler } from "../../utils/apiHandler.js"; // Import apiHandler từ utils
 
 // Thunk đăng nhập
 export const login = createAsyncThunk(
@@ -8,7 +9,13 @@ export const login = createAsyncThunk(
     async (credentials, { dispatch, rejectWithValue }) => {
         try {
             const response = await loginAPI(credentials);
-            const { user } = response.data; // API trả về { user }
+            const { user, token } = response.data; // API trả về { user, token }
+
+            // Lưu token vào localStorage để sử dụng trong trường hợp cookie không được hỗ trợ
+            if (token) {
+                localStorage.setItem('auth_token', token);
+            }
+
             return user;
         } catch (error) {
             const errorMsg = error.response?.data.message || "Đăng nhập thất bại";
@@ -28,7 +35,7 @@ export const checkLogin = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data.message || "Không thể xác thực";
             // dispatch(setErrorMessage(errorMsg));
-            return 
+            return
         }
     }
 );
@@ -44,7 +51,7 @@ export const register = createAsyncThunk(
         } catch (error) {
             const errorMsg = error.response?.data.message || "Đăng ký thất bại";
             dispatch(setErrorMessage(errorMsg));
-            return 
+            return
         }
     }
 );
@@ -55,12 +62,97 @@ export const logout = createAsyncThunk(
     async (_, { dispatch, rejectWithValue }) => {
         try {
             await logoutAPI();
+            // Xóa token khỏi localStorage khi đăng xuất
+            localStorage.removeItem('auth_token');
             // dispatch(setSuccessMessage("Đăng xuất thành công"));
             return; // Chỉ cần xóa user khỏi state
         } catch (error) {
             // const errorMsg = error.response?.data || "Đăng xuất thất bại";
             // dispatch(setErrorMessage(errorMsg));
-            return 
+            return
+        }
+    }
+);
+
+export const updateAvatar = createAsyncThunk(
+    "auth/updateAvatar",
+    async (avatar, { dispatch }) => {
+        return await apiHandler(dispatch, updateAvatarAPI, { avatar }, () => {
+            dispatch(setSuccessMessage("Cập nhật ảnh đại diện thành công"));
+        }, true);
+    }
+);
+
+export const updateUser = createAsyncThunk(
+    "auth/updateUser",
+    async (user, { dispatch }) => {
+        return await apiHandler(dispatch, updateUserAPI, user, () => {
+            dispatch(setSuccessMessage("Cập nhật thông tin thành công"));
+        }, true);
+    }
+);
+
+// Thêm action kiểm tra token và nguồn gửi token
+export const testTokenSource = createAsyncThunk(
+    "auth/testTokenSource",
+    async (_, { dispatch, rejectWithValue }) => {
+        try {
+            const response = await getUserMeAPI();
+            const { hasTokenInCookie, hasTokenInHeader, tokenSource } = response.data;
+
+            // Hiển thị thông báo về nguồn token
+            let message = "Kiểm tra token: ";
+            if (tokenSource === 'cookie') {
+                message += "Sử dụng cookie để gửi token";
+            } else if (tokenSource === 'header') {
+                message += "Sử dụng header để gửi token";
+            } else {
+                message += "Không tìm thấy token";
+            }
+
+            console.log(message);
+
+            dispatch(setSuccessMessage(message));
+
+            return { hasTokenInCookie, hasTokenInHeader, tokenSource };
+        } catch (error) {
+            const errorMsg = error.response?.data.message || "Không thể kiểm tra token";
+            dispatch(setErrorMessage(errorMsg));
+            return rejectWithValue(errorMsg);
+        }
+    }
+);
+
+// Thêm action mới
+export const checkLoginIfNeeded = createAsyncThunk(
+    "auth/checkLoginIfNeeded",
+    async (_, { dispatch, getState, rejectWithValue }) => {  // Thêm rejectWithValue vào đây
+        const CACHE_DURATION = 5 * 60 * 1000; // 5 phút
+        const lastCheck = localStorage.getItem('lastLoginCheck');
+        const now = Date.now();
+
+        // Kiểm tra cache
+        if (lastCheck && (now - parseInt(lastCheck) < CACHE_DURATION)) {
+            const cachedUser = localStorage.getItem('cachedUser');
+            if (cachedUser) {
+                return JSON.parse(cachedUser);
+            }
+        }
+
+        // Nếu không có cache hoặc cache hết hạn, gọi API
+        try {
+            const response = await checkLoginAPI();
+            const user = response.data.user;
+
+            // Cập nhật cache
+            localStorage.setItem('lastLoginCheck', now.toString());
+            localStorage.setItem('cachedUser', JSON.stringify(user));
+
+            return user;
+        } catch (error) {
+            localStorage.removeItem('lastLoginCheck');
+            localStorage.removeItem('cachedUser');
+            return rejectWithValue(error);
         }
     }
 );
@@ -105,21 +197,31 @@ const authSlice = createSlice({
                 state.user = null;
             })
 
-            // Xử lý register
-            .addCase(register.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(register.fulfilled, (state, action) => {
-                state.loading = false;
-                state.user = action.payload;
-            })
-            .addCase(register.rejected, (state) => {
-                state.loading = false;
-            })
-
             // Xử lý logout
             .addCase(logout.fulfilled, (state) => {
                 state.user = null;
+            })
+
+            .addCase(updateAvatar.fulfilled, (state, action) => {
+                if (state.user) {
+                    state.user.avatarUrl = action.payload.newAvartarUrl;
+                }
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+                if (state.user) {
+                    state.user = { ...state.user, ...action.payload.data };
+                }
+            })
+
+            // Xử lý testTokenSource
+            .addCase(testTokenSource.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(testTokenSource.fulfilled, (state) => {
+                state.loading = false;
+            })
+            .addCase(testTokenSource.rejected, (state) => {
+                state.loading = false;
             });
     },
 });

@@ -16,7 +16,7 @@ const QuestionManagement = () => {
                 <AdminModal isOpen={isAddView} headerText={'Tạo câu hỏi mới'} onClose={() => dispatch(setIsAddView(false))} >
                     <AddQuestionModal onClose={() => dispatch(setIsAddView(false))} fetchQuestions={fetchQuestions} />
                 </AdminModal>
-                <div className="text-[#090a0a] text-[32px] font-bold font-['Be Vietnam Pro'] leading-9">
+                <div className="text-[#090a0a] text-[32px] font-bold font-bevietnam leading-9">
                     Danh sách câu hỏi
                 </div>
                 <FunctionBarAdmin />

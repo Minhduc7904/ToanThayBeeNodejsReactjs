@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../features/auth/authSlice';
 import { useNavigate, Link } from 'react-router-dom';
@@ -8,6 +8,7 @@ import Button from '../components/button/ButtonForAuthPage';
 import GoogleLoginButton from '../components/button/GoogleLoginButton';
 import LoadingSpinner from '../components/loading/LoadingSpinner';
 import { AuthCheckbox } from '../components/checkBox/AuthCheckbox';
+import { BeeMathLogo } from '../components/logo/BeeMathLogo';
 
 export default function LoginPage() {
     const dispatch = useDispatch();
@@ -18,12 +19,15 @@ export default function LoginPage() {
         password: "",
     });
 
+    const { user } = useSelector((state) => state.auth);
+    useEffect(() => {
+        if (user) {
+            navigate('/overview');
+        }
+    }, [user, navigate]);
+
     const handleChange = (e) =>
         setFormData({ ...formData, [e.target.name]: e.target.value });
-
-    const handleGoogleLogin = () => {
-        alert('Đang phát triển');
-    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -35,7 +39,11 @@ export default function LoginPage() {
             } else {
                 localStorage.removeItem("savedUsername");
             }
-            navigate('/');
+            let redirectPath = localStorage.getItem("redirect_after_login") || "/overview";
+            redirectPath = redirectPath === "/" ? "/overview" : redirectPath;
+            localStorage.removeItem("redirect_after_login");
+
+            navigate(redirectPath); // Nếu dùng React Router
         }
     };
 
@@ -46,9 +54,13 @@ export default function LoginPage() {
                 className="flex flex-col gap-4 w-full px-4 sm:px-6 py-8 max-w-sm mx-auto bg-white backdrop-blur-md shadow-xl rounded-xl"
             >
                 {/* Tiêu đề */}
-                <div className="mb-2  text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-sky-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent tracking-wide drop-shadow-sm uppercase font-cubano">
-                    Đăng nhập
+                <div className='flex items-center justify-start gap-2'>
+                    <div className="text-3xl sm:text-4xl font-extrabold bg-gradient-to-r from-sky-600 via-blue-500 to-indigo-600 bg-clip-text text-transparent tracking-wide drop-shadow-sm uppercase font-cubano">
+                        Đăng nhập
+                    </div>
+                    <BeeMathLogo className="w-[2rem] h-[2rem] lg:hidden block" />
                 </div>
+
 
 
                 {/* Input Username */}
@@ -98,10 +110,11 @@ export default function LoginPage() {
                 {/* Liên kết */}
                 <div className="text-center text-sm text-gray-600 space-y-1">
                     <p className=" font-medium">
-                        Nếu bạn chưa có tài khoản hoặc quên mật khẩu, vui lòng liên hệ với giáo viên! 
+                        Nếu bạn chưa có tài khoản hoặc quên mật khẩu, vui lòng liên hệ với giáo viên!
                     </p>
                 </div>
             </form>
+
         </AuthLayout>
 
     );

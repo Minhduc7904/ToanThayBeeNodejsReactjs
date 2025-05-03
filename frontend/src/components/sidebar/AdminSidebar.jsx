@@ -69,10 +69,10 @@ const AdminSidebar = () => {
             <div className="flex-col w-full justify-start items-start gap-5 inline-flex">
                 <HeaderSidebar />
                 <div className="flex flex-col gap-3 w-full">
-                    <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon1} text={'Tổng quan'} />
+                    {/* <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon1} text={'Tổng quan'} /> */}
 
                     <button
-                        className={`p-3 w-full justify-center items-center rounded-lg gap-4 inline-flex 
+                        className={`p-3 w-full justify-center items-center rounded-lg gap-4 inline-flex
                             ${dropdown
                                 ? 'bg-[#253f61] text-white'
                                 : 'bg-white text-[#253f61] hover:bg-[#f0f4fa] hover:text-[#253f61]'
@@ -108,18 +108,20 @@ const AdminSidebar = () => {
                             <Choice route={'/admin/question-management'} text={'Câu hỏi'} />
                             <Choice route={'/admin/exam-management'} text={'Đề thi'} />
                             <Choice route={'/admin/code-management'} text={'Code'} />
+                            <Choice route={'/admin/achievement-management'} text={'Thành tích'} />
                             {/* <Choice route={'/admin/theory-management'} text={'Lý thuyết'} /> */}
 
                         </div>
                     )}
-
-                    <MenuSidebar onClick={() => navigate('/')} icon={icon2} text={'Báo cáo thống kê'} />
+                    <MenuSidebar onClick={() => navigate('/admin/article-management')} route={'/admin/article-management'} icon={icon1} text={'Bài viết'} />
+                    <MenuSidebar onClick={() => navigate('/admin/homepage-management')} route={'/admin/homepage-management'} icon={icon2} text={'Trang chủ'} />
+                    {/* <MenuSidebar onClick={() => navigate('/')} icon={icon2} text={'Báo cáo thống kê'} /> */}
 
                 </div>
             </div>
             <div className="flex-col w-full justify-start items-start gap-3 inline-flex">
-                <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon3} text={'Thông báo'} icon2={notification} />
-                <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon4} text={'Trợ giúp'} />
+                {/* <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon3} text={'Thông báo'} icon2={notification} /> */}
+                {/* <MenuSidebar onClick={() => navigate('/')} route={'/'} icon={icon4} text={'Trợ giúp'} /> */}
                 <MenuSidebar onClick={handleLogout} route={'/'} icon={icon5} text={'Đăng xuất'} />
                 <UserSidebar />
             </div>

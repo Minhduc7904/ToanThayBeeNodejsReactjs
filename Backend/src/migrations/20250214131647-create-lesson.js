@@ -33,6 +33,15 @@ export default {
         },
         onDelete: 'CASCADE',
       },
+      chapter: {
+        type: Sequelize.STRING,
+        references: {
+          model: 'allCode',
+          key: 'code'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'SET NULL'
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,

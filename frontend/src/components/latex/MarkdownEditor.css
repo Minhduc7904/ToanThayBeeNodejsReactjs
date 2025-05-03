@@ -1,0 +1,73 @@
+/* Custom styles for the Markdown Editor */
+
+.markdown-editor-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.markdown-editor-fullsize {
+  flex: 1;
+  width: 100%;
+  height: 100%;
+}
+
+/* Override default styles to make the editor more responsive */
+.w-md-editor {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.w-md-editor-content {
+  height: 100% !important;
+}
+
+/* Make sure the editor toolbar stays at the top */
+.w-md-editor-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  background-color: #f9f9f9;
+}
+
+/* Ensure the editor and preview panes are properly sized */
+.w-md-editor-area {
+  height: 100% !important;
+}
+
+/* Improve the appearance of the editor */
+.w-md-editor-text {
+  padding: 10px !important;
+}
+
+/* Hide scrollbar in the editor text area while maintaining scroll functionality */
+.w-md-editor-text-input {
+  overflow: auto !important; /* Ensure scrolling still works */
+  scrollbar-width: none !important; /* For Firefox */
+  -ms-overflow-style: none !important; /* For Internet Explorer and Edge */
+}
+
+.w-md-editor-text-input::-webkit-scrollbar {
+  /* For Chrome, Safari, and newer versions of Edge */
+  display: none !important;
+  width: 0 !important;
+  height: 0 !important;
+}
+
+/* Ensure the preview scrolls independently */
+.w-md-editor-preview {
+  overflow: auto !important;
+}
+
+/* Improve the appearance of the preview */
+.wmde-markdown {
+  padding: 10px !important;
+}
+
+/* Fix for mobile view */
+@media (max-width: 768px) {
+  .w-md-editor-toolbar {
+    flex-wrap: wrap;
+  }
+}

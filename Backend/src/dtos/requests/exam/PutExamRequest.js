@@ -13,6 +13,7 @@ class PutExamRequest {
         this.solutionUrl = data.solutionUrl
         this.imageUrl = data.imageUrl
         this.public = data.public
+        this.seeCorrectAnswer = data.seeCorrectAnswer
     }
 
     static validate(data) {
@@ -28,6 +29,7 @@ class PutExamRequest {
             solutionUrl: Joi.string().uri().optional(),
             imageUrl: Joi.string().uri().optional(),
             public: Joi.boolean().optional(),
+            seeCorrectAnswer: Joi.boolean().optional(),
         })
 
         return schema.validate(data)

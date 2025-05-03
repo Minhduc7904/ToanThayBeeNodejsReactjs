@@ -14,6 +14,7 @@ import DropMenuBarAdmin from "../../../components/dropMenu/OptionBarAdmin";
 import { fetchPublicExamById, setExam } from "../../../features/exam/examSlice";
 import LoadingSpinner from "../../../components/loading/LoadingSpinner";
 import YouTubePlayer from "../../../components/YouTubePlayer";
+import SuggestInputBarAdmin from "../../../components/input/suggestInputBarAdmin";
 
 const LessonManagement = () => {
     const { classId } = useParams();
@@ -32,6 +33,7 @@ const LessonManagement = () => {
         name: '',
         day: '',
         description: '',
+        chapter: null,
     });
 
     const [newLearningItem, setNewLearningItem] = useState({
@@ -86,6 +88,7 @@ const LessonManagement = () => {
             name: '',
             day: '',
             description: '',
+            chapter: null,
         });
     }
 
@@ -118,7 +121,7 @@ const LessonManagement = () => {
         await dispatch(postLesson({ data: { ...newLesson, classId } })); // Gọi API để thêm lesson mới
 
         setIsAddViewLesson(false); // Đóng form thêm buổi học sau khi đã lưu
-        setNewLesson({ name: '', day: '', description: '' }); // Reset form
+        setNewLesson({ name: '', day: '', description: '', chapter: null }); // Reset form
 
         // Cập nhật lại danh sách lessons
         dispatch(getFullLessonLearningItemByClassId({ classId }));
@@ -170,7 +173,7 @@ const LessonManagement = () => {
 
     useEffect(() => {
         setLoading(true);
-        dispatch(fetchCodesByType(['study item type']))
+        dispatch(fetchCodesByType(['study item type', 'chapter']))
             .then(() => setLoading(false))
             .catch(() => setLoading(false));
     }, [dispatch]);
@@ -208,6 +211,10 @@ const LessonManagement = () => {
         window.addEventListener("selectLearningItem", handleSelectItem);
         return () => window.removeEventListener("selectLearningItem", handleSelectItem);
     }, []);
+
+    // useEffect(() => {
+    //     console.log("newLesson", newLesson);
+    // }, [newLesson]);
 
     return (
         <AdminLayout>
@@ -248,7 +255,13 @@ const LessonManagement = () => {
             <div className="flex flex-row w-full gap-4">
                 {loading ? (
                     <div className="flex items-center w-1/3 justify-center h-screen">
-                        <LoadingSpinner color="border-black" size="5rem" />
+                        <LoadingSpinner
+                            type="dots"
+                            color="border-blue-600"
+                            size="4rem"
+                            showText={true}
+                            text="Đang tải danh sách buổi học..."
+                        />
                     </div>
 
                 ) : (
@@ -320,14 +333,14 @@ const LessonManagement = () => {
 
                                 {/* Lesson Content */}
                                 <div
-                                    className={`flex flex-col transition-all duration-500 ease-in-out overflow-hidden w-full 
+                                    className={`flex flex-col transition-all duration-500 ease-in-out overflow-hidden w-full
         ${openLessons.includes(index) || lesson.learningItems.length === 0 ? "max-h-96 opacity-100" : "max-h-0 opacity-0"}`}
                                 >
                                     {lesson.learningItems?.map((learningItem, i) => (
                                         <div
                                             key={i}
                                             onClick={() => setActiveItem({ type: 'learningItem', index: learningItem.id, item: learningItem })}
-                                            className={`pl-12 pr-4 py-2 rounded-md inline-flex justify-start items-center gap-2.5 cursor-pointer transition 
+                                            className={`pl-12 pr-4 py-2 rounded-md inline-flex justify-start items-center gap-2.5 cursor-pointer transition
                 ${activeItem.type === 'learningItem' && activeItem.index === learningItem.id ? 'bg-slate-700 text-white' : 'hover:bg-gray-200'}`}
                                         >
                                             <LearningItemIcon type={learningItem.typeOfLearningItem} />
@@ -377,12 +390,23 @@ const LessonManagement = () => {
                                         />
                                     </div>
                                     <div className="flex flex-col gap-2">
+                                        <label className="text-lg font-semibold font-['Be_Vietnam_Pro']">Chương
+                                            <span className="text-gray-400 text-sm font-['Be_Vietnam_Pro']"
+                                            > - {(newLesson.chapter !== null) ? `${newLesson.chapter}` : "Không có"}</span>
+                                        </label>
+                                        <SuggestInputBarAdmin
+                                            options={codes['chapter'] ? codes['chapter'].filter((c) => c.code.length===4) : []}
+                                            selectedOption={newLesson.chapter}
+                                            onChange={(option) => setNewLesson({ ...newLesson, chapter: option })}
+                                            placeholder="Chọn chương" />
+                                    </div>
+                                    <div className="flex flex-col gap-2">
                                         <label className="text-lg font-semibold font-['Be_Vietnam_Pro']">Mô tả</label>
                                         <textarea
                                             name="description"
                                             value={newLesson.description}
                                             onChange={handleChange}
-                                            className="w-full h-32 border border-gray-300 rounded-md p-2"
+                                            className="w-full h-32 border resize-none border-gray-300 rounded-md p-2"
                                         ></textarea>
                                     </div>
                                     <div className="flex justify-end items-center gap-4">
@@ -534,7 +558,7 @@ const LessonManagement = () => {
                                             name="description"
                                             value={newLearningItem.description}
                                             onChange={handleChangeLearningItem}
-                                            className="w-full h-32 border border-gray-300 rounded-md p-2"
+                                            className="w-full h-32 border resize-none border-gray-300 rounded-md p-2"
                                         ></textarea>
                                     </div>
                                     <div className="flex justify-end items-center gap-4">

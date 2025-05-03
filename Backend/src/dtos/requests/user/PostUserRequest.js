@@ -16,6 +16,7 @@ class PostUserRequest {
         this.highSchoolScore = data.highSchoolScore
         this.university = data.university
         this.avatarUrl = data.avatarUrl
+        this.userType = data.userType
     }
 
     static validate(data) {
@@ -24,8 +25,8 @@ class PostUserRequest {
             firstName: Joi.string().max(50).required(),
             username: Joi.string().min(3).max(30).optional(),
             password: Joi.string().min(6).max(50).optional(),
-            gender: Joi.boolean().required(),
-            birthDate: Joi.date().less("now").required(),
+            gender: Joi.boolean().optional(),
+            birthDate: Joi.date().less("now").optional().allow(null),
             phone: Joi.alternatives().try(Joi.string().pattern(/^[0-9]{10,15}$/), Joi.allow(null)).optional(),
             highSchool: Joi.string().max(100).required(),
             class: Joi.string().max(50).required(),
@@ -34,6 +35,7 @@ class PostUserRequest {
             highSchoolScore: Joi.number().min(0).max(10).optional(),
             university: Joi.string().max(100).optional().allow(''),
             avatarUrl: Joi.string().uri().optional(),
+            userType: Joi.string().valid("HS1", "GV", "AS").required(),
         })
 
         return schema.validate(data)

@@ -14,7 +14,10 @@ router.get('/v1/user/class',
     // requireRoles([]),
     asyncHandler(ClassController.getPublicClass)
 )
-
+router.get('/v1/user/class/overview',
+    requireRoles([]),
+    asyncHandler(ClassController.getOverviewClass)
+)
 router.get('/v1/admin/class',
     requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(ClassController.getAllClass)
@@ -62,18 +65,18 @@ router.post('/v1/user/class/:classCode/join',
 
 router.post('/v1/admin/class', 
     validate(PostClassRequest),
-    requireRoles([UserType.ADMIN, UserType.TEACHER]),
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(ClassController.postClass)
 )
 
 router.put('/v1/admin/class/:id', 
     validate(PutClassRequest),
-    requireRoles([UserType.ADMIN, UserType.TEACHER]),
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     asyncHandler(ClassController.putClass)
 )
 
 router.put('/v1/admin/class/:id/images',
-    requireRoles([UserType.ADMIN, UserType.TEACHER]),
+    requireRoles([UserType.ADMIN, UserType.TEACHER, UserType.ASSISTANT]),
     uploadGoogleImageMiddleware.fields([
         { name: 'images', maxCount: 5 }
     ]),

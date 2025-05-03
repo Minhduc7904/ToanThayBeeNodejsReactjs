@@ -16,6 +16,10 @@ router.get('/v1/user/answer/attempt/:attemptId',
     requireRoles([]),
     asyncHandler(AnswerController.getAnswerByAttempt)
 )
+router.get('/v1/user/answer/re-examination/:attemptId',
+    requireRoles([]),
+    asyncHandler(AnswerController.reExamination)
+)
 router.get('/v1/user/answer/attempt/:attemptId/questions',
     requireRoles([]),
     asyncHandler(AnswerController.getQuestionsAndAnswersByAttempt)

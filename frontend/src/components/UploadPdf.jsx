@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useDispatch } from "react-redux";
 import { setSuccessMessage, setErrorMessage } from "../features/state/stateApiSlice";
 
-const UploadLearningItemPdfForm = ({ learningItemId, onSubmit }) => {
+const UploadPdfForm = ({ id, onSubmit }) => {
     const dispatch = useDispatch();
     const [pdfFile, setPdfFile] = useState(null);
     const [isHovering, setIsHovering] = useState(false);
@@ -36,7 +36,7 @@ const UploadLearningItemPdfForm = ({ learningItemId, onSubmit }) => {
 
         // Gọi hàm onSubmit từ prop và truyền vào dữ liệu cần thiết
         if (onSubmit) {
-            await onSubmit({ learningItemId, pdfFile });
+            await onSubmit({ id, pdfFile });
         }
     };
 
@@ -118,4 +118,4 @@ const UploadLearningItemPdfForm = ({ learningItemId, onSubmit }) => {
     );
 };
 
-export default UploadLearningItemPdfForm;
+export default UploadPdfForm;

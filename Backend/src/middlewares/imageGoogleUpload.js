@@ -4,12 +4,21 @@ import config from '../config/firebaseConfig.js'
 
 
 const fileFilter = (req, file, callback) => {
-    if (file.mimetype.startsWith('image')) {
-        callback(null, true)
+    const allowedMimes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/heic', // Thêm định dạng HEIC từ iPhone
+        'image/heif' // Thêm định dạng HEIF từ iPhone
+    ];
+    
+    if (allowedMimes.includes(file.mimetype)) {
+        callback(null, true);
     } else {
-        callback(new Error('File type is not supported'), false)
+        callback(new Error('File type is not supported'), false);
     }
-}
+};
 
 const upload = multer({
     storage: multer.memoryStorage(),
